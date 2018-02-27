@@ -1,0 +1,14 @@
+﻿  Using 'git status' to determine working set for adaptive non-unity build.
+  Creating makefile for hot reloading Lyfe_GameEditor (modules to compile have changed)
+  Compiling game modules for hot reload
+  Parsing headers for Lyfe_GameEditor
+    Running UnrealHeaderTool "C:\Users\Megapoort\Desktop\Lyfe\Lyfe_Game\Lyfe_Game.uproject" "C:\Users\Megapoort\Desktop\Lyfe\Lyfe_Game\Intermediate\Build\Win64\Lyfe_GameEditor\Development\Lyfe_GameEditor.uhtmanifest" -LogCmds="loginit warning, logexit warning, logdatabase error" -Unattended -WarningsAsErrors -installed
+  Reflection code generated for Lyfe_GameEditor in 10,8041534 seconds
+  Performing 4 actions (4 in parallel)
+  Character_SingleCelled.cpp
+  Character_SingleCelled.gen.cpp
+C:\Users\Megapoort\Desktop\Lyfe\Lyfe_Game\Source\Lyfe_Game\Private\Character_SingleCelled.cpp(46): error C4239: Nicht dem Standard entsprechende Erweiterung: "Argument": Konvertierung von "FVector" in "FVector &"
+  C:\Users\Megapoort\Desktop\Lyfe\Lyfe_Game\Source\Lyfe_Game\Private\Character_SingleCelled.cpp(46): note: Ein nicht konstanter Verweis kann nur an einen L-Wert gebunden werden.
+ERROR : UBT error : Failed to produce item: C:\Users\Megapoort\Desktop\Lyfe\Lyfe_Game\Binaries\Win64\UE4Editor-Lyfe_Game-5720.dll
+  Total build time: 20,44 seconds (Local executor: 0,00 seconds)
+C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.MakeFile.Targets(44,5): error MSB3075: Der Befehl ""C:\Program Files\Epic Games\UE_4.18\Engine\Build\BatchFiles\Build.bat" Lyfe_GameEditor Win64 Development "C:\Users\Megapoort\Desktop\Lyfe\Lyfe_Game\Lyfe_Game.uproject" -waitmutex" wurde mit dem Code 5 beendet. Stellen Sie sicher, dass Sie zur Ausführung dieses Befehls berechtigt sind.

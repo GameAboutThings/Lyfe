@@ -1,0 +1,33 @@
+/Zc:inline
+/nologo
+/Oi
+/c
+/Gy
+/Zm850
+/wd4819
+/D_CRT_STDIO_LEGACY_WIDE_SPECIFIERS=1
+/D_SILENCE_STDEXT_HASH_DEPRECATION_WARNINGS=1
+/source-charset:utf-8 /execution-charset:utf-8
+/Ox
+/Ot
+/Ob2
+/errorReport:prompt
+/Z7
+/MD
+/bigobj
+/fp:fast
+/Zo
+/Zp8
+/wd4463
+/wd4838
+/w44668
+/I "C:\Program Files\Epic Games\UE_4.18\Engine\Source"
+/D_HAS_EXCEPTIONS=0
+/FI"C:\Users\Megapoort\Desktop\Lyfe\Lyfe_Game\Intermediate\Build\Win64\Lyfe_Game\Development\UELinkerFixups\PCH.UELinkerFixups.h"
+/Yu"C:\Users\Megapoort\Desktop\Lyfe\Lyfe_Game\Intermediate\Build\Win64\Lyfe_Game\Development\UELinkerFixups\PCH.UELinkerFixups.h"
+/Fp"C:\Users\Megapoort\Desktop\Lyfe\Lyfe_Game\Intermediate\Build\Win64\Lyfe_Game\Development\UELinkerFixups\PCH.UELinkerFixups.h.pch"
+"C:\Users\Megapoort\Desktop\Lyfe\Lyfe_Game\Intermediate\Build\Win64\UE4\Development\UELinkerFixups.cpp"
+/Fo"C:\Users\Megapoort\Desktop\Lyfe\Lyfe_Game\Intermediate\Build\Win64\Lyfe_Game\Development\UELinkerFixups\UELinkerFixups.cpp.obj"
+/TP
+/GR-
+/W4

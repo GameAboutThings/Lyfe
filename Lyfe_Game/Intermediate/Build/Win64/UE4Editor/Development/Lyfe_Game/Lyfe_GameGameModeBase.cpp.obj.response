@@ -26,8 +26,6 @@
 /I "C:\Program Files\Epic Games\UE_4.18\Engine\Source"
 /I C:\Users\Megapoort\Desktop\Lyfe\Lyfe_Game\Source
 /I C:\Users\Megapoort\Desktop\Lyfe\Lyfe_Game\Source\Lyfe_Game\Public
-/I C:\Users\Megapoort\Desktop\Lyfe\Lyfe_Game\Source\Lyfe_Game\Public\Camera
-/I C:\Users\Megapoort\Desktop\Lyfe\Lyfe_Game\Source\Lyfe_Game\Public\NameGenerators
 /I C:\Users\Megapoort\Desktop\Lyfe\Lyfe_Game\Intermediate\Build\Win64\UE4Editor\Inc\Lyfe_Game
 /I C:\Users\Megapoort\Desktop\Lyfe\Lyfe_Game\Source\Lyfe_Game
 /I "C:\Program Files\Epic Games\UE_4.18\Engine\Source\Runtime\Core\Public"
