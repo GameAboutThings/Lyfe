@@ -1,0 +1,76 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup>
+		<None Include="..\..\Lyfe_Game.uproject" />
+		<Filter Include="Source">
+			<UniqueIdentifier>{9D3F99D9-F59A-4877-94F9-F669A11A51C6}</UniqueIdentifier>
+		</Filter>
+		<None Include="..\..\Source\Lyfe_Game.Target.cs">
+			<Filter>Source</Filter>
+		</None >
+		<None Include="..\..\Source\Lyfe_GameEditor.Target.cs">
+			<Filter>Source</Filter>
+		</None >
+		<Filter Include="Config">
+			<UniqueIdentifier>{D90ED833-E297-4D36-A24B-A21C04C9D975}</UniqueIdentifier>
+		</Filter>
+		<None Include="..\..\Config\DefaultEditor.ini">
+			<Filter>Config</Filter>
+		</None >
+		<None Include="..\..\Config\DefaultEngine.ini">
+			<Filter>Config</Filter>
+		</None >
+		<None Include="..\..\Config\DefaultGame.ini">
+			<Filter>Config</Filter>
+		</None >
+		<Filter Include="Source\Lyfe_Game">
+			<UniqueIdentifier>{D491C356-A2C7-4BDB-88C8-745B005CC191}</UniqueIdentifier>
+		</Filter>
+		<None Include="..\..\Source\Lyfe_Game\Lyfe_Game.Build.cs">
+			<Filter>Source\Lyfe_Game</Filter>
+		</None >
+		<ClCompile Include="..\..\Source\Lyfe_Game\Lyfe_Game.cpp">
+			<Filter>Source\Lyfe_Game</Filter>
+		</ClCompile >
+		<ClInclude Include="..\..\Source\Lyfe_Game\Lyfe_Game.h">
+			<Filter>Source\Lyfe_Game</Filter>
+		</ClInclude >
+		<ClCompile Include="..\..\Source\Lyfe_Game\Lyfe_GameGameModeBase.cpp">
+			<Filter>Source\Lyfe_Game</Filter>
+		</ClCompile >
+		<ClInclude Include="..\..\Source\Lyfe_Game\Lyfe_GameGameModeBase.h">
+			<Filter>Source\Lyfe_Game</Filter>
+		</ClInclude >
+		<Filter Include="Source\Lyfe_Game\Private">
+			<UniqueIdentifier>{CFD0B894-5E30-41CE-868C-FCC70CCAB5CC}</UniqueIdentifier>
+		</Filter>
+		<Filter Include="Source\Lyfe_Game\Private\Camera">
+			<UniqueIdentifier>{D3D9FFD4-900A-4F30-8BE0-1B5495A97EBD}</UniqueIdentifier>
+		</Filter>
+		<ClCompile Include="..\..\Source\Lyfe_Game\Private\Camera\Camera_Editor.cpp">
+			<Filter>Source\Lyfe_Game\Private\Camera</Filter>
+		</ClCompile >
+		<Filter Include="Source\Lyfe_Game\Private\NameGenerators">
+			<UniqueIdentifier>{422B5585-3AB6-41F9-B6C2-02FFE252D69D}</UniqueIdentifier>
+		</Filter>
+		<ClCompile Include="..\..\Source\Lyfe_Game\Private\NameGenerators\NG_Base.cpp">
+			<Filter>Source\Lyfe_Game\Private\NameGenerators</Filter>
+		</ClCompile >
+		<Filter Include="Source\Lyfe_Game\Public">
+			<UniqueIdentifier>{14F39187-E151-4B28-9483-EEB54B89DC60}</UniqueIdentifier>
+		</Filter>
+		<Filter Include="Source\Lyfe_Game\Public\Camera">
+			<UniqueIdentifier>{DF02DA11-7F15-4F7E-A55D-3BD421F69ED9}</UniqueIdentifier>
+		</Filter>
+		<ClInclude Include="..\..\Source\Lyfe_Game\Public\Camera\Camera_Editor.h">
+			<Filter>Source\Lyfe_Game\Public\Camera</Filter>
+		</ClInclude >
+		<Filter Include="Source\Lyfe_Game\Public\NameGenerators">
+			<UniqueIdentifier>{E820790D-BAC5-4F3F-8DB2-50AF9DBF25B0}</UniqueIdentifier>
+		</Filter>
+		<ClInclude Include="..\..\Source\Lyfe_Game\Public\NameGenerators\NG_Base.h">
+			<Filter>Source\Lyfe_Game\Public\NameGenerators</Filter>
+		</ClInclude >
+	</ItemGroup>
+</Project>
