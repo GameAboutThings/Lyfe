@@ -1,0 +1,21 @@
+/NOLOGO
+/errorReport:prompt
+/MACHINE:x64
+/SUBSYSTEM:WINDOWS
+/DEF
+/NAME:"UE4Editor-Lyfe_Game-1919.dll"
+/IGNORE:4221
+/NODEFAULTLIB
+"C:\Program Files\Epic Games\UE_4.18\Engine\Intermediate\Build\Win64\UE4Editor\Development\Engine\SharedPCH.Engine.h.obj"
+"C:\Users\Megapoort\Desktop\Lyfe\Lyfe_Game\Intermediate\Build\Win64\UE4Editor\Development\Lyfe_Game\Lyfe_Game.cpp.obj"
+"C:\Users\Megapoort\Desktop\Lyfe\Lyfe_Game\Intermediate\Build\Win64\UE4Editor\Development\Lyfe_Game\Lyfe_GameGameModeBase.cpp.obj"
+"C:\Users\Megapoort\Desktop\Lyfe\Lyfe_Game\Intermediate\Build\Win64\UE4Editor\Development\Lyfe_Game\Camera_SingleCelled.cpp.obj"
+"C:\Users\Megapoort\Desktop\Lyfe\Lyfe_Game\Intermediate\Build\Win64\UE4Editor\Development\Lyfe_Game\Character_SingleCelled.cpp.obj"
+"C:\Users\Megapoort\Desktop\Lyfe\Lyfe_Game\Intermediate\Build\Win64\UE4Editor\Development\Lyfe_Game\Stage_Meta_SingleCelled.cpp.obj"
+"C:\Users\Megapoort\Desktop\Lyfe\Lyfe_Game\Intermediate\Build\Win64\UE4Editor\Development\Lyfe_Game\Camera_SingleCelled.gen.cpp.obj"
+"C:\Users\Megapoort\Desktop\Lyfe\Lyfe_Game\Intermediate\Build\Win64\UE4Editor\Development\Lyfe_Game\Character_SingleCelled.gen.cpp.obj"
+"C:\Users\Megapoort\Desktop\Lyfe\Lyfe_Game\Intermediate\Build\Win64\UE4Editor\Development\Lyfe_Game\Lyfe_Game.init.gen.cpp.obj"
+"C:\Users\Megapoort\Desktop\Lyfe\Lyfe_Game\Intermediate\Build\Win64\UE4Editor\Development\Lyfe_Game\Lyfe_GameGameModeBase.gen.cpp.obj"
+"C:\Program Files\Epic Games\UE_4.18\Engine\Intermediate\Build\Win64\UE4Editor\Development\Lyfe_Game\PCLaunch.rc.res"
+"C:\Program Files\Epic Games\UE_4.18\Engine\Intermediate\Build\Win64\UE4Editor\Development\ModuleVersionResource.rc.inl.res"
+/OUT:"C:\Users\Megapoort\Desktop\Lyfe\Lyfe_Game\Intermediate\Build\Win64\UE4Editor\Development\UE4Editor-Lyfe_Game-1919.lib"

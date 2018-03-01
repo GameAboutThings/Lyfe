@@ -19,8 +19,8 @@ void EmptyLinkFunctionForGeneratedCodeLyfe_Game_init() {}
 			static const UE4CodeGen_Private::FPackageParams PackageParams = {
 				"/Script/Lyfe_Game",
 				PKG_CompiledIn | 0x00000000,
-				0x6E467A63,
-				0xCA0DAEAF,
+				0xEEBF20E2,
+				0x5B06E5B5,
 				nullptr, 0,
 				METADATA_PARAMS(nullptr, 0)
 			};
