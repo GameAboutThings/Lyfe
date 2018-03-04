@@ -1,0 +1,4 @@
+struct instances: _<name>
+enum instances: _e<name>
+variables: first letter is lower case ("movementSpeed")
+functions: first letter is upper case ("GetMovementSpeed")
