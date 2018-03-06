@@ -28,3 +28,8 @@ bool AGameMode_Cell::DisableWASDInput()
 {
 	return (_eControlSetting == EControlSettings::EFollowMouse);
 }
+
+AGameMode_Cell * AGameMode_Cell::GetGameMode()
+{
+	return this;
+}

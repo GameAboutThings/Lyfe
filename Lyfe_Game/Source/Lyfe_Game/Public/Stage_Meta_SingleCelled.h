@@ -15,6 +15,7 @@
 #define ZOOM_SPEED 0.5f //how fast you zoom in or out
 #define ZOOM_MIN_DISTANCE 300.f
 #define ZOOM_MAX_DISTANCE 1500.f
+
 /**
  * 
  */
