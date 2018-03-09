@@ -43,7 +43,7 @@ public:
 private:
 	struct Movement
 	{
-		/** this will set the speed with which the cell will rotate towards the player's courser.
+		/** this will set the speed with which the cell will rotate towards the player's courser. => How many degrees per frame
 		* Can be called through code but not set.
 		* It will be calculated through the parts on the player's cell.
 		*/
@@ -69,6 +69,9 @@ private:
 
 		/** The location the cell will move towards */
 		FVector targetLocation;
+
+		/** targetLocation of previous frame */
+		FVector targetLocationPrev;
 	};
 
 protected:
@@ -83,6 +86,7 @@ public:
 private:
 	/** This variable describes all variables needed for movement calculation */
 	Movement _movement;
+
 	/** Sets the weight for the cell;
 	* has influence on rotation and movement
 	*/
@@ -114,9 +118,15 @@ private:
 	/** True when the player character is moving */
 	bool bIsMoving;
 
+	/** True when the player character is rotating */
+	bool bIsRotating;
+
 protected:
 
+
 public:
+	/** The direction the player is facing */
+	class UArrowComponent* playerDirection;
 
 
   /////////////////////////////////////////////////////////////////////////////
@@ -130,7 +140,7 @@ private:
 	*/
 	void DetermineTargetLocation();
 
-	void MoveToTargetLocation();
+	void MoveToTargetLocation(float DeltaTime);
 
 	void Die();
 
@@ -138,11 +148,7 @@ private:
 	UFUNCTION(BlueprintCallable, Category = "CELL|CELL_Camera")
 	class UCameraComponent* GetPlayerCamera();
 
-	/** Bound to the MoveForward Axis */
-	void SetForwardMotion(float input);
 
-	/** Bound to the MoveRight Axis */
-	void SetRightMotion(float input);
 
 	/** Moves the camera closer to or further away from the player cell */
 	UFUNCTION(BlueprintCallable, Category = "CELL|CELL_Camera")
@@ -155,6 +161,14 @@ private:
 	void OnRightClick();
 
 protected:
+	/** Bound to the MoveForward Axis */
+	UFUNCTION(BlueprintCallable, Category = "CELL|CELL_Movement")
+	void SetForwardMotion(float input);
+
+	/** Bound to the MoveRight Axis */
+	UFUNCTION(BlueprintCallable, Category = "CELL|CELL_Movement")
+	void SetRightMotion(float input);
+
 	/** Returns the cells rotation speed */
 	UFUNCTION(BlueprintCallable, Category = "CELL|CELL_Movement")
 	float GetRotationSpeed();

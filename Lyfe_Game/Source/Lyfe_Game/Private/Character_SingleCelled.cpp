@@ -8,6 +8,8 @@
 #include "GameMode_Cell.h"
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 #include "DrawDebugHelpers.h"
+#include "StaticMaths.h"
+#include "Runtime/Engine/Classes/Components/ArrowComponent.h"
 
 // Sets default values
 ACharacter_SingleCelled::ACharacter_SingleCelled()
@@ -30,9 +32,17 @@ ACharacter_SingleCelled::ACharacter_SingleCelled()
 	UCameraComponent* camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	camera->SetupAttachment(cameraArm, USpringArmComponent::SocketName);
 
+	playerCamera = camera;
+	playerCamera->bUsePawnControlRotation = false;
+
+	playerDirection = CreateDefaultSubobject<UArrowComponent>(TEXT("PlayerDirection"));
+	playerDirection->SetupAttachment(RootComponent, USpringArmComponent::SocketName);
+
 	AutoPossessPlayer = EAutoReceiveInput::Player0;
 
 	//-------------- End of temporary code
+	bIsMoving = false;
+	bIsRotating = false;
 
 }
 
@@ -44,18 +54,20 @@ void ACharacter_SingleCelled::BeginPlay()
 	AGameMode_Cell* gameMode = Cast<AGameMode_Cell>(GetWorld()->GetAuthGameMode());
 	if (gameMode != nullptr)
 	{
-		//UE_LOG(LogTemp, Warning, TEXT("gameMode: %s"), *(GetWorld()->GetAuthGameMode()->GetClass()->GetName()));
-		gameMode->SetControlSetting(EControlSettings::EClick);
+		gameMode->SetControlSetting(EControlSettings::EFollowMouse);
 	}
-	//UE_LOG(LogTemp, Warning, TEXT("gameMode: %s"), *(GetWorld()->GetAuthGameMode()->GetClass()->GetName()));
 
 	//Sets the movement variables to neutral.
-	_movement = { 0.f, //rotationSpeed || needs to be called from function later on
-				0.f,   //movementSpeed || needs to be called from function later on
+	_movement = { 50.f, //rotationSpeed || needs to be called from function later on
+				50.f,   //movementSpeed || needs to be called from function later on
 				0.f,   //forwardInput
 				0.f,   //rightInput
-				GetActorLocation() //targetLocation
+				GetActorLocation(), //targetLocation
+				GetActorLocation() //targetLocationPrev
 		};
+
+	//make it so the cell looks up at the beginning;
+	_movement.targetLocation += playerDirection->GetForwardVector();
 
 	SetPlayerState(EPlayerState::EAlive);
 }
@@ -68,7 +80,7 @@ void ACharacter_SingleCelled::Tick(float DeltaTime)
 	if (_ePlayerState == EPlayerState::EAlive)
 	{
 		DetermineTargetLocation();
-		MoveToTargetLocation();
+		MoveToTargetLocation(DeltaTime);
 	}
 }
 
@@ -92,7 +104,7 @@ void ACharacter_SingleCelled::SetupPlayerInputComponent(UInputComponent* PlayerI
 
 void ACharacter_SingleCelled::DetermineTargetLocation()
 {
-	
+	_movement.targetLocationPrev = _movement.targetLocation;
 	AGameMode_Cell* gameMode = Cast<AGameMode_Cell>(GetWorld()->GetAuthGameMode());
 	if (gameMode != nullptr)
 	{
@@ -109,55 +121,100 @@ void ACharacter_SingleCelled::DetermineTargetLocation()
 		}
 		else if (gameMode->GetControlSetting() == EControlSettings::EWASD) //WASD to move
 		{
-			//sets up a virtual target location in front of the cell through the input axis
-			_movement.targetLocation == FVector(_movement.forwardInput * 100.f, _movement.rightInput * 100.f, 0.f);
+			//This is handled in the Binding methods |||||||| for test reason not anymore
+
+			_movement.targetLocation.X = (_movement.forwardInput * 1000.f) + GetActorLocation().X; //+ (_movement.targetLocationPrev.X / 100.f);
+			_movement.targetLocation.Y = (_movement.rightInput * 1000.f) + GetActorLocation().Y; // + (_movement.targetLocationPrev.Y / 100.f);
 		}
 		else if (gameMode->GetControlSetting() == EControlSettings::EClick) //Cell moves towards location of mouse click
 		{
 			//This is handled in the on LeftClick method
 		}
+		
+	}
+
+	if (_movement.targetLocation.Z != 0)
+	{
+		_movement.targetLocation.Z = 0;
 	}
 }
 
-void ACharacter_SingleCelled::MoveToTargetLocation()
+void ACharacter_SingleCelled::MoveToTargetLocation(float DeltaTime)
 {
-
 	//Cell will only move forward from it's point of view but ROTATE towards the cursor while doing so resulting in an arch movement.
 	//getting player position
 	FVector currentLocation = GetActorLocation();
 
 	//moveVector is the vector towards the position the cell should move
-	FVector directionVector = FVector(_movement.targetLocation.X - currentLocation.X, _movement.targetLocation.Y - currentLocation.Y, 0);
-
+	FVector directionVector = FVector(_movement.targetLocation.X - currentLocation.X, _movement.targetLocation.Y - currentLocation.Y, 0.f);
 
 	float distance = sqrt(pow(directionVector.X, 2) + pow(directionVector.Y, 2));
 
-	//the degree it has to rotate towards the target location
-	float deg = 0;
+	FRotator movementAngle = directionVector.Rotation();
+	float deltaYaw = StaticMaths::FindDeltaAngleDegrees(playerDirection->GetComponentRotation().Yaw, movementAngle.Yaw);
 
-	//the forward vector as seen from the cell
-	FVector forwardVector = GetActorForwardVector();
+	bool valid = StaticMaths::FindLookAtAngle2D(playerDirection->GetForwardVector(), directionVector, deltaYaw);
 
-	//cosine of the degree the character has to rotate to face in the right direction to move
-	forwardVector.Z = 0;
-	directionVector.Normalize();
-	forwardVector.Normalize();
-	deg = FMath::Acos(FVector::DotProduct(forwardVector, directionVector));
-	UE_LOG(LogTemp, Warning, TEXT("deg: %d"), deg);
-	//still need to check what values this returns. After that I can map it correctly
-
-	//if the cell needs to move: it will also rotate
-	if (distance >= MOVEMENT_THRESHOLD)
+	if (!valid)
 	{
-		if (GetMovementBase())
+		deltaYaw = 0.f;
+	}
+
+	//keep it inside the bounds
+	if (deltaYaw > 360.f)
+	{
+		deltaYaw -= 360.f;
+	}
+	else if (deltaYaw < -360.f)
+	{
+		deltaYaw += 360.f;
+	}
+	//make sure it only makes rotations between -180° and 180°
+	else if (deltaYaw > 180.f)
+	{
+		deltaYaw = -180.f + (deltaYaw - 180.f);
+	}
+	else if (deltaYaw < -180.f)
+	{
+		deltaYaw = 180.f - (deltaYaw + 180.f);
+	}
+
+	//for some reason the calculation for deltaYaw returns the negative of what it is supposed to, so....
+	deltaYaw = -deltaYaw;
+
+
+	if (deltaYaw != 0.f && (distance >= ROTATION_THRESHOLD || distance <= -ROTATION_THRESHOLD))
+	{
+
+		//debugging
+		//DrawDebugString(GetWorld(), FVector(0.f, 0.f, 0.f), _movement.targetLocation.ToString(), 0, FColor::White, 0.01f, false);
+		//DrawDebugString(GetWorld(), FVector(10.f, 0.f, 0.f), FString::SanitizeFloat(deltaYaw), 0, FColor::White, 0.01f, false);
+		//DrawDebugString(GetWorld(), FVector(-20.f, 0.f, 0.f), directionVector.ToString(), 0, FColor::White, 0.01f, false);
+
+
+
+		float maxYawThisFrame = _movement.rotationSpeed * DeltaTime;
+		if (maxYawThisFrame >= FMath::Abs(deltaYaw))
 		{
-			GetMovementBase()->AddImpulse(FVector(_movement.movementSpeed, 0.f, 0.f));
+			//character can reach the rotation within one frame
+			playerDirection->SetWorldRotation(movementAngle);
+		}
+		else
+		{
+			//can't reach rotation in this frame so the character needs to rotate over several frames
+			playerDirection->AddLocalRotation(FRotator(0.0f, FMath::Sign(deltaYaw) *  maxYawThisFrame, 0.0f));
 		}
 	}
-	//if the cell doesn't need to move it will only rotate
-	else if (deg >= ROTATION_THRESHOLD || deg <= - ROTATION_THRESHOLD)
-	{
 
+	//set forward movement
+	if (distance >= MOVEMENT_THRESHOLD)
+	{
+		FVector movementDirection = playerDirection->GetForwardVector();
+		//FVector currentLocation = GetActorLocation();
+		currentLocation.X += movementDirection.X * _movement.movementSpeed * DeltaTime;
+		currentLocation.Y += movementDirection.Y * _movement.movementSpeed * DeltaTime;
+
+		SetActorLocation(currentLocation);
 	}
 }
 
@@ -171,19 +228,8 @@ class UCameraComponent * ACharacter_SingleCelled::GetPlayerCamera()
 	return playerCamera;
 }
 
-void ACharacter_SingleCelled::SetForwardMotion(float input)
-{
-	_movement.forwardInput = input;
-}
-
-void ACharacter_SingleCelled::SetRightMotion(float input)
-{
-	_movement.rightInput = input;
-}
-
 void ACharacter_SingleCelled::Zoom(float input)
 {
-	//zoom = input;
 	float start = cameraAttachmentArm->TargetArmLength;
 	float end = cameraAttachmentArm->TargetArmLength + input * ZOOM_FACTOR;
 
@@ -207,10 +253,6 @@ void ACharacter_SingleCelled::OnLeftClick()
 			FVector mouseDirection;
 			playerController->DeprojectMousePositionToWorld(_movement.targetLocation, mouseDirection);
 			_movement.targetLocation = _movement.targetLocation + (cameraAttachmentArm->TargetArmLength * mouseDirection);
-			//UE_LOG(LogTemp, Warning, TEXT("click:  %d | %d | %d"), _movement.targetLocation.X, _movement.targetLocation.Y, _movement.targetLocation.Z);
-			//UE_LOG(LogTemp, Warning, TEXT("Player: %d | %d | %d"), GetActorLocation().X, GetActorLocation().Y, GetActorLocation().Z);
-			DrawDebugPoint(GetWorld(), _movement.targetLocation, 10, FColor::Red, true, 0.0f);
-			//SetActorLocation(_movement.targetLocation);
 		}
 	}
 }
@@ -222,6 +264,30 @@ void ACharacter_SingleCelled::OnRightClick()
   //////////////////////////////////////////////////////////////////////////////
  //////////////////////////////// PROTECTED ///////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+
+void ACharacter_SingleCelled::SetForwardMotion(float input)
+{
+	AGameMode_Cell* gameMode = Cast<AGameMode_Cell>(GetWorld()->GetAuthGameMode());
+	if (gameMode)
+	{
+		if (gameMode->GetControlSetting() == EControlSettings::EWASD)
+		{
+			_movement.forwardInput =  FMath::Clamp(input, -1.f, 1.f) * 1.f;
+		}
+	}
+}
+
+void ACharacter_SingleCelled::SetRightMotion(float input)
+{
+	AGameMode_Cell* gameMode = Cast<AGameMode_Cell>(GetWorld()->GetAuthGameMode());
+	if (gameMode)
+	{
+		if (gameMode->GetControlSetting() == EControlSettings::EWASD)
+		{
+			_movement.rightInput =  FMath::Clamp(input, -1.f, 1.f) * 1.f;
+		}
+	}
+}
 
 float ACharacter_SingleCelled::GetRotationSpeed()
 {
