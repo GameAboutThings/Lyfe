@@ -41,6 +41,7 @@ public:
  //////////////////////////// CLASSES | STRUCTS ///////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 private:
+	/** Saves all the values necessary for the player's movement */
 	struct Movement
 	{
 		/** this will set the speed with which the cell will rotate towards the player's courser. => How many degrees per frame
@@ -72,6 +73,24 @@ private:
 
 		/** targetLocation of previous frame */
 		FVector targetLocationPrev;
+	};
+
+	/** One single compound*/
+	struct Compound
+	{
+		int current;
+		int maximum;
+		int balance;
+	};
+
+	/** Saves all compunds within the player */
+	struct Compounds
+	{
+		Compound _carbon;
+		Compound _oxygen;
+		Compound _nitrogen;
+		Compound _sulfur;
+		Compound _phosphor;
 	};
 
 protected:
@@ -106,8 +125,8 @@ private:
 	/** Current player state */
 	EPlayerState _ePlayerState;
 
-	UPROPERTY()
-	class USphereComponent* testMesh;
+	//UPROPERTY()
+	//class USphereComponent* testMesh;
 
 	/** The camera that follows your cell around */
 	class UCameraComponent* playerCamera;
@@ -120,6 +139,15 @@ private:
 
 	/** True when the player character is rotating */
 	bool bIsRotating;
+
+	/** stores all compounds for the player */
+	Compounds _playerCompounds;
+
+	/** stores current and max DNA */
+	Compound _DNA;
+
+	/** Whether the mouse influences Gameplay or the GUI */
+	bool bInteractGUI;
 
 protected:
 
@@ -148,8 +176,6 @@ private:
 	UFUNCTION(BlueprintCallable, Category = "CELL|CELL_Camera")
 	class UCameraComponent* GetPlayerCamera();
 
-
-
 	/** Moves the camera closer to or further away from the player cell */
 	UFUNCTION(BlueprintCallable, Category = "CELL|CELL_Camera")
 	void Zoom(float input);
@@ -159,6 +185,22 @@ private:
 
 	/** Called when the player clicks the right mouse button */
 	void OnRightClick();
+
+	/** Sets compounds when world is loaded.
+	* Should not be called anywhere else.
+	*/
+	void SetCompounds();
+
+	/** Sets whether the player interacts with the GUI or with the Game. This is mostly relevant for EFollowMouse*/
+	UFUNCTION(BlueprintCallable, Category = "CELL|CELL_HUD")
+	void SetInteractGUI(bool bGUI);
+
+	/** Only used for key binding*/
+	UFUNCTION(BlueprintCallable, Category = "CELL|CELL_HUD")
+	void SetInteractGUITrue();
+
+	/** Enforces the balance saved for every compound; Called every frame to reduce compound or rather metabolize it*/
+	void EnforceCompoundBalance();
 
 protected:
 	/** Bound to the MoveForward Axis */
@@ -208,4 +250,35 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "CELL|CELL_Movement")
 	bool PlayerIsMoving();
+
+	/** Adds to or reduces a compound
+	* It's up to the programmer to see if the compound is already 0. For debugging reasons it will be mentioned in the console, though.
+	* @param amound Can be positive or negative
+	* @param compound can be [carbon, oxygen, nitrogen, sulfur, phosphor]
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CELL|CELL_Compound")
+	void AddCompound(int amount, FString compound);
+
+	/** Returns the amount left of that compound
+	* @param amound Can be positive or negative
+	* @param compound can be [carbon, oxygen, nitrogen, sulfur, phosphor]
+	* @param bMax whether the maximum should be returned or the current; true => maximum
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CELL|CELL_Compound")
+	int GetCompound(FString compound, bool bMax);
+
+	/** Allows the programmer to add or reduce DNA */
+	UFUNCTION(BlueprintCallable, Category = "CELL|CELL_DNA")
+	void AddDNA(int amount);
+
+	/** Allows the programmer to get the current DNA value 
+	* @param bMax whether the maximum should be returned or the current; true => maximum
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CELL|CELL_DNA")
+	int GetDNA(bool bMax);
+
+	/** Returns the balance for the input compound; */
+	UFUNCTION(BlueprintCallable, Category = "CELL|CELL_Compound")
+	int GetCompoundBalance(FString compound);
+
 };

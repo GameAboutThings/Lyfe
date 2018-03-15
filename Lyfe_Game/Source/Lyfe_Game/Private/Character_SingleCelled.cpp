@@ -17,8 +17,6 @@ ACharacter_SingleCelled::ACharacter_SingleCelled()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	//----------------This next part is only temporary so the movement and input can be tested
-
 	//Use a spring ar to give the camera smooth, natural-feeling motion
 	USpringArmComponent* cameraArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraAttachmentArm"));
 	cameraArm->SetupAttachment(RootComponent);
@@ -35,12 +33,14 @@ ACharacter_SingleCelled::ACharacter_SingleCelled()
 	playerCamera = camera;
 	playerCamera->bUsePawnControlRotation = false;
 
+	//Component to let the user know which way he is facing. Rotates in the desired direction
 	playerDirection = CreateDefaultSubobject<UArrowComponent>(TEXT("PlayerDirection"));
 	playerDirection->SetupAttachment(RootComponent, USpringArmComponent::SocketName);
 
+	//Allow user to control this character
 	AutoPossessPlayer = EAutoReceiveInput::Player0;
 
-	//-------------- End of temporary code
+
 	bIsMoving = false;
 	bIsRotating = false;
 
@@ -51,11 +51,24 @@ void ACharacter_SingleCelled::BeginPlay()
 {
 	Super::BeginPlay();
 
+	SetActorEnableCollision(true);
+
+	//Setting up the control setting (later on done in the gameMode and loaded from saved settings)
 	AGameMode_Cell* gameMode = Cast<AGameMode_Cell>(GetWorld()->GetAuthGameMode());
 	if (gameMode != nullptr)
 	{
 		gameMode->SetControlSetting(EControlSettings::EFollowMouse);
 	}
+
+	//Setting health
+	maxHealth = 100; //will be calculated through the player's mass later on
+	currentHealth = maxHealth;
+
+	//Setting compounds
+	SetCompounds();
+
+	_DNA.maximum = 100;
+	_DNA.current = 0;
 
 	//Sets the movement variables to neutral.
 	_movement = { 50.f, //rotationSpeed || needs to be called from function later on
@@ -79,6 +92,7 @@ void ACharacter_SingleCelled::Tick(float DeltaTime)
 
 	if (_ePlayerState == EPlayerState::EAlive)
 	{
+		EnforceCompoundBalance();
 		DetermineTargetLocation();
 		MoveToTargetLocation(DeltaTime);
 	}
@@ -94,6 +108,7 @@ void ACharacter_SingleCelled::SetupPlayerInputComponent(UInputComponent* PlayerI
 	PlayerInputComponent->BindAxis("MoveRight", this, &ACharacter_SingleCelled::SetRightMotion);
 	PlayerInputComponent->BindAction("MouseLeft", IE_Pressed, this, &ACharacter_SingleCelled::OnLeftClick);
 	PlayerInputComponent->BindAction("MouseRight", IE_Pressed, this, &ACharacter_SingleCelled::OnRightClick);
+	PlayerInputComponent->BindAction("InteractGUI", IE_Pressed, this, &ACharacter_SingleCelled::SetInteractGUITrue);
 }
 
 /*---------------------------------------------------------------------------------------------------------------------------------------------------------------*/
@@ -141,6 +156,9 @@ void ACharacter_SingleCelled::DetermineTargetLocation()
 
 void ACharacter_SingleCelled::MoveToTargetLocation(float DeltaTime)
 {
+	//If interaction is set to GUI the cell won't move anymore
+	if (bInteractGUI)
+		return;
 	//Cell will only move forward from it's point of view but ROTATE towards the cursor while doing so resulting in an arch movement.
 	//getting player position
 	FVector currentLocation = GetActorLocation();
@@ -255,10 +273,60 @@ void ACharacter_SingleCelled::OnLeftClick()
 			_movement.targetLocation = _movement.targetLocation + (cameraAttachmentArm->TargetArmLength * mouseDirection);
 		}
 	}
+
+	//return to the normal game
+	bInteractGUI = false;
 }
 
 void ACharacter_SingleCelled::OnRightClick()
 {
+}
+
+void ACharacter_SingleCelled::SetCompounds()
+{
+	//carbon
+	_playerCompounds._carbon.maximum = 10000;
+	_playerCompounds._carbon.current = 10000;
+	_playerCompounds._carbon.balance = -1;
+
+	//oxygen
+	_playerCompounds._oxygen.maximum = 10000;
+	_playerCompounds._oxygen.current = 10000;
+	_playerCompounds._oxygen.balance = -1;
+
+	//nitrogen
+	_playerCompounds._nitrogen.maximum = 10000;
+	_playerCompounds._nitrogen.current = 10000;
+	_playerCompounds._nitrogen.balance = -1;
+
+	//phosphor
+	_playerCompounds._phosphor.maximum = 10000;
+	_playerCompounds._phosphor.current = 10000;
+	_playerCompounds._phosphor.balance = -1;
+
+	//sulfur
+	_playerCompounds._sulfur.maximum = 10000;
+	_playerCompounds._sulfur.current = 10000;
+	_playerCompounds._sulfur.balance = -1;
+}
+
+void ACharacter_SingleCelled::SetInteractGUI(bool bGUI)
+{
+	bInteractGUI = bGUI;
+}
+
+void ACharacter_SingleCelled::SetInteractGUITrue()
+{
+	SetInteractGUI(true);
+}
+
+void ACharacter_SingleCelled::EnforceCompoundBalance()
+{
+	AddCompound(_playerCompounds._carbon.balance, "carbon");
+	AddCompound(_playerCompounds._carbon.balance, "nitrogen");
+	AddCompound(_playerCompounds._carbon.balance, "oxygen");
+	AddCompound(_playerCompounds._carbon.balance, "phosphor");
+	AddCompound(_playerCompounds._carbon.balance, "sulfur");
 }
 
   //////////////////////////////////////////////////////////////////////////////
@@ -345,4 +413,229 @@ EPlayerState ACharacter_SingleCelled::GetPlayerState()
 bool ACharacter_SingleCelled::PlayerIsMoving()
 {
 	return bIsMoving;
+}
+
+void ACharacter_SingleCelled::AddCompound(int amount, FString compound)
+{
+	//find the right compound to add the amount
+	if (compound.ToLower().Equals("carbon"))
+	{
+		//add the amount
+		_playerCompounds._carbon.current += amount;
+
+		//check if it's greater than the maximum or smaller than 0 and correct that
+		if (_playerCompounds._carbon.current > _playerCompounds._carbon.maximum)
+		{
+			_playerCompounds._carbon.current = _playerCompounds._carbon.maximum;
+		}
+		else if (_playerCompounds._carbon.current < 0)
+		{
+			_playerCompounds._carbon.current = 0;
+		}
+	}
+	else if (compound.ToLower().Equals("oxygen"))
+	{
+		_playerCompounds._oxygen.current += amount;
+
+		if (_playerCompounds._oxygen.current > _playerCompounds._oxygen.maximum)
+		{
+			_playerCompounds._oxygen.current = _playerCompounds._oxygen.maximum;
+		}
+		else if (_playerCompounds._oxygen.current < 0)
+		{
+			_playerCompounds._oxygen.current = 0;
+		}
+	}
+	else if (compound.ToLower().Equals("nitrogen"))
+	{
+		_playerCompounds._nitrogen.current += amount;
+
+		if (_playerCompounds._nitrogen.current > _playerCompounds._nitrogen.maximum)
+		{
+			_playerCompounds._nitrogen.current = _playerCompounds._nitrogen.maximum;
+		}
+		else if (_playerCompounds._nitrogen.current < 0)
+		{
+			_playerCompounds._nitrogen.current = 0;
+		}
+	}
+	else if (compound.ToLower().Equals("sulfur"))
+	{
+		_playerCompounds._sulfur.current += amount;
+
+		if (_playerCompounds._sulfur.current > _playerCompounds._sulfur.maximum)
+		{
+			_playerCompounds._sulfur.current = _playerCompounds._sulfur.maximum;
+		}
+		else if (_playerCompounds._sulfur.current < 0)
+		{
+			_playerCompounds._sulfur.current = 0;
+		}
+	}
+	else if (compound.ToLower().Equals("phosphor"))
+	{
+		_playerCompounds._phosphor.current += amount;
+
+		if (_playerCompounds._phosphor.current > _playerCompounds._phosphor.maximum)
+		{
+			_playerCompounds._phosphor.current = _playerCompounds._phosphor.maximum;
+		}
+		else if (_playerCompounds._phosphor.current < 0)
+		{
+			_playerCompounds._phosphor.current = 0;
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Input compound <<%s>> not found at AddCompound()"), *compound);
+	}
+}
+
+int ACharacter_SingleCelled::GetCompound(FString compound, bool bMax)
+{
+	if (bMax)
+	{
+		if (compound.ToLower().Equals("carbon"))
+		{
+			return _playerCompounds._carbon.maximum;
+		}
+		else if (compound.ToLower().Equals("oxygen"))
+		{
+			return _playerCompounds._oxygen.maximum;
+		}
+		else if (compound.ToLower().Equals("nitrogen"))
+		{
+			return _playerCompounds._nitrogen.maximum;
+		}
+		else if (compound.ToLower().Equals("sulfur"))
+		{
+			return _playerCompounds._sulfur.maximum;
+		}
+		else if (compound.ToLower().Equals("phosphor"))
+		{
+			return _playerCompounds._phosphor.maximum;
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Input compound <<%s>> not found at GetCompound()"), *compound);
+			return 0;
+		}
+	}
+	else
+	{
+		if (compound.ToLower().Equals("carbon"))
+		{
+			return _playerCompounds._carbon.current;
+		}
+		else if (compound.ToLower().Equals("oxygen"))
+		{
+			return _playerCompounds._oxygen.current;
+		}
+		else if (compound.ToLower().Equals("nitrogen"))
+		{
+			return _playerCompounds._nitrogen.current;
+		}
+		else if (compound.ToLower().Equals("sulfur"))
+		{
+			return _playerCompounds._sulfur.current;
+		}
+		else if (compound.ToLower().Equals("phosphor"))
+		{
+			return _playerCompounds._phosphor.current;
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Input compound <<%s>> not found at GetCompound()"), *compound);
+			return 0;
+		}
+	}
+}
+
+void ACharacter_SingleCelled::AddDNA(int amount)
+{
+	_DNA.current += amount;
+	if (_DNA.current > _DNA.maximum)
+	{
+		_DNA.current = _DNA.maximum;
+	}
+	else if(_DNA.current < 0)
+	{
+		_DNA.current = 0;
+	}
+}
+
+int ACharacter_SingleCelled::GetDNA(bool bMax)
+{
+	if (bMax)
+	{
+		return _DNA.maximum;
+	}
+	else
+	{
+		return _DNA.current;
+	}
+}
+
+int ACharacter_SingleCelled::GetCompoundBalance(FString compound)
+{
+	if (compound.ToLower().Equals("carbon"))
+	{
+		if (GetCompound("carbon", false) == 0)
+		{
+			return 0;
+		}
+		else
+		{
+			return _playerCompounds._carbon.balance;
+		}		
+	}
+	else if (compound.ToLower().Equals("oxygen"))
+	{
+		if (GetCompound("oxygen", false) == 0)
+		{
+			return 0;
+		}
+		else
+		{
+			return _playerCompounds._oxygen.balance;
+		}	
+	}
+	else if (compound.ToLower().Equals("nitrogen"))
+	{
+		if (GetCompound("nitrogen", false) == 0)
+		{
+			return 0;
+		}
+		else
+		{
+			return _playerCompounds._nitrogen.balance;
+		}
+	}
+	else if (compound.ToLower().Equals("sulfur"))
+	{
+		if (GetCompound("sulfur", false) == 0)
+		{
+			return 0;
+		}
+		else
+		{
+			return _playerCompounds._sulfur.balance;
+		}
+	}
+	else if (compound.ToLower().Equals("phosphor"))
+	{
+		if (GetCompound("phosphor", false) == 0)
+		{
+			return 0;
+		}
+		else
+		{
+			return _playerCompounds._phosphor.balance;
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Input compound <<%s>> not found at GetCompoundBalance()"), *compound);
+		return 0;
+	}
 }

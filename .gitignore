@@ -91,3 +91,6 @@ obj/
 *.opensdf
 *.sdf
 *.suo
+
+#Plugins
+Lyfe_Game/Plugins/*

@@ -42,7 +42,14 @@ public:
 private:
 	/** The active control setting */
 	EControlSettings _eControlSetting;
+
+
 protected:
+	/** Will change every few frames */
+	UPROPERTY(BlueprintReadWrite, Category = "CELL|CELL_Compound")
+	FString lowCompound;
+
+	FTimerHandle lowCompoundRefreshTimer;
 
 public:
 
@@ -51,27 +58,31 @@ public:
  ////////////////////////////// FUNCTIONS ////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 private:
+	UFUNCTION(BlueprintCallable, Category = "CELL|CELL_Compound")
+	void UpdateLowCompound();
 
 protected:
-
+	/** Called on BeginPlay(). Starts a Timer to get the next low compound every few seconds. */
+	UFUNCTION(Blueprintcallable, Category = "CELL|CELL_Compound")
+	void StartLowCompoundCycle();
 public:
 	/** Set the control setting
 	* EFollowMouse -> Cell follows the cursor
 	* EWASD		   -> Cell is moved with WASD
+	* EClick	   -> Cell moves towards the position of the click
 	*/
-	UFUNCTION(BlueprintCallable, Category = "CELL_Movement")
-		void SetControlSetting(EControlSettings newSetting);
+	UFUNCTION(BlueprintCallable, Category = "CELL|CELL_Movement")
+	void SetControlSetting(EControlSettings newSetting);
 
 	/** Returns the currently active control setting */
-	UFUNCTION(BlueprintCallable, Category = "CELL_Movement")
+	UFUNCTION(BlueprintCallable, Category = "CELL|CELL_Movement")
 	EControlSettings GetControlSetting();
 
 	/** Returns whether the courser should be displayed or not */
-	UFUNCTION(BlueprintCallable, Category = "CELL_GUI")
+	UFUNCTION(BlueprintCallable, Category = "CELL|CELL_GUI")
 	bool DisableWASDInput();
 
-	/** returns this object */
-	UFUNCTION(BlueprintCallable, Category = "CELL_Mode")
-	AGameMode_Cell* GetGameMode();
-	
+	/** Returns one compound that is low at this moment. Used for display in the GUI*/
+	UFUNCTION(BlueprintCallable, Category = "CELL|CELL_Compound")
+	FString GetLowCompound();
 };
