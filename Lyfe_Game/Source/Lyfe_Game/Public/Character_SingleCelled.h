@@ -14,6 +14,17 @@ enum class EPlayerState : uint8
 	EAlive
 };
 
+UENUM(BlueprintType)
+enum ECompound
+{
+	ECO2 UMETA(DisplayName = "CO2"),
+	EO2 UMETA(DisplayName = "O2"),
+	EAminoAcid UMETA(DisplayName = "AminoAcid"),
+	EGlucose UMETA(DisplayName = "Glucose"),
+	ENothing UMETA(DisplayName = "nothing")
+};
+
+
 UCLASS()
 class LYFE_GAME_API ACharacter_SingleCelled : public ACharacter
 {
@@ -86,11 +97,10 @@ private:
 	/** Saves all compunds within the player */
 	struct Compounds
 	{
-		Compound _carbon;
-		Compound _oxygen;
-		Compound _nitrogen;
-		Compound _sulfur;
-		Compound _phosphor;
+		Compound _CO2;
+		Compound _O2;
+		Compound _AminoAcid;
+		Compound _Glucose;
 	};
 
 protected:
@@ -150,7 +160,8 @@ private:
 	bool bInteractGUI;
 
 protected:
-
+	UPROPERTY(BlueprintReadWrite)
+	class UStaticMeshComponent* playerMesh;
 
 public:
 	/** The direction the player is facing */
@@ -201,6 +212,8 @@ private:
 
 	/** Enforces the balance saved for every compound; Called every frame to reduce compound or rather metabolize it*/
 	void EnforceCompoundBalance();
+
+	FString GetCompoundName(ECompound compound);
 
 protected:
 	/** Bound to the MoveForward Axis */
@@ -257,7 +270,7 @@ public:
 	* @param compound can be [carbon, oxygen, nitrogen, sulfur, phosphor]
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CELL|CELL_Compound")
-	void AddCompound(int amount, FString compound);
+	void AddCompound(int amount, ECompound compound);
 
 	/** Returns the amount left of that compound
 	* @param amound Can be positive or negative
@@ -265,7 +278,7 @@ public:
 	* @param bMax whether the maximum should be returned or the current; true => maximum
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CELL|CELL_Compound")
-	int GetCompound(FString compound, bool bMax);
+	int GetCompound(ECompound compound, bool bMax);
 
 	/** Allows the programmer to add or reduce DNA */
 	UFUNCTION(BlueprintCallable, Category = "CELL|CELL_DNA")
@@ -279,6 +292,6 @@ public:
 
 	/** Returns the balance for the input compound; */
 	UFUNCTION(BlueprintCallable, Category = "CELL|CELL_Compound")
-	int GetCompoundBalance(FString compound);
+	int GetCompoundBalance(ECompound compound);
 
 };

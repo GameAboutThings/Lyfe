@@ -26,4 +26,7 @@ public:
 	static bool FindLookAtAngle2D(const FVector & start, const FVector & target, float & angle);
 
 	static FVector2D ThreeDTo2D(const FVector & vector, FString plane);
+
+	/** Returns a random float between a min and max*/
+	static float RR(float min, float max);
 };

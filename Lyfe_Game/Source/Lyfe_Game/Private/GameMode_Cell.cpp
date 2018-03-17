@@ -2,7 +2,6 @@
 
 #include "GameMode_Cell.h"
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
-#include "Character_SingleCelled.h"
 
   //////////////////////////////////////////////////////////////////////////////
  ////////////////////////////////// PRIVATE ///////////////////////////////////
@@ -14,11 +13,10 @@ void AGameMode_Cell::UpdateLowCompound()
 	if (controller != nullptr)
 	{
 		TArray<bool> isLow = { 
-			false, //carbon
-			false, //nitrogen
+			false, //CO2
 			false, //oxygen
-			false, //phosphor
-			false  //sulfur
+			false, //amino acid
+			false //glucose
 		};
 
 		//cycle through all compounds and see if the are <= than 10% of their maximum
@@ -32,54 +30,42 @@ void AGameMode_Cell::UpdateLowCompound()
 
 
 		//											current amount		/									maximum			<= 0.1f
-		isLow[0] = ((float)controller->GetCompound("carbon", false)		/ (float)controller->GetCompound("carbon", true))	<= 0.1f;
-		isLow[1] = ((float)controller->GetCompound("nitrogen", false)	/ (float)controller->GetCompound("nitrogen", true)) <= 0.1f;
-		isLow[2] = ((float)controller->GetCompound("oxygen", false)		/ (float)controller->GetCompound("oxygen", true))	<= 0.1f;
-		isLow[3] = ((float)controller->GetCompound("phosphor", false)	/ (float)controller->GetCompound("phosphor", true)) <= 0.1f;
-		isLow[4] = ((float)controller->GetCompound("sulfur", false)		/ (float)controller->GetCompound("sulfur", true))	<= 0.1f;
+		isLow[0] = ((float)controller->GetCompound(ECompound::ECO2, false)		/ (float)controller->GetCompound(ECompound::ECO2, true))	<= 0.1f;
+		isLow[1] = ((float)controller->GetCompound(ECompound::EO2, false)	/ (float)controller->GetCompound(ECompound::EO2, true)) <= 0.1f;
+		isLow[2] = ((float)controller->GetCompound(ECompound::EAminoAcid, false)		/ (float)controller->GetCompound(ECompound::EAminoAcid, true))	<= 0.1f;
+		isLow[3] = ((float)controller->GetCompound(ECompound::EGlucose, false)	/ (float)controller->GetCompound(ECompound::EGlucose, true)) <= 0.1f;
 
-		//UE_LOG(LogTemp, Warning, TEXT("carbon: %d"), isLow[0]);
-		//UE_LOG(LogTemp, Warning, TEXT("nitrogen: %d"), isLow[1]);
-		//UE_LOG(LogTemp, Warning, TEXT("oxygen: %d"), isLow[2]);
-		//UE_LOG(LogTemp, Warning, TEXT("phosphor: %d"), isLow[3]);
-		//UE_LOG(LogTemp, Warning, TEXT("sulfur: %d"), isLow[4]);
-
-		if (!isLow[0] && !isLow[1] && !isLow[2] && !isLow[3] && !isLow[4])
+		if (!isLow[0] && !isLow[1] && !isLow[2] && !isLow[3])
 		{
 			lowCompound = "";
 		}
 		else
 		{
 			int start = 0;
-			if (lowCompound.ToLower().Equals(""))
+			if (_eLowCompound == ECompound::ENothing)
 			{
 				//this starts to look at carbon and moves on from there
 				start = 0;
 			}
-			else if (lowCompound.ToLower().Equals("carbon"))
+			else if (_eLowCompound == ECompound::ECO2)
 			{
 				//this starts to look at nitrogen and moves on from there
 				start = 1;
 			}
-			else if (lowCompound.ToLower().Equals("nitrogen"))
+			else if (_eLowCompound == ECompound::EO2)
 			{
 				//this starts to look at oxygen and moves on from there
 				start = 2;
 			}
-			else if (lowCompound.ToLower().Equals("oxygen"))
+			else if (_eLowCompound == ECompound::EAminoAcid)
 			{
 				//this starts to look at phosphor and moves on from there
 				start = 3;
 			}
-			else if (lowCompound.ToLower().Equals("phosphor"))
+			else if (_eLowCompound == ECompound::EGlucose)
 			{
 				//this starts to look at sulfur and moves on from there
 				start = 4;
-			}
-			else if (lowCompound.ToLower().Equals("sulfur"))
-			{
-				//this starts to look at carbon and moves on from there
-				start = 0;
 			}
 
 			//6 so it can return to the starting position if there are not other compounds
@@ -95,19 +81,16 @@ void AGameMode_Cell::UpdateLowCompound()
 			switch ((start + position) % 5)
 			{
 			case 0:
-				lowCompound = "Carbon";
+				lowCompound = "CO2";
 				break;
 			case 1:
-				lowCompound = "Nitrogen";
-				break;
-			case 2:
 				lowCompound = "Oxygen";
 				break;
-			case 3:
-				lowCompound = "Phosphor";
+			case 2:
+				lowCompound = "Amino Acids";
 				break;
-			case 4:
-				lowCompound = "Sulfur";
+			case 3:
+				lowCompound = "Glucose";
 				break;
 			default:
 				lowCompound = "ERROR";

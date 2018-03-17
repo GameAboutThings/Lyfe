@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "Character_SingleCelled.h"
 #include "Stage_Meta_SingleCelled.h"
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
@@ -35,13 +36,13 @@ protected:
 public:
 
 
-
   //////////////////////////////////////////////////////////////////////////////
  //////////////////////////////// VARIABLES ///////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 private:
 	/** The active control setting */
 	EControlSettings _eControlSetting;
+	ECompound _eLowCompound;
 
 
 protected:

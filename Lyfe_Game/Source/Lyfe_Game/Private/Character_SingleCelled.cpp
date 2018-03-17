@@ -2,7 +2,6 @@
 
 #include "Character_SingleCelled.h"
 #include "Runtime/Engine/Classes/Components/SphereComponent.h"
-#include "Runtime/CoreUObject/Public/UObject/ConstructorHelpers.h"
 #include "Runtime/Engine/Classes/GameFramework/SpringArmComponent.h"
 #include "Runtime/Engine/Classes/Camera/CameraComponent.h"
 #include "GameMode_Cell.h"
@@ -10,6 +9,8 @@
 #include "DrawDebugHelpers.h"
 #include "StaticMaths.h"
 #include "Runtime/Engine/Classes/Components/ArrowComponent.h"
+#include "Runtime/Engine/Classes/Components/StaticMeshComponent.h"
+#include "GameMode_Cell.h"
 
 // Sets default values
 ACharacter_SingleCelled::ACharacter_SingleCelled()
@@ -284,30 +285,25 @@ void ACharacter_SingleCelled::OnRightClick()
 
 void ACharacter_SingleCelled::SetCompounds()
 {
-	//carbon
-	_playerCompounds._carbon.maximum = 10000;
-	_playerCompounds._carbon.current = 10000;
-	_playerCompounds._carbon.balance = -1;
+	//CO2
+	_playerCompounds._CO2.maximum = 10000;
+	_playerCompounds._CO2.current = 10000;
+	_playerCompounds._CO2.balance = -1;
 
-	//oxygen
-	_playerCompounds._oxygen.maximum = 10000;
-	_playerCompounds._oxygen.current = 10000;
-	_playerCompounds._oxygen.balance = -1;
+	//Oxygen
+	_playerCompounds._O2.maximum = 10000;
+	_playerCompounds._O2.current = 10000;
+	_playerCompounds._O2.balance = -1;
 
-	//nitrogen
-	_playerCompounds._nitrogen.maximum = 10000;
-	_playerCompounds._nitrogen.current = 10000;
-	_playerCompounds._nitrogen.balance = -1;
+	//Amino Acid
+	_playerCompounds._AminoAcid.maximum = 10000;
+	_playerCompounds._AminoAcid.current = 10000;
+	_playerCompounds._AminoAcid.balance = -1;
 
-	//phosphor
-	_playerCompounds._phosphor.maximum = 10000;
-	_playerCompounds._phosphor.current = 10000;
-	_playerCompounds._phosphor.balance = -1;
-
-	//sulfur
-	_playerCompounds._sulfur.maximum = 10000;
-	_playerCompounds._sulfur.current = 10000;
-	_playerCompounds._sulfur.balance = -1;
+	//Glucose
+	_playerCompounds._Glucose.maximum = 10000;
+	_playerCompounds._Glucose.current = 10000;
+	_playerCompounds._Glucose.balance = -1;
 }
 
 void ACharacter_SingleCelled::SetInteractGUI(bool bGUI)
@@ -322,11 +318,15 @@ void ACharacter_SingleCelled::SetInteractGUITrue()
 
 void ACharacter_SingleCelled::EnforceCompoundBalance()
 {
-	AddCompound(_playerCompounds._carbon.balance, "carbon");
-	AddCompound(_playerCompounds._carbon.balance, "nitrogen");
-	AddCompound(_playerCompounds._carbon.balance, "oxygen");
-	AddCompound(_playerCompounds._carbon.balance, "phosphor");
-	AddCompound(_playerCompounds._carbon.balance, "sulfur");
+	AddCompound(_playerCompounds._CO2.balance, ECompound::ECO2);
+	AddCompound(_playerCompounds._O2.balance, ECompound::EO2);
+	AddCompound(_playerCompounds._AminoAcid.balance, ECompound::EAminoAcid);
+	AddCompound(_playerCompounds._Glucose.balance, ECompound::EGlucose);
+}
+
+FString ACharacter_SingleCelled::GetCompoundName(ECompound compound)
+{
+	return FString();
 }
 
   //////////////////////////////////////////////////////////////////////////////
@@ -415,137 +415,116 @@ bool ACharacter_SingleCelled::PlayerIsMoving()
 	return bIsMoving;
 }
 
-void ACharacter_SingleCelled::AddCompound(int amount, FString compound)
+void ACharacter_SingleCelled::AddCompound(int amount, ECompound compound)
 {
 	//find the right compound to add the amount
-	if (compound.ToLower().Equals("carbon"))
+	if (compound == ECompound::ECO2)
 	{
 		//add the amount
-		_playerCompounds._carbon.current += amount;
+		_playerCompounds._CO2.current += amount;
 
 		//check if it's greater than the maximum or smaller than 0 and correct that
-		if (_playerCompounds._carbon.current > _playerCompounds._carbon.maximum)
+		if (_playerCompounds._CO2.current > _playerCompounds._CO2.maximum)
 		{
-			_playerCompounds._carbon.current = _playerCompounds._carbon.maximum;
+			_playerCompounds._CO2.current = _playerCompounds._CO2.maximum;
 		}
-		else if (_playerCompounds._carbon.current < 0)
+		else if (_playerCompounds._CO2.current < 0)
 		{
-			_playerCompounds._carbon.current = 0;
-		}
-	}
-	else if (compound.ToLower().Equals("oxygen"))
-	{
-		_playerCompounds._oxygen.current += amount;
-
-		if (_playerCompounds._oxygen.current > _playerCompounds._oxygen.maximum)
-		{
-			_playerCompounds._oxygen.current = _playerCompounds._oxygen.maximum;
-		}
-		else if (_playerCompounds._oxygen.current < 0)
-		{
-			_playerCompounds._oxygen.current = 0;
+			_playerCompounds._CO2.current = 0;
 		}
 	}
-	else if (compound.ToLower().Equals("nitrogen"))
+	else if (compound == ECompound::EO2)
 	{
-		_playerCompounds._nitrogen.current += amount;
+		_playerCompounds._O2.current += amount;
 
-		if (_playerCompounds._nitrogen.current > _playerCompounds._nitrogen.maximum)
+		if (_playerCompounds._O2.current > _playerCompounds._O2.maximum)
 		{
-			_playerCompounds._nitrogen.current = _playerCompounds._nitrogen.maximum;
+			_playerCompounds._O2.current = _playerCompounds._O2.maximum;
 		}
-		else if (_playerCompounds._nitrogen.current < 0)
+		else if (_playerCompounds._O2.current < 0)
 		{
-			_playerCompounds._nitrogen.current = 0;
+			_playerCompounds._O2.current = 0;
 		}
 	}
-	else if (compound.ToLower().Equals("sulfur"))
+	else if (compound == ECompound::EAminoAcid)
 	{
-		_playerCompounds._sulfur.current += amount;
+		_playerCompounds._AminoAcid.current += amount;
 
-		if (_playerCompounds._sulfur.current > _playerCompounds._sulfur.maximum)
+		if (_playerCompounds._AminoAcid.current > _playerCompounds._AminoAcid.maximum)
 		{
-			_playerCompounds._sulfur.current = _playerCompounds._sulfur.maximum;
+			_playerCompounds._AminoAcid.current = _playerCompounds._AminoAcid.maximum;
 		}
-		else if (_playerCompounds._sulfur.current < 0)
+		else if (_playerCompounds._AminoAcid.current < 0)
 		{
-			_playerCompounds._sulfur.current = 0;
+			_playerCompounds._AminoAcid.current = 0;
 		}
 	}
-	else if (compound.ToLower().Equals("phosphor"))
+	else if (compound == ECompound::EGlucose)
 	{
-		_playerCompounds._phosphor.current += amount;
+		_playerCompounds._Glucose.current += amount;
 
-		if (_playerCompounds._phosphor.current > _playerCompounds._phosphor.maximum)
+		if (_playerCompounds._Glucose.current > _playerCompounds._Glucose.maximum)
 		{
-			_playerCompounds._phosphor.current = _playerCompounds._phosphor.maximum;
+			_playerCompounds._Glucose.current = _playerCompounds._Glucose.maximum;
 		}
-		else if (_playerCompounds._phosphor.current < 0)
+		else if (_playerCompounds._Glucose.current < 0)
 		{
-			_playerCompounds._phosphor.current = 0;
+			_playerCompounds._Glucose.current = 0;
 		}
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Input compound <<%s>> not found at AddCompound()"), *compound);
+		UE_LOG(LogTemp, Warning, TEXT("Input compound <<%s>> not found at AddCompound()"), *GetCompoundName(compound));
 	}
 }
 
-int ACharacter_SingleCelled::GetCompound(FString compound, bool bMax)
+int ACharacter_SingleCelled::GetCompound(ECompound compound, bool bMax)
 {
 	if (bMax)
 	{
-		if (compound.ToLower().Equals("carbon"))
+		if (compound == ECompound::ECO2)
 		{
-			return _playerCompounds._carbon.maximum;
+			return _playerCompounds._CO2.maximum;
 		}
-		else if (compound.ToLower().Equals("oxygen"))
+		else if (compound == ECompound::EO2)
 		{
-			return _playerCompounds._oxygen.maximum;
+			return _playerCompounds._O2.maximum;
 		}
-		else if (compound.ToLower().Equals("nitrogen"))
+		else if (compound == ECompound::EAminoAcid)
 		{
-			return _playerCompounds._nitrogen.maximum;
+			return _playerCompounds._AminoAcid.maximum;
 		}
-		else if (compound.ToLower().Equals("sulfur"))
+		else if (compound == ECompound::EGlucose)
 		{
-			return _playerCompounds._sulfur.maximum;
-		}
-		else if (compound.ToLower().Equals("phosphor"))
-		{
-			return _playerCompounds._phosphor.maximum;
+			return _playerCompounds._Glucose.maximum;
 		}
 		else
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Input compound <<%s>> not found at GetCompound()"), *compound);
+			UE_LOG(LogTemp, Warning, TEXT("Input compound <<%s>> not found at GetCompound()"), *GetCompoundName(compound));
 			return 0;
 		}
 	}
 	else
 	{
-		if (compound.ToLower().Equals("carbon"))
+		if (compound == ECompound::ECO2)
 		{
-			return _playerCompounds._carbon.current;
+			return _playerCompounds._CO2.current;
 		}
-		else if (compound.ToLower().Equals("oxygen"))
+		else if (compound == ECompound::EO2)
 		{
-			return _playerCompounds._oxygen.current;
+			return _playerCompounds._O2.current;
 		}
-		else if (compound.ToLower().Equals("nitrogen"))
+		else if (compound == ECompound::EAminoAcid)
 		{
-			return _playerCompounds._nitrogen.current;
+			return _playerCompounds._AminoAcid.current;
 		}
-		else if (compound.ToLower().Equals("sulfur"))
+		else if (compound == ECompound::EGlucose)
 		{
-			return _playerCompounds._sulfur.current;
-		}
-		else if (compound.ToLower().Equals("phosphor"))
-		{
-			return _playerCompounds._phosphor.current;
+			return _playerCompounds._Glucose.current;
 		}
 		else
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Input compound <<%s>> not found at GetCompound()"), *compound);
+			UE_LOG(LogTemp, Warning, TEXT("Input compound <<%s>> not found at GetCompound()"), *GetCompoundName(compound));
 			return 0;
 		}
 	}
@@ -576,66 +555,55 @@ int ACharacter_SingleCelled::GetDNA(bool bMax)
 	}
 }
 
-int ACharacter_SingleCelled::GetCompoundBalance(FString compound)
+int ACharacter_SingleCelled::GetCompoundBalance(ECompound compound)
 {
-	if (compound.ToLower().Equals("carbon"))
+	if (compound == ECompound::ECO2)
 	{
-		if (GetCompound("carbon", false) == 0)
+		if (GetCompound(compound, false) == 0)
 		{
 			return 0;
 		}
 		else
 		{
-			return _playerCompounds._carbon.balance;
+			return _playerCompounds._CO2.balance;
 		}		
 	}
-	else if (compound.ToLower().Equals("oxygen"))
+	else if (compound == ECompound::EO2)
 	{
-		if (GetCompound("oxygen", false) == 0)
+		if (GetCompound(compound, false) == 0)
 		{
 			return 0;
 		}
 		else
 		{
-			return _playerCompounds._oxygen.balance;
+			return _playerCompounds._O2.balance;
 		}	
 	}
-	else if (compound.ToLower().Equals("nitrogen"))
+	else if (compound == ECompound::EAminoAcid)
 	{
-		if (GetCompound("nitrogen", false) == 0)
+		if (GetCompound(compound, false) == 0)
 		{
 			return 0;
 		}
 		else
 		{
-			return _playerCompounds._nitrogen.balance;
+			return _playerCompounds._AminoAcid.balance;
 		}
 	}
-	else if (compound.ToLower().Equals("sulfur"))
+	else if (compound == ECompound::EGlucose)
 	{
-		if (GetCompound("sulfur", false) == 0)
+		if (GetCompound(compound, false) == 0)
 		{
 			return 0;
 		}
 		else
 		{
-			return _playerCompounds._sulfur.balance;
-		}
-	}
-	else if (compound.ToLower().Equals("phosphor"))
-	{
-		if (GetCompound("phosphor", false) == 0)
-		{
-			return 0;
-		}
-		else
-		{
-			return _playerCompounds._phosphor.balance;
+			return _playerCompounds._Glucose.balance;
 		}
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Input compound <<%s>> not found at GetCompoundBalance()"), *compound);
+		UE_LOG(LogTemp, Warning, TEXT("Input compound <<%s>> not found at GetCompoundBalance()"), *GetCompoundName(compound));
 		return 0;
 	}
 }

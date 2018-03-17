@@ -57,3 +57,11 @@ FVector2D StaticMaths::ThreeDTo2D(const FVector & vector, FString plane)
 	
 	return FVector2D();
 }
+
+float StaticMaths::RR(float min, float max)
+{
+	float random = ((float)rand()) / (float)RAND_MAX;
+	float diff = max - min;
+	float r = random * diff;
+	return min + r;
+}

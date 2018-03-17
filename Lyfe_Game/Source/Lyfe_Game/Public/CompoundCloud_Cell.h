@@ -42,14 +42,13 @@ public:
  //////////////////////////////// VARIABLES ///////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 private:
-	/** The editable mesh for the compound cloud*/
-	UPROPERTY(VisibleAnywhere)
-	UProceduralMeshComponent * mesh;
-
 	UPROPERTY()
 	uint32 value;
 
 protected:
+	/** The editable mesh for the compound cloud*/
+	UPROPERTY(BlueprintReadWrite)
+	UProceduralMeshComponent * mesh;
 public:
 
   /////////////////////////////////////////////////////////////////////////////
@@ -58,7 +57,11 @@ public:
 private:
 	/** Creates a single triangle on the mesh*/
 	UFUNCTION(BlueprintCallable)
-	void CreateTriangle();
+	void CreateCube();
+
+	/** */
+	UFUNCTION(BlueprintCallable)
+	void CreateCloudMesh();
 protected:
 public:
 	
