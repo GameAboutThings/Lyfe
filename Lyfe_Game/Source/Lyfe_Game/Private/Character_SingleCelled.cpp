@@ -44,7 +44,6 @@ ACharacter_SingleCelled::ACharacter_SingleCelled()
 
 	bIsMoving = false;
 	bIsRotating = false;
-
 }
 
 // Called when the game starts or when spawned
@@ -58,7 +57,7 @@ void ACharacter_SingleCelled::BeginPlay()
 	AGameMode_Cell* gameMode = Cast<AGameMode_Cell>(GetWorld()->GetAuthGameMode());
 	if (gameMode != nullptr)
 	{
-		gameMode->SetControlSetting(EControlSettings::EFollowMouse);
+		gameMode->SetControlSetting(CONTROLSETTING);
 	}
 
 	//Setting health
@@ -82,6 +81,8 @@ void ACharacter_SingleCelled::BeginPlay()
 
 	//make it so the cell looks up at the beginning;
 	_movement.targetLocation += playerDirection->GetForwardVector();
+
+	playerMesh->bGenerateOverlapEvents = true;
 
 	SetPlayerState(EPlayerState::EAlive);
 }
@@ -287,23 +288,28 @@ void ACharacter_SingleCelled::SetCompounds()
 {
 	//CO2
 	_playerCompounds._CO2.maximum = 10000;
-	_playerCompounds._CO2.current = 10000;
+	_playerCompounds._CO2.current = 10;
 	_playerCompounds._CO2.balance = -1;
 
 	//Oxygen
 	_playerCompounds._O2.maximum = 10000;
-	_playerCompounds._O2.current = 10000;
+	_playerCompounds._O2.current = 10;
 	_playerCompounds._O2.balance = -1;
 
 	//Amino Acid
 	_playerCompounds._AminoAcid.maximum = 10000;
-	_playerCompounds._AminoAcid.current = 10000;
+	_playerCompounds._AminoAcid.current = 10;
 	_playerCompounds._AminoAcid.balance = -1;
 
 	//Glucose
 	_playerCompounds._Glucose.maximum = 10000;
-	_playerCompounds._Glucose.current = 10000;
+	_playerCompounds._Glucose.current = 10;
 	_playerCompounds._Glucose.balance = -1;
+
+	//Lipid
+	_playerCompounds._Lipid.maximum = 10000;
+	_playerCompounds._Lipid.current = 10;
+	_playerCompounds._Lipid.balance = -1;
 }
 
 void ACharacter_SingleCelled::SetInteractGUI(bool bGUI)
@@ -322,6 +328,7 @@ void ACharacter_SingleCelled::EnforceCompoundBalance()
 	AddCompound(_playerCompounds._O2.balance, ECompound::EO2);
 	AddCompound(_playerCompounds._AminoAcid.balance, ECompound::EAminoAcid);
 	AddCompound(_playerCompounds._Glucose.balance, ECompound::EGlucose);
+	AddCompound(_playerCompounds._Lipid.balance, ECompound::ELipid);
 }
 
 FString ACharacter_SingleCelled::GetCompoundName(ECompound compound)
@@ -472,6 +479,19 @@ void ACharacter_SingleCelled::AddCompound(int amount, ECompound compound)
 			_playerCompounds._Glucose.current = 0;
 		}
 	}
+	else if (compound == ECompound::ELipid)
+	{
+		_playerCompounds._Lipid.current += amount;
+
+		if (_playerCompounds._Lipid.current > _playerCompounds._Lipid.maximum)
+		{
+			_playerCompounds._Lipid.current = _playerCompounds._Lipid.maximum;
+		}
+		else if (_playerCompounds._Lipid.current < 0)
+		{
+			_playerCompounds._Lipid.current = 0;
+		}
+	}
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Input compound <<%s>> not found at AddCompound()"), *GetCompoundName(compound));
@@ -498,6 +518,10 @@ int ACharacter_SingleCelled::GetCompound(ECompound compound, bool bMax)
 		{
 			return _playerCompounds._Glucose.maximum;
 		}
+		else if (compound == ECompound::ELipid)
+		{
+			return _playerCompounds._Lipid.maximum;
+		}
 		else
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Input compound <<%s>> not found at GetCompound()"), *GetCompoundName(compound));
@@ -521,6 +545,10 @@ int ACharacter_SingleCelled::GetCompound(ECompound compound, bool bMax)
 		else if (compound == ECompound::EGlucose)
 		{
 			return _playerCompounds._Glucose.current;
+		}
+		else if (compound == ECompound::ELipid)
+		{
+			return _playerCompounds._Lipid.current;
 		}
 		else
 		{
@@ -599,6 +627,17 @@ int ACharacter_SingleCelled::GetCompoundBalance(ECompound compound)
 		else
 		{
 			return _playerCompounds._Glucose.balance;
+		}
+	}
+	else if (compound == ECompound::ELipid)
+	{
+		if (GetCompound(compound, false) == 0)
+		{
+			return 0;
+		}
+		else
+		{
+			return _playerCompounds._Lipid.balance;
 		}
 	}
 	else

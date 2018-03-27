@@ -21,6 +21,7 @@ enum ECompound
 	EO2 UMETA(DisplayName = "O2"),
 	EAminoAcid UMETA(DisplayName = "AminoAcid"),
 	EGlucose UMETA(DisplayName = "Glucose"),
+	ELipid UMETA(DisplayName = "Lipid"),
 	ENothing UMETA(DisplayName = "nothing")
 };
 
@@ -101,6 +102,7 @@ private:
 		Compound _O2;
 		Compound _AminoAcid;
 		Compound _Glucose;
+		Compound _Lipid;
 	};
 
 protected:

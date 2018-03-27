@@ -16,7 +16,8 @@ void AGameMode_Cell::UpdateLowCompound()
 			false, //CO2
 			false, //oxygen
 			false, //amino acid
-			false //glucose
+			false, //glucose
+			false //lipid
 		};
 
 		//cycle through all compounds and see if the are <= than 10% of their maximum
@@ -34,38 +35,39 @@ void AGameMode_Cell::UpdateLowCompound()
 		isLow[1] = ((float)controller->GetCompound(ECompound::EO2, false)	/ (float)controller->GetCompound(ECompound::EO2, true)) <= 0.1f;
 		isLow[2] = ((float)controller->GetCompound(ECompound::EAminoAcid, false)		/ (float)controller->GetCompound(ECompound::EAminoAcid, true))	<= 0.1f;
 		isLow[3] = ((float)controller->GetCompound(ECompound::EGlucose, false)	/ (float)controller->GetCompound(ECompound::EGlucose, true)) <= 0.1f;
+		isLow[4] = ((float)controller->GetCompound(ECompound::ELipid, false) / (float)controller->GetCompound(ECompound::ELipid, true)) <= 0.1f;
 
-		if (!isLow[0] && !isLow[1] && !isLow[2] && !isLow[3])
+		if (!isLow[0] && !isLow[1] && !isLow[2] && !isLow[3] && !isLow[4])
 		{
 			lowCompound = "";
+			_eLowCompound = ECompound::ENothing;
 		}
 		else
 		{
 			int start = 0;
 			if (_eLowCompound == ECompound::ENothing)
 			{
-				//this starts to look at carbon and moves on from there
 				start = 0;
 			}
 			else if (_eLowCompound == ECompound::ECO2)
 			{
-				//this starts to look at nitrogen and moves on from there
 				start = 1;
 			}
 			else if (_eLowCompound == ECompound::EO2)
 			{
-				//this starts to look at oxygen and moves on from there
 				start = 2;
 			}
 			else if (_eLowCompound == ECompound::EAminoAcid)
 			{
-				//this starts to look at phosphor and moves on from there
 				start = 3;
 			}
 			else if (_eLowCompound == ECompound::EGlucose)
 			{
-				//this starts to look at sulfur and moves on from there
 				start = 4;
+			}
+			else if (_eLowCompound == ECompound::ELipid)
+			{
+				start = 0;
 			}
 
 			//6 so it can return to the starting position if there are not other compounds
@@ -82,17 +84,26 @@ void AGameMode_Cell::UpdateLowCompound()
 			{
 			case 0:
 				lowCompound = "CO2";
+				_eLowCompound = ECompound::ECO2;
 				break;
 			case 1:
 				lowCompound = "Oxygen";
+				_eLowCompound = ECompound::EO2;
 				break;
 			case 2:
 				lowCompound = "Amino Acids";
+				_eLowCompound = ECompound::EAminoAcid;
 				break;
 			case 3:
 				lowCompound = "Glucose";
+				_eLowCompound = ECompound::EGlucose;
+				break;
+			case 4:
+				lowCompound = "Lipids";
+				_eLowCompound = ECompound::ELipid;
 				break;
 			default:
+				_eLowCompound = ECompound::ENothing;
 				lowCompound = "ERROR";
 				break;
 			}

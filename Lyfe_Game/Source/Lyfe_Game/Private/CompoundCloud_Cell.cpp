@@ -2,6 +2,7 @@
 
 #include "CompoundCloud_Cell.h"
 #include "StaticMaths.h"
+#include "Character_SingleCelled.h"
 #include "Runtime/Engine/Classes/Materials/MaterialInstanceDynamic.h"
 #include "Runtime/CoreUObject/Public/UObject/ConstructorHelpers.h"
 
@@ -16,13 +17,17 @@ ACompoundCloud_Cell::ACompoundCloud_Cell()
 	RootComponent = mesh;
 	
 	mesh->bUseAsyncCooking = true;
+
+	//mesh->OnComponentBeginOverlap.AddDynamic(this, &ACompoundCloud_Cell::BeginOverlap);
+	//mesh->OnComponentEndOverlap.AddDynamic(this, &ACompoundCloud_Cell::EndOverlap);
+
 }
 
 // Called when the game starts or when spawned
 void ACompoundCloud_Cell::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	value = 1000;
 }
 
 void ACompoundCloud_Cell::PostActorCreated()
@@ -43,7 +48,15 @@ void ACompoundCloud_Cell::PostLoad()
 void ACompoundCloud_Cell::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	if(bBeingConsumed)
+	{
+		ReshapeMeshOnConsumption();
+		//UE_LOG(LogTemp, Warning, TEXT("%d"), value);
+		if (value <= 0.f)
+		{
+			CloudFinishConsumption();
+		}
+	}
 }
 
 /* ------------------------------------------------------------------------------------------------- */
@@ -142,13 +155,13 @@ void ACompoundCloud_Cell::CreateCube()
 	//Enable collision data
 	mesh->ContainsPhysicsTriMeshData(true);
 	mesh->bUseComplexAsSimpleCollision = false;
-	mesh->SetSimulatePhysics(true);
+	//mesh->SetSimulatePhysics(true);
 }
 
 void ACompoundCloud_Cell::CreateCloudMesh()
 {
 	//vertex buffer
-	TArray<FVector> vertices;
+	//TArray<FVector> vertices;
 	//Front
 	vertices.Add(FVector(50.f, -50.f, -50.f));//0
 	vertices.Add(FVector(50.f, 0.f, -50.f));
@@ -217,7 +230,6 @@ void ACompoundCloud_Cell::CreateCloudMesh()
 
 
 	//index buffer
-	TArray<int32> indices;
 	//+++++ Front
 	//Lower Left
 	indices.Add(3);
@@ -416,16 +428,136 @@ void ACompoundCloud_Cell::CreateCloudMesh()
 	TArray<FLinearColor> vertexColors;
 
 	mesh->CreateMeshSection_LinearColor(0, vertices, indices, normals, uv0, vertexColors, tangents, true);
-
-	//Enable collision data
-	mesh->ContainsPhysicsTriMeshData(true);
-	mesh->bUseComplexAsSimpleCollision = false;
-	mesh->SetSimulatePhysics(true);
-	//mesh->SetVisibility(false);
+	mesh->SetMobility(EComponentMobility::Movable);
+	mesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	mesh->SetCollisionProfileName("OverlapAll");
+	SetActorEnableCollision(true);
+	//mesh->bUseComplexAsSimpleCollision = true;
+	//mesh->SetSimulatePhysics(false);
+	//mesh->SetCollisionObjectType(ECollisionChannel::ECC_WorldDynamic);
+	mesh->bGenerateOverlapEvents = true;
+	mesh->SetCollisionConvexMeshes({ vertices });
+	mesh->ContainsPhysicsTriMeshData(false);
+	//mesh->UpdateMeshSection_LinearColor(0, vertices, normals, uv0, vertexColors, tangents);
 }
-  //////////////////////////////////////////////////////////////////////////////
+void ACompoundCloud_Cell::ReshapeMeshOnConsumption()
+{
+	if (consumingCell != nullptr)
+	{
+
+	}
+	if (consumingPlayer != nullptr)
+	{
+		FVector location = consumingPlayer->GetActorLocation();
+		FVector2D relativePlayerPosition = StaticMaths::ThreeDTo2D(StaticMaths::WorldToLocal(this, location), EPlane::E_XY);
+		FVector2D vertex = FVector2D();
+		for (int i = 0; i < vertices.Num(); i++)
+		{
+			vertex = StaticMaths::ThreeDTo2D(vertices[i], EPlane::E_XY);
+
+			//vector from the player to the vertex, so basically the vector along which the vertex is moved
+			FVector2D distanceVector = vertex - relativePlayerPosition;
+
+			//distance between player and vertex
+			float distance = FMath::Abs(StaticMaths::Distance2D(distanceVector, FVector2D(0.f, 0.f)));
+
+			float degree = 0;
+			
+			//if (StaticMaths::FindLookAtAngle2D({ FVector(relativePlayerPosition, 0.f) },
+			//	vertices[i], degree))
+			//{
+			//	bool bPlayerBetweenCenterAndVertex = ((
+			//		FMath::Abs(StaticMaths::Distance2D(relativePlayerPosition, FVector2D(0.f, 0.f))) //distance between center and player
+			//		< FMath::Abs(StaticMaths::Distance2D(StaticMaths::ThreeDTo2D(vertices[i], EPlane::E_XY), FVector2D(0.f, 0.f))) //distance between center and vertex
+			//		) && degree < CLOUD_PLAYERROTATION_THRESHOLD);
+
+
+				if (distance <= CLOUD_MESH_VERTEX_DISTANCE_THRESHOLD )//|| bPlayerBetweenCenterAndVertex) //and the vertex and player are in roughly the same direction from the center
+																   //if distance between vertex and player exceeds threshold 
+																   //or if the player is between the center and the vertex
+				{
+					FVector2D newVertex;
+					newVertex.X = vertices[i].X;
+					newVertex.Y = vertices[i].Y;
+
+
+					degree = 0;
+
+					if (StaticMaths::FindLookAtAngle2D(consumingPlayer->GetActorForwardVector(),
+						consumingPlayer->GetActorLocation() - this->GetActorLocation(), degree))
+					{
+
+						if (degree <= CLOUD_PLAYERROTATION_THRESHOLD)
+						{
+							//Move vertex away from player
+
+							//normalize the vector from the player to the vertex
+							distanceVector = distanceVector / distance;
+
+							newVertex.X += distanceVector.X * CLOUD_MESH_VERTEX_DELTA_MOVEMENT;
+							newVertex.Y += distanceVector.Y * CLOUD_MESH_VERTEX_DELTA_MOVEMENT;
+						}
+					}
+					//Move vertex inward
+
+					//correct the previous calculations so you can't enlarge the cloud
+					float n = vertices[i].Size2D();
+					newVertex.X -= (vertices[i] / n).X * CLOUD_MESH_VERTEX_DELTA_MOVEMENT;
+					newVertex.Y -= (vertices[i] / n).Y * CLOUD_MESH_VERTEX_DELTA_MOVEMENT;
+
+					vertices[i].X = newVertex.X;
+					vertices[i].Y = newVertex.Y;
+
+					//consume some of the cloud
+					value -= CLOUD_CONSUMPTION_RATE;
+				}
+			//}
+		}
+	}
+
+	mesh->UpdateMeshSection_LinearColor(0, vertices, vertices, {}, {}, {});
+}
+
+void ACompoundCloud_Cell::CloudFinishConsumption()
+{
+	mesh->SetVisibility(false);
+}
+
+//////////////////////////////////////////////////////////////////////////////
  //////////////////////////////// PROTECTED ///////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+void ACompoundCloud_Cell::BeginOverlap(AActor* otherActor)
+{
+	if ((otherActor != nullptr) && (otherActor != this))
+	{
+		//If the player is on the compound cloud
+		ACharacter_SingleCelled* controller = Cast<ACharacter_SingleCelled>(otherActor);
+		if (controller != nullptr)
+		{
+			bBeingConsumed = true;
+			consumingPlayer = controller;
+		}
+
+		//If a cell is on the compound cloud
+	}
+}
+
+void ACompoundCloud_Cell::EndOverlap(AActor* otherActor)
+{
+	if ((otherActor != nullptr) && (otherActor != this))
+	{
+		//If the player is on the compound cloud
+		ACharacter_SingleCelled* controller = Cast<ACharacter_SingleCelled>(otherActor);
+		if (controller != nullptr)
+		{
+			bBeingConsumed = false;
+			consumingPlayer = nullptr;
+		}
+
+
+		//If a cell is on the compound cloud
+	}
+}
 
   //////////////////////////////////////////////////////////////////////////////
  ///////////////////////////////// PUBLIC /////////////////////////////////////

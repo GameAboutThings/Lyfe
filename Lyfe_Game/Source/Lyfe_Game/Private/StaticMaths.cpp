@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "StaticMaths.h"
+#include "Runtime/Engine/Classes/GameFramework/Actor.h"
 
 StaticMaths::StaticMaths()
 {
@@ -40,17 +41,17 @@ bool StaticMaths::FindLookAtAngle2D(const FVector & start, const FVector & targe
 	return false;
 }
 
-FVector2D StaticMaths::ThreeDTo2D(const FVector & vector, FString plane)
+FVector2D StaticMaths::ThreeDTo2D(const FVector & vector, EPlane plane)
 {
-	if (plane.Equals("XY"))
+	if (plane == EPlane::E_XY)
 	{
 		return FVector2D(vector.X, vector.Y);
 	}
-	else if (plane.Equals("XZ"))
+	else if (plane == EPlane::E_XZ)
 	{
 		return FVector2D(vector.X, vector.Z);
 	}
-	else if (plane.Equals("YZ"))
+	else if (plane == EPlane::E_YZ)
 	{
 		return FVector2D(vector.Y, vector.Z);
 	}
@@ -64,4 +65,22 @@ float StaticMaths::RR(float min, float max)
 	float diff = max - min;
 	float r = random * diff;
 	return min + r;
+}
+
+FVector StaticMaths::WorldToLocal(const class AActor * referenceActor, const FVector & location)
+{
+	FTransform transform = referenceActor->GetTransform();
+	FVector translation = transform.GetTranslation();
+	return location - translation;
+}
+
+float StaticMaths::Distance2D(const FVector2D & a, const FVector2D & b)
+{
+	return FMath::Abs(FMath::Sqrt(FMath::Pow(a.X - b.X, 2) + FMath::Pow(a.Y - b.Y, 2)));
+}
+
+FVector2D StaticMaths::Normalized2D(const FVector2D & a)
+{
+	float length = sqrt(pow(a.X, 2) + pow(a.Y, 2));
+	return (a / length);
 }
