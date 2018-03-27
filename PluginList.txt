@@ -1,4 +1,2 @@
 You may need to download these plugins and add them to your project for it to compile.
-
-URuntimeMeshComponent
 Realtime Simulation and Volume Modelling
