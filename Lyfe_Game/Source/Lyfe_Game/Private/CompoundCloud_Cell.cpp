@@ -2,6 +2,7 @@
 
 #include "CompoundCloud_Cell.h"
 #include "StaticMaths.h"
+#include "Logging.h"
 #include "Character_SingleCelled.h"
 #include "Runtime/Engine/Classes/Materials/MaterialInstanceDynamic.h"
 #include "Runtime/CoreUObject/Public/UObject/ConstructorHelpers.h"
@@ -510,6 +511,8 @@ void ACompoundCloud_Cell::ReshapeMeshOnConsumption()
 
 					//consume some of the cloud
 					value -= CLOUD_CONSUMPTION_RATE;
+					Logging::Log(FString("something"), false);
+					Logging::Log(vertices[i], false);
 				}
 			//}
 		}

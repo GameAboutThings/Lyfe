@@ -21,8 +21,8 @@
 #define CLOUD_CONSUMPTION_RATE 1.1f //How much of a cloud is consumed each frame
 #define CLOUD_PLAYERROTATION_THRESHOLD 30.f //degree the player can face away from the compoud cloud for it to still move the vertices actievly away from him/her
 
-#define LOG_STRING(x) UE_LOG(LogTemp, Warning, TEXT("%c"), x)
-#define LOG_NUMBER(x) UE_LOG(LogTemp, Warning, TEXT("%d"), x)
+//#define LOG_STRING(x) UE_LOG(LogTemp, Warning, TEXT("%c"), x)
+//#define LOG_NUMBER(x) UE_LOG(LogTemp, Warning, TEXT("%d"), x)
 
 /**
  * 
