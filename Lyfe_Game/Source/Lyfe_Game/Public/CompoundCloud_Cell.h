@@ -7,6 +7,18 @@
 #include "ProceduralMeshComponent.h"
 #include "CompoundCloud_Cell.generated.h"
 
+USTRUCT(BlueprintType)
+struct FMeshBounds
+{
+	GENERATED_BODY()
+
+	float zero;
+	float one;
+	float two;
+	float three;
+	float four;
+};
+
 UCLASS()
 class LYFE_GAME_API ACompoundCloud_Cell : public AActor
 {
@@ -80,7 +92,7 @@ private:
 
 	/** Create a random 3d shape for the cloud */
 	UFUNCTION(BlueprintCallable, Category = "CELL|CELL_Compound")
-	void CreateCloudMesh();
+	void CreateCloudMesh(FMeshBounds _b);
 
 	/** Reshapes the mesh away from the object that is consuming the cloud */
 	UFUNCTION()

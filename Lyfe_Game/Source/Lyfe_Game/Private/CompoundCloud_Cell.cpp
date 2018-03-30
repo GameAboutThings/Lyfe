@@ -29,21 +29,36 @@ ACompoundCloud_Cell::ACompoundCloud_Cell()
 void ACompoundCloud_Cell::BeginPlay()
 {
 	Super::BeginPlay();
-	value = 1000;
+	value = StaticMaths::RR(700.f, 1300.f);
 }
 
 void ACompoundCloud_Cell::PostActorCreated()
 {
 	Super::PostActorCreated();
-	Logging::Log("PostActorCreation", false);
-	CreateCloudMesh();
+	
+	if (value == 0 || value == NULL)
+	{
+		value = StaticMaths::RR(700.f, 1300.f);
+	}
+
+	float modifier = value / 1000.f;
+
+	FMeshBounds bounds = {
+		StaticMaths::RR(-10.f, 10.f) * modifier,
+		StaticMaths::RR(40.f, 60.f) * modifier,
+		StaticMaths::RR(90.f, 110.f) * modifier,
+		StaticMaths::RR(140.f, 160.f) * modifier,
+		StaticMaths::RR(190.f, 210.f) * modifier,
+	};
+
+	CreateCloudMesh(bounds);
 }
 
 void ACompoundCloud_Cell::PostLoad()
 {
-	Super::PostLoad();
-	Logging::Log("PostLoad", false);
-	CreateCloudMesh();
+	//Super::PostLoad();
+	//Logging::Log("PostLoad", false);
+	//CreateCloudMesh();
 }
 
 // Called every frame
@@ -159,52 +174,52 @@ void ACompoundCloud_Cell::CreateCube()
 	//mesh->SetSimulatePhysics(true);
 }
 
-void ACompoundCloud_Cell::CreateCloudMesh()
+void ACompoundCloud_Cell::CreateCloudMesh(FMeshBounds _b)
 {
 	//vertex buffer
 	//TArray<FVector> vertices;
 	//Front
-	vertices.Add(FVector(50.f, -50.f, -50.f));//0
-	vertices.Add(FVector(50.f, 0.f, -50.f));
-	vertices.Add(FVector(50.f, 50.f, -50.f));
-	vertices.Add(FVector(StaticMaths::RR(50.f, 150.f), StaticMaths::RR(-150.f,-50.f), 0.f));
-	vertices.Add(FVector(StaticMaths::RR(100.f, 200.f), 0.f, 0.f));
-	vertices.Add(FVector(StaticMaths::RR(50.f, 150.f), StaticMaths::RR(50.f, 150.f), 0.f));//5
-	vertices.Add(FVector(50.f, -50.f, 50.f));
-	vertices.Add(FVector(50.f, 0.f, 50.f));
-	vertices.Add(FVector(50.f, 50.f, 50.f));
+	vertices.Add(FVector(_b.one, -_b.one, -_b.one));//0
+	vertices.Add(FVector(_b.one, _b.zero, -_b.one));
+	vertices.Add(FVector(_b.one, _b.one, -_b.one));
+	vertices.Add(FVector(StaticMaths::RR(_b.one, _b.three), StaticMaths::RR(-_b.three,-_b.one), _b.zero));
+	vertices.Add(FVector(StaticMaths::RR(_b.two, _b.four), _b.zero, _b.zero));
+	vertices.Add(FVector(StaticMaths::RR(_b.one, _b.three), StaticMaths::RR(_b.one, _b.three), _b.zero));//5
+	vertices.Add(FVector(_b.one, -_b.one, _b.one));
+	vertices.Add(FVector(_b.one, _b.zero, _b.one));
+	vertices.Add(FVector(_b.one, _b.one, _b.one));
 
 	//Left
 	//2
-	vertices.Add(FVector(0.f, 50.f, -50.f));
-	vertices.Add(FVector(-50.f, 50.f, -50.f)); //10
+	vertices.Add(FVector(_b.zero, _b.one, -_b.one));
+	vertices.Add(FVector(-_b.one, _b.one, -_b.one)); //10
 	//5
-	vertices.Add(FVector(0.f, StaticMaths::RR(100.f, 200.f), 0.f));
-	vertices.Add(FVector(StaticMaths::RR(-150.f, -50.f), StaticMaths::RR(50.f, 150.f), 0.f));
+	vertices.Add(FVector(_b.zero, StaticMaths::RR(_b.two, _b.four), _b.zero));
+	vertices.Add(FVector(StaticMaths::RR(-_b.three, -_b.one), StaticMaths::RR(_b.one, _b.three), _b.zero));
 	//8
-	vertices.Add(FVector(0.f, 50.f, 50.f));
-	vertices.Add(FVector(-50.f, 50.f, 50.f));
+	vertices.Add(FVector(_b.zero, _b.one, _b.one));
+	vertices.Add(FVector(-_b.one, _b.one, _b.one));
 
 	//Back
 	//10
-	vertices.Add(FVector(-50.f, 0.f, -50.f)); //15
-	vertices.Add(FVector(-50.f, -50.f, -50.f));
+	vertices.Add(FVector(-_b.one, _b.zero, -_b.one)); //15
+	vertices.Add(FVector(-_b.one, -_b.one, -_b.one));
 	//12
-	vertices.Add(FVector(StaticMaths::RR(-200.f, -100.f), 0.f, 0.f));
-	vertices.Add(FVector(StaticMaths::RR(-150.f, -50.f), StaticMaths::RR(-150.f, -50.f), 0.f));
+	vertices.Add(FVector(StaticMaths::RR(-_b.four, -_b.two), _b.zero, _b.zero));
+	vertices.Add(FVector(StaticMaths::RR(-_b.three, -_b.one), StaticMaths::RR(-_b.three, -_b.one), _b.zero));
 	//14
-	vertices.Add(FVector(-50.f, 0.f, 50.f));
-	vertices.Add(FVector(-50.f, -50.f, 50.f));//20
+	vertices.Add(FVector(-_b.one, _b.zero, _b.one));
+	vertices.Add(FVector(-_b.one, -_b.one, _b.one));//20
 
 	//Left
 	//16
-	vertices.Add(FVector(0.f, -50.f, -50.f));
+	vertices.Add(FVector(_b.zero, -_b.one, -_b.one));
 	//0
 	//18
-	vertices.Add(FVector(0.f, StaticMaths::RR(-200.f, -100.f), 0.f));
+	vertices.Add(FVector(_b.zero, StaticMaths::RR(-_b.four, -_b.two), _b.zero));
 	//3
 	//20
-	vertices.Add(FVector(0.f, -50.f, 50.f));
+	vertices.Add(FVector(_b.zero, -_b.one, _b.one));
 	//6
 
 	//Bottom
@@ -212,7 +227,7 @@ void ACompoundCloud_Cell::CreateCloudMesh()
 	//15
 	//10
 	//21
-	vertices.Add(FVector(0.f, 0.f, -50.f));
+	vertices.Add(FVector(_b.zero, _b.zero, -_b.one));
 	//9
 	//0
 	//1
@@ -223,7 +238,7 @@ void ACompoundCloud_Cell::CreateCloudMesh()
 	//7
 	//8
 	//23
-	vertices.Add(FVector(0.f, 0.f, 50.f)); //25
+	vertices.Add(FVector(_b.zero, _b.zero, _b.one)); //25
 	//13
 	//20
 	//19
