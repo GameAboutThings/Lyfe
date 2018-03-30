@@ -10,8 +10,9 @@
 			"LoadingPhase": "Default",
 			"AdditionalDependencies": [
 				"Engine",
-        "CustomMeshComponent",
-        "ProceduralMeshComponent"
+				"CustomMeshComponent",
+				"ProceduralMeshComponent",
+				"CoreUObject"
 			]
 		}
 	]

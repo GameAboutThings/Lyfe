@@ -2,19 +2,10 @@
 
 #pragma once
 
-#include "Character_SingleCelled.h"
-#include "Stage_Meta_SingleCelled.h"
+#include "Meta_CellStage.h"
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
 #include "GameMode_Cell.generated.h"
-
-UENUM()
-enum class EControlSettings : uint8
-{
-	EFollowMouse,
-	EWASD,
-	EClick
-};
 
 /**
  * 
@@ -32,7 +23,13 @@ class LYFE_GAME_API AGameMode_Cell : public AGameModeBase
 private:
 
 protected:
-
+	/** Used to store the count of all objects spawned on runtime */
+	struct playerSurroundings
+	{
+		int cells;
+		int clouds;
+		int passives;
+	};
 public:
 
 
@@ -43,7 +40,7 @@ private:
 	/** The active control setting */
 	EControlSettings _eControlSetting;
 	ECompound _eLowCompound;
-
+	playerSurroundings _playerSurroundings;
 
 protected:
 	/** Will change every few frames */
@@ -86,4 +83,12 @@ public:
 	/** Returns one compound that is low at this moment. Used for display in the GUI*/
 	UFUNCTION(BlueprintCallable, Category = "CELL|CELL_Compound")
 	FString GetLowCompound();
+
+	/** Returns the number of a chosen spawnable object */
+	UFUNCTION(BlueprintCallable, Category = "CELL|CELL_Spawn")
+	int GetPlayerSurroundings(ESpawnable objectType);
+
+	/** Adds or reduces the count for one object type in the player's surroundings */
+	UFUNCTION(BlueprintCallable, Category = "CELL|CELL_Spawn")
+	void AddPlayerSurroundings(ESpawnable objectType, int number);
 };

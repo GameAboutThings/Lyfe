@@ -2,28 +2,10 @@
 
 #pragma once
 
-#include "Stage_Meta_SingleCelled.h"
+#include "Meta_CellStage.h"
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Character_SingleCelled.generated.h"
-
-UENUM()
-enum class EPlayerState : uint8
-{
-	EDead,
-	EAlive
-};
-
-UENUM(BlueprintType)
-enum ECompound
-{
-	ECO2 UMETA(DisplayName = "CO2"),
-	EO2 UMETA(DisplayName = "O2"),
-	EAminoAcid UMETA(DisplayName = "AminoAcid"),
-	EGlucose UMETA(DisplayName = "Glucose"),
-	ELipid UMETA(DisplayName = "Lipid"),
-	ENothing UMETA(DisplayName = "nothing")
-};
 
 
 UCLASS()

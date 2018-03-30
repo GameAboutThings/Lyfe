@@ -69,7 +69,7 @@ void Logging::Log(FString inputString, bool bConsole)
 
 void Logging::Log(FVector inputVector, bool bConsole)
 {
-	FString log = "{ X: ";
+	FString log = " VECTOR : { X: ";
 	log.Append(FString::SanitizeFloat(inputVector.X));
 	log.Append(" | Y: ");
 	log.Append(FString::SanitizeFloat(inputVector.Y));
@@ -82,7 +82,7 @@ void Logging::Log(FVector inputVector, bool bConsole)
 
 void Logging::Log(FVector2D inputVector, bool bConsole)
 {
-	FString log = "{ X: ";
+	FString log = " VECTOR2D : { X: ";
 	log.Append(FString::SanitizeFloat(inputVector.X));
 	log.Append(" | Y: ");
 	log.Append(FString::SanitizeFloat(inputVector.Y));
@@ -93,28 +93,31 @@ void Logging::Log(FVector2D inputVector, bool bConsole)
 
 void Logging::Log(float inputFloat, bool bConsole)
 {
-	FString log = FString::SanitizeFloat(inputFloat);
+	FString log = FString(" FLOAT : ").Append(FString::SanitizeFloat(inputFloat));
 	Log(log, bConsole);
 }
 
 void Logging::Log(int inputInt, bool bConsole)
 {
-	FString log = FString::SanitizeFloat(inputInt);
+	FString log = FString(" INTEGER : ").Append(FString::SanitizeFloat(inputInt));
 	Log(log, bConsole);
 }
 
-void Logging::Log(bool inputBool, bool bConsole)
-{
-	FString log;
-
-	if (inputBool)
-	{
-		log = "true";
-	}
-	else
-	{
-		log = "false";
-	}
-
-	Log(log, bConsole);
-}
+//void Logging::Log(bool inputBool, bool bConsole)
+//{
+//	FString log;
+//	if (inputBool != 0 && inputBool != 1)
+//	{
+//		log = FString(inputBool);
+//	}
+//	else if (inputBool)
+//	{
+//		log.Append(" BOOLEAN : true");
+//	}
+//	else
+//	{
+//		log.Append(" BOOLEAN : false");
+//	}
+//
+//	Log(log, bConsole);
+//}

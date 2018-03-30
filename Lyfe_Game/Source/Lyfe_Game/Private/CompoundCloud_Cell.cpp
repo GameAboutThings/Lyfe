@@ -6,6 +6,7 @@
 #include "Character_SingleCelled.h"
 #include "Runtime/Engine/Classes/Materials/MaterialInstanceDynamic.h"
 #include "Runtime/CoreUObject/Public/UObject/ConstructorHelpers.h"
+#include "GameMode_Cell.h"
 
 
 // Sets default values
@@ -34,14 +35,14 @@ void ACompoundCloud_Cell::BeginPlay()
 void ACompoundCloud_Cell::PostActorCreated()
 {
 	Super::PostActorCreated();
-	//CreateCube();
+	Logging::Log("PostActorCreation", false);
 	CreateCloudMesh();
 }
 
 void ACompoundCloud_Cell::PostLoad()
 {
 	Super::PostLoad();
-	//CreateCube();
+	Logging::Log("PostLoad", false);
 	CreateCloudMesh();
 }
 
@@ -52,7 +53,6 @@ void ACompoundCloud_Cell::Tick(float DeltaTime)
 	if(bBeingConsumed)
 	{
 		ReshapeMeshOnConsumption();
-		//UE_LOG(LogTemp, Warning, TEXT("%d"), value);
 		if (value <= 0.f)
 		{
 			CloudFinishConsumption();
@@ -511,8 +511,6 @@ void ACompoundCloud_Cell::ReshapeMeshOnConsumption()
 
 					//consume some of the cloud
 					value -= CLOUD_CONSUMPTION_RATE;
-					Logging::Log(FString("something"), false);
-					Logging::Log(vertices[i], false);
 				}
 			//}
 		}
@@ -523,7 +521,17 @@ void ACompoundCloud_Cell::ReshapeMeshOnConsumption()
 
 void ACompoundCloud_Cell::CloudFinishConsumption()
 {
-	mesh->SetVisibility(false);
+	AGameMode_Cell* gameMode = Cast<AGameMode_Cell>(GetWorld()->GetAuthGameMode());
+	if (gameMode != nullptr)
+	{
+		gameMode->AddPlayerSurroundings(ESpawnable::ECloud, -1);
+		//mesh->SetVisibility(false);
+		this->Destroy();
+	}
+	else
+	{
+		Logging::Log("ERROR in CloudFinishConsumption: GameMode could not be referenced ", true);
+	}
 }
 
 //////////////////////////////////////////////////////////////////////////////

@@ -28,5 +28,5 @@ public:
 
 	static void Log(int inputInt, bool bConsole);
 
-	static void Log(bool inputBool, bool bConsole);
+	//static void Log(bool inputBool, bool bConsole);
 };
