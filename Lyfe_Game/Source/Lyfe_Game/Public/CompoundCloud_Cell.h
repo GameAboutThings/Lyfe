@@ -60,6 +60,8 @@ private:
 	UPROPERTY()
 	bool bBeingConsumed;
 
+	FTimerHandle despawnTimer;
+
 protected:
 	/** The editable mesh for the compound cloud */
 	UPROPERTY(BlueprintReadWrite, Category = "CELL|CELL_Compound")
@@ -100,6 +102,10 @@ private:
 
 	UFUNCTION()
 	void CloudFinishConsumption();
+
+	/** Called every 5 seconds */
+	UFUNCTION()
+	void DespawnTick();
 protected:
 	UFUNCTION(BlueprintCallable, Category = "CELL|CELL_Collision")
 	void BeginOverlap(AActor* otherActor);

@@ -44,7 +44,7 @@ void ASpawnVolume_Cell::SpawnTick()
 
 		Spawn();
 
-		controller->GetWorldTimerManager().SetTimer(spawnTimer, this, &ASpawnVolume_Cell::SpawnTick, 5.f, false);
+		controller->GetWorldTimerManager().SetTimer(spawnTimer, this, &ASpawnVolume_Cell::SpawnTick, SURROUNDINGS_DELTA_TIME, false);
 	}
 }
 
@@ -73,6 +73,8 @@ void ASpawnVolume_Cell::Spawn()
 			{
 			//passive
 			case 0:
+				if (gameMode->GetPlayerSurroundings(ESpawnable::EPassive) >= SURROUNDINGS_MAX_PASSIVE)
+					return;
 				spawnRotation.Yaw = FMath::FRand() * 360.f;
 				spawnRotation.Pitch = FMath::FRand() * 360.f;
 				spawnRotation.Roll = FMath::FRand() * 360.f;
@@ -81,6 +83,8 @@ void ASpawnVolume_Cell::Spawn()
 				break;
 			//compound cloud
 			case 1:
+				if (gameMode->GetPlayerSurroundings(ESpawnable::ECloud) >= SURROUNDINGS_MAX_CLOUD)
+					return;
 				spawnRotation.Yaw = 0.f;
 				spawnRotation.Pitch = 0.f;
 				spawnRotation.Roll = 0.f;
@@ -89,6 +93,8 @@ void ASpawnVolume_Cell::Spawn()
 				break;
 			//cell
 			case 2:
+				if (gameMode->GetPlayerSurroundings(ESpawnable::ECell) >= SURROUNDINGS_MAX_CELL)
+					return;
 				break;
 			default:
 				break;
@@ -106,13 +112,13 @@ FVector ASpawnVolume_Cell::GetRandomPointWithinBounds()
 	FVector innerExtent = volume->Bounds.BoxExtent;
 
 	// top/bottom (true) or left/right (false)
-	if (StaticMaths::RR(0, 2))
+	if (StaticMaths::RandomBool() == 1)
 	{
 		// set x position randomly
 		spawnPosition.X = StaticMaths::RR(-innerExtent.X, innerExtent.X);
 
 		//spawn on top or bottom
-		if (StaticMaths::RR(0, 2))
+		if (StaticMaths::RandomBool() == 1)
 		{
 			spawnPosition.Y = innerExtent.Y;
 		}
@@ -127,7 +133,7 @@ FVector ASpawnVolume_Cell::GetRandomPointWithinBounds()
 		spawnPosition.Y = StaticMaths::RR(-innerExtent.Y, innerExtent.Y);
 
 		//spawn on top or bottom
-		if (StaticMaths::RR(0, 2))
+		if (StaticMaths::RandomBool() == 1)
 		{
 			spawnPosition.X = innerExtent.X;
 		}
@@ -137,7 +143,8 @@ FVector ASpawnVolume_Cell::GetRandomPointWithinBounds()
 		}
 	}
 
-	spawnPosition += this->GetActorLocation();
+	spawnPosition = spawnPosition + this->GetActorLocation();
+	
 	return spawnPosition;
 }
 

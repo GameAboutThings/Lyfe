@@ -137,8 +137,8 @@ private:
 	/** stores all compounds for the player */
 	Compounds _playerCompounds;
 
-	/** stores current and max DNA */
-	Compound _DNA;
+	/** stores current and max Protein */
+	Compound _protein;
 
 	/** Whether the mouse influences Gameplay or the GUI */
 	bool bInteractGUI;
@@ -264,15 +264,15 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "CELL|CELL_Compound")
 	int GetCompound(ECompound compound, bool bMax);
 
-	/** Allows the programmer to add or reduce DNA */
-	UFUNCTION(BlueprintCallable, Category = "CELL|CELL_DNA")
-	void AddDNA(int amount);
+	/** Allows the programmer to add or reduce Protein */
+	UFUNCTION(BlueprintCallable, Category = "CELL|CELL_Protein")
+	void AddProtein(int amount);
 
-	/** Allows the programmer to get the current DNA value 
+	/** Allows the programmer to get the current Protein value 
 	* @param bMax whether the maximum should be returned or the current; true => maximum
 	*/
-	UFUNCTION(BlueprintCallable, Category = "CELL|CELL_DNA")
-	int GetDNA(bool bMax);
+	UFUNCTION(BlueprintCallable, Category = "CELL|CELL_Protein")
+	int GetProtein(bool bMax);
 
 	/** Returns the balance for the input compound; */
 	UFUNCTION(BlueprintCallable, Category = "CELL|CELL_Compound")

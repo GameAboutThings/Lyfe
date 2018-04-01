@@ -2,6 +2,9 @@
 
 #include "StaticMaths.h"
 #include "Runtime/Engine/Classes/GameFramework/Actor.h"
+#include <ctime>
+#include <cstdlib>
+#include "Logging.h"
 
 StaticMaths::StaticMaths()
 {
@@ -79,8 +82,24 @@ float StaticMaths::Distance2D(const FVector2D & a, const FVector2D & b)
 	return FMath::Abs(FMath::Sqrt(FMath::Pow(a.X - b.X, 2) + FMath::Pow(a.Y - b.Y, 2)));
 }
 
+float StaticMaths::Distance2D(const FVector & a, const FVector & b)
+{
+	return StaticMaths::Distance2D(StaticMaths::ThreeDTo2D(a, EPlane::E_XY), StaticMaths::ThreeDTo2D(b, EPlane::E_XY));
+}
+
 FVector2D StaticMaths::Normalized2D(const FVector2D & a)
 {
 	float length = sqrt(pow(a.X, 2) + pow(a.Y, 2));
 	return (a / length);
+}
+
+bool StaticMaths::RandomBool()
+{
+	//srand(time(0));
+	int random = (int)(rand()) % 2;
+	int random_2 = (int)(rand()) % 2;
+
+	Logging::Log(random, true);
+
+	return random_2 ? random : !random;
 }

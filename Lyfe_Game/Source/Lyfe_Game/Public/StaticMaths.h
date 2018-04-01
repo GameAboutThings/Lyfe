@@ -42,5 +42,9 @@ public:
 
 	static float Distance2D(const FVector2D & a, const FVector2D & b);
 
+	static float Distance2D(const FVector & a, const FVector & b);
+
 	static FVector2D Normalized2D(const FVector2D & a);
+
+	static bool RandomBool();
 };

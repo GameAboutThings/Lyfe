@@ -23,7 +23,7 @@ ACharacter_SingleCelled::ACharacter_SingleCelled()
 	cameraArm->SetupAttachment(RootComponent);
 	cameraArm->RelativeRotation = FRotator(-90.f, 0.f, 0.f);
 	cameraArm->RelativeLocation = FVector(0.f, 0.f, -20.f);
-	cameraArm->TargetArmLength = CAMERA_DISTANCE;
+	cameraArm->TargetArmLength = CAMERA_START_DISTANCE;
 	cameraArm->bEnableCameraLag = true;
 	cameraArm->CameraLagSpeed = 3.f;
 	cameraAttachmentArm = cameraArm;
@@ -67,8 +67,8 @@ void ACharacter_SingleCelled::BeginPlay()
 	//Setting compounds
 	SetCompounds();
 
-	_DNA.maximum = 100;
-	_DNA.current = 0;
+	_protein.maximum = 100;
+	_protein.current = 0;
 
 	//Sets the movement variables to neutral.
 	_movement = { 50.f, //rotationSpeed || needs to be called from function later on
@@ -251,12 +251,12 @@ class UCameraComponent * ACharacter_SingleCelled::GetPlayerCamera()
 void ACharacter_SingleCelled::Zoom(float input)
 {
 	float start = cameraAttachmentArm->TargetArmLength;
-	float end = cameraAttachmentArm->TargetArmLength + input * ZOOM_FACTOR;
+	float end = cameraAttachmentArm->TargetArmLength + input * CAMERA_ZOOM_FACTOR;
 
-	end = FMath::Clamp(end, ZOOM_MIN_DISTANCE, ZOOM_MAX_DISTANCE);
+	end = FMath::Clamp(end, CAMERA_ZOOM_MIN_DISTANCE, CAMERA_ZOOM_MAX_DISTANCE);
 
 	cameraAttachmentArm->TargetArmLength =
-		FMath::Lerp<float>(start, end, ZOOM_SPEED);
+		FMath::Lerp<float>(start, end, CAMERA_ZOOM_SPEED);
 }
 
 void ACharacter_SingleCelled::OnLeftClick()
@@ -558,28 +558,28 @@ int ACharacter_SingleCelled::GetCompound(ECompound compound, bool bMax)
 	}
 }
 
-void ACharacter_SingleCelled::AddDNA(int amount)
+void ACharacter_SingleCelled::AddProtein(int amount)
 {
-	_DNA.current += amount;
-	if (_DNA.current > _DNA.maximum)
+	_protein.current += amount;
+	if (_protein.current > _protein.maximum)
 	{
-		_DNA.current = _DNA.maximum;
+		_protein.current = _protein.maximum;
 	}
-	else if(_DNA.current < 0)
+	else if(_protein.current < 0)
 	{
-		_DNA.current = 0;
+		_protein.current = 0;
 	}
 }
 
-int ACharacter_SingleCelled::GetDNA(bool bMax)
+int ACharacter_SingleCelled::GetProtein(bool bMax)
 {
 	if (bMax)
 	{
-		return _DNA.maximum;
+		return _protein.maximum;
 	}
 	else
 	{
-		return _DNA.current;
+		return _protein.current;
 	}
 }
 

@@ -7,6 +7,9 @@
 #include "Runtime/Engine/Classes/Materials/MaterialInstanceDynamic.h"
 #include "Runtime/CoreUObject/Public/UObject/ConstructorHelpers.h"
 #include "GameMode_Cell.h"
+#include "Character_SingleCelled.h"
+#include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
+#include "StaticMaths.h"
 
 
 // Sets default values
@@ -30,12 +33,19 @@ void ACompoundCloud_Cell::BeginPlay()
 {
 	Super::BeginPlay();
 	value = StaticMaths::RR(700.f, 1300.f);
+
+	//First of all set the volume back on the player
+	ACharacter_SingleCelled* controller = Cast<ACharacter_SingleCelled>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+	if (controller != nullptr)
+	{
+		controller->GetWorldTimerManager().SetTimer(despawnTimer, this, &ACompoundCloud_Cell::DespawnTick, 5.f, false);
+	}
 }
 
 void ACompoundCloud_Cell::PostActorCreated()
 {
 	Super::PostActorCreated();
-	
+
 	if (value == 0 || value == NULL)
 	{
 		value = StaticMaths::RR(700.f, 1300.f);
@@ -56,9 +66,24 @@ void ACompoundCloud_Cell::PostActorCreated()
 
 void ACompoundCloud_Cell::PostLoad()
 {
-	//Super::PostLoad();
-	//Logging::Log("PostLoad", false);
-	//CreateCloudMesh();
+	Super::PostLoad();
+
+	if (value == 0 || value == NULL)
+	{
+		value = StaticMaths::RR(700.f, 1300.f);
+	}
+
+	float modifier = value / 1000.f;
+
+	FMeshBounds bounds = {
+		StaticMaths::RR(-10.f, 10.f) * modifier,
+		StaticMaths::RR(40.f, 60.f) * modifier,
+		StaticMaths::RR(90.f, 110.f) * modifier,
+		StaticMaths::RR(140.f, 160.f) * modifier,
+		StaticMaths::RR(190.f, 210.f) * modifier,
+	};
+
+	CreateCloudMesh(bounds);
 }
 
 // Called every frame
@@ -526,6 +551,7 @@ void ACompoundCloud_Cell::ReshapeMeshOnConsumption()
 
 					//consume some of the cloud
 					value -= CLOUD_CONSUMPTION_RATE;
+
 				}
 			//}
 		}
@@ -546,6 +572,27 @@ void ACompoundCloud_Cell::CloudFinishConsumption()
 	else
 	{
 		Logging::Log("ERROR in CloudFinishConsumption: GameMode could not be referenced ", true);
+	}
+}
+
+void ACompoundCloud_Cell::DespawnTick()
+{
+	//First of all set the volume back on the player
+	ACharacter_SingleCelled* controller = Cast<ACharacter_SingleCelled>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+	if (controller != nullptr)
+	{
+		//check distance to player
+		controller->GetActorLocation();
+		this->GetActorLocation();
+
+		if (StaticMaths::Distance2D(controller->GetActorLocation(),
+			this->GetActorLocation()) >= SURROUNDINGS_DESPAWN_DISTANCE)
+		{
+			this->Destroy();
+		}
+
+
+		controller->GetWorldTimerManager().SetTimer(despawnTimer, this, &ACompoundCloud_Cell::DespawnTick, 5.f, false);
 	}
 }
 
