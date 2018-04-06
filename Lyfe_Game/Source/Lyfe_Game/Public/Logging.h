@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Meta_CellStage.h"
 
 //#define GetCurrentDirectory ""
 #define LOG_DIRECTORY FString("/Lyfe/Logging") //Directory path
@@ -28,5 +29,5 @@ public:
 
 	static void Log(int inputInt, bool bConsole);
 
-	//static void Log(bool inputBool, bool bConsole);
+	static void Log(ECompound inputCompound, bool bConsole);
 };

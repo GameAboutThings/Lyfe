@@ -95,11 +95,8 @@ FVector2D StaticMaths::Normalized2D(const FVector2D & a)
 
 bool StaticMaths::RandomBool()
 {
-	//srand(time(0));
 	int random = (int)(rand()) % 2;
 	int random_2 = (int)(rand()) % 2;
-
-	Logging::Log(random, true);
 
 	return random_2 ? random : !random;
 }

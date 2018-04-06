@@ -103,21 +103,29 @@ void Logging::Log(int inputInt, bool bConsole)
 	Log(log, bConsole);
 }
 
-//void Logging::Log(bool inputBool, bool bConsole)
-//{
-//	FString log;
-//	if (inputBool != 0 && inputBool != 1)
-//	{
-//		log = FString(inputBool);
-//	}
-//	else if (inputBool)
-//	{
-//		log.Append(" BOOLEAN : true");
-//	}
-//	else
-//	{
-//		log.Append(" BOOLEAN : false");
-//	}
-//
-//	Log(log, bConsole);
-//}
+void Logging::Log(ECompound inputCompound, bool bConsole)
+{
+	FString log = FString(" ECOMPOUND : ");
+	switch (inputCompound)
+	{
+	case ECompound::EO2:
+		log.Append(" O2 ");
+		break;
+	case ECompound::ECO2:
+		log.Append(" CO2 ");
+		break;
+	case ECompound::EAminoAcid:
+		log.Append(" Amino Acid ");
+		break;
+	case ECompound::EGlucose:
+		log.Append(" Glucose ");
+		break;
+	case ECompound::ELipid:
+		log.Append(" Lipid ");
+		break;
+	case ECompound::ENothing:
+		log.Append(" Nothing ");
+		break;
+	}
+	Logging::Log(log, bConsole);
+}

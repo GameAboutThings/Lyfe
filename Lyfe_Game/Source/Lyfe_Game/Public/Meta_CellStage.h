@@ -24,7 +24,7 @@
 /* COMPOUND CLOUDS */
 #define CLOUD_MESH_VERTEX_DISTANCE_THRESHOLD 50.f
 #define CLOUD_MESH_VERTEX_DELTA_MOVEMENT 5.f
-#define CLOUD_CONSUMPTION_RATE 1.1f //How much of a cloud is consumed each frame
+#define CLOUD_CONSUMPTION_RATE 11.f //How much of a cloud is consumed each frame
 #define CLOUD_PLAYERROTATION_THRESHOLD 30.f //degree the player can face away from the compoud cloud for it to still move the vertices actievly away from him/her
 
 /* SPAWNING AND DESPAWNING */

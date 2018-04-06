@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "ProceduralMeshComponent.h"
+#include "Meta_CellStage.h"
+
 #include "CompoundCloud_Cell.generated.h"
 
 USTRUCT(BlueprintType)
@@ -60,7 +62,12 @@ private:
 	UPROPERTY()
 	bool bBeingConsumed;
 
+	UPROPERTY()
 	FTimerHandle despawnTimer;
+
+	/** The type of this compound cloud */
+	UPROPERTY()
+	TEnumAsByte<ECompound> type;
 
 protected:
 	/** The editable mesh for the compound cloud */
@@ -112,6 +119,9 @@ protected:
 
 	UFUNCTION(BlueprintCallable, Category = "CELL|CELL_Collision")
 	void EndOverlap(AActor* otherActor);
+
+	UFUNCTION(BlueprintCallable, Category = "CELL|CELL_Compound")
+	ECompound GetType();
 
 public:
 	

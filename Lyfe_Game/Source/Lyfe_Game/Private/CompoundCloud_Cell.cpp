@@ -32,7 +32,7 @@ ACompoundCloud_Cell::ACompoundCloud_Cell()
 void ACompoundCloud_Cell::BeginPlay()
 {
 	Super::BeginPlay();
-	value = StaticMaths::RR(700.f, 1300.f);
+	value = StaticMaths::RR(7000.f, 13000.f);
 
 	//First of all set the volume back on the player
 	ACharacter_SingleCelled* controller = Cast<ACharacter_SingleCelled>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
@@ -48,10 +48,10 @@ void ACompoundCloud_Cell::PostActorCreated()
 
 	if (value == 0 || value == NULL)
 	{
-		value = StaticMaths::RR(700.f, 1300.f);
+		value = StaticMaths::RR(7000.f, 13000.f);
 	}
 
-	float modifier = value / 1000.f;
+	float modifier = value / 10000.f;
 
 	FMeshBounds bounds = {
 		StaticMaths::RR(-10.f, 10.f) * modifier,
@@ -62,6 +62,8 @@ void ACompoundCloud_Cell::PostActorCreated()
 	};
 
 	CreateCloudMesh(bounds);
+
+	type = ECompound(rand()%5);
 }
 
 void ACompoundCloud_Cell::PostLoad()
@@ -70,10 +72,10 @@ void ACompoundCloud_Cell::PostLoad()
 
 	if (value == 0 || value == NULL)
 	{
-		value = StaticMaths::RR(700.f, 1300.f);
+		value = StaticMaths::RR(7000.f, 13000.f);
 	}
 
-	float modifier = value / 1000.f;
+	float modifier = value / 10000.f;
 
 	FMeshBounds bounds = {
 		StaticMaths::RR(-10.f, 10.f) * modifier,
@@ -84,6 +86,8 @@ void ACompoundCloud_Cell::PostLoad()
 	};
 
 	CreateCloudMesh(bounds);
+
+	type = ECompound(rand() % 5);
 }
 
 // Called every frame
@@ -551,7 +555,7 @@ void ACompoundCloud_Cell::ReshapeMeshOnConsumption()
 
 					//consume some of the cloud
 					value -= CLOUD_CONSUMPTION_RATE;
-
+					consumingPlayer->AddCompound(CLOUD_CONSUMPTION_RATE, type);
 				}
 			//}
 		}
@@ -630,6 +634,11 @@ void ACompoundCloud_Cell::EndOverlap(AActor* otherActor)
 
 		//If a cell is on the compound cloud
 	}
+}
+
+ECompound ACompoundCloud_Cell::GetType()
+{
+	return type;
 }
 
   //////////////////////////////////////////////////////////////////////////////

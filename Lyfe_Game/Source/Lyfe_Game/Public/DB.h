@@ -3,9 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "..\SQLite\sqlite3.h"
+#include "../SQLite/sqlite3.h"
 
-#define DB_PATH "..\..\..\Content\Database\LYFE.db"
+#define DB_PATH "../../../Content/Database/LYFE.db"
 
 /**
  * 

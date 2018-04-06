@@ -11,6 +11,7 @@
 #include "Runtime/Engine/Classes/Components/ArrowComponent.h"
 #include "Runtime/Engine/Classes/Components/StaticMeshComponent.h"
 #include "GameMode_Cell.h"
+#include "Logging.h"
 
 // Sets default values
 ACharacter_SingleCelled::ACharacter_SingleCelled()
@@ -68,7 +69,7 @@ void ACharacter_SingleCelled::BeginPlay()
 	SetCompounds();
 
 	_protein.maximum = 100;
-	_protein.current = 0;
+	_protein.current = 25;
 
 	//Sets the movement variables to neutral.
 	_movement = { 50.f, //rotationSpeed || needs to be called from function later on
@@ -287,29 +288,29 @@ void ACharacter_SingleCelled::OnRightClick()
 void ACharacter_SingleCelled::SetCompounds()
 {
 	//CO2
-	_playerCompounds._CO2.maximum = 10000;
-	_playerCompounds._CO2.current = 10;
-	_playerCompounds._CO2.balance = -1;
+	_playerCompounds._CO2.maximum = 10000.f;
+	_playerCompounds._CO2.current = 10.f;
+	_playerCompounds._CO2.balance = 0;
 
 	//Oxygen
-	_playerCompounds._O2.maximum = 10000;
-	_playerCompounds._O2.current = 10;
-	_playerCompounds._O2.balance = -1;
+	_playerCompounds._O2.maximum = 10000.f;
+	_playerCompounds._O2.current = 10.f;
+	_playerCompounds._O2.balance = 0;
 
 	//Amino Acid
-	_playerCompounds._AminoAcid.maximum = 10000;
-	_playerCompounds._AminoAcid.current = 10;
-	_playerCompounds._AminoAcid.balance = -1;
+	_playerCompounds._AminoAcid.maximum = 10000.f;
+	_playerCompounds._AminoAcid.current = 10.f;
+	_playerCompounds._AminoAcid.balance = 0;
 
 	//Glucose
-	_playerCompounds._Glucose.maximum = 10000;
-	_playerCompounds._Glucose.current = 10;
-	_playerCompounds._Glucose.balance = -1;
+	_playerCompounds._Glucose.maximum = 10000.f;
+	_playerCompounds._Glucose.current = 10.f;
+	_playerCompounds._Glucose.balance = 0;
 
 	//Lipid
-	_playerCompounds._Lipid.maximum = 10000;
-	_playerCompounds._Lipid.current = 10;
-	_playerCompounds._Lipid.balance = -1;
+	_playerCompounds._Lipid.maximum = 10000.f;
+	_playerCompounds._Lipid.current = 10.f;
+	_playerCompounds._Lipid.balance = 0;
 }
 
 void ACharacter_SingleCelled::SetInteractGUI(bool bGUI)
@@ -428,7 +429,7 @@ void ACharacter_SingleCelled::AddCompound(int amount, ECompound compound)
 	if (compound == ECompound::ECO2)
 	{
 		//add the amount
-		_playerCompounds._CO2.current += amount;
+		_playerCompounds._CO2.current = _playerCompounds._CO2.current + amount;
 
 		//check if it's greater than the maximum or smaller than 0 and correct that
 		if (_playerCompounds._CO2.current > _playerCompounds._CO2.maximum)
@@ -442,7 +443,7 @@ void ACharacter_SingleCelled::AddCompound(int amount, ECompound compound)
 	}
 	else if (compound == ECompound::EO2)
 	{
-		_playerCompounds._O2.current += amount;
+		_playerCompounds._O2.current = _playerCompounds._O2.current + amount;
 
 		if (_playerCompounds._O2.current > _playerCompounds._O2.maximum)
 		{
@@ -455,7 +456,7 @@ void ACharacter_SingleCelled::AddCompound(int amount, ECompound compound)
 	}
 	else if (compound == ECompound::EAminoAcid)
 	{
-		_playerCompounds._AminoAcid.current += amount;
+		_playerCompounds._AminoAcid.current = _playerCompounds._AminoAcid.current+ amount;
 
 		if (_playerCompounds._AminoAcid.current > _playerCompounds._AminoAcid.maximum)
 		{
@@ -468,7 +469,7 @@ void ACharacter_SingleCelled::AddCompound(int amount, ECompound compound)
 	}
 	else if (compound == ECompound::EGlucose)
 	{
-		_playerCompounds._Glucose.current += amount;
+		_playerCompounds._Glucose.current = _playerCompounds._Glucose.current + amount;
 
 		if (_playerCompounds._Glucose.current > _playerCompounds._Glucose.maximum)
 		{
@@ -481,7 +482,7 @@ void ACharacter_SingleCelled::AddCompound(int amount, ECompound compound)
 	}
 	else if (compound == ECompound::ELipid)
 	{
-		_playerCompounds._Lipid.current += amount;
+		_playerCompounds._Lipid.current = _playerCompounds._Lipid.current + amount;
 
 		if (_playerCompounds._Lipid.current > _playerCompounds._Lipid.maximum)
 		{
