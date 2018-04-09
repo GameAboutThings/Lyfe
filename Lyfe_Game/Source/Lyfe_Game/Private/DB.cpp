@@ -32,7 +32,9 @@ bool DB::Table(FString query, FString *** result, int timeout)
 		Logging::Log("*** Opened Database ***", false);
 	}
 
+	//TODO execute query on db
+
 	sqlite3_close(db);
 
-	return false; //REMOVE
+	return true; //REMOVE
 }

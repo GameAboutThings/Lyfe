@@ -487,6 +487,10 @@ void ACompoundCloud_Cell::CreateCloudMesh(FMeshBounds _b)
 }
 void ACompoundCloud_Cell::ReshapeMeshOnConsumption()
 {
+	bool moveCenter = false;
+	int moveCenterIndex = 0;
+	FVector moveCenterDirection = FVector();
+
 	if (consumingCell != nullptr)
 	{
 
@@ -508,58 +512,74 @@ void ACompoundCloud_Cell::ReshapeMeshOnConsumption()
 
 			float degree = 0;
 			
-			//if (StaticMaths::FindLookAtAngle2D({ FVector(relativePlayerPosition, 0.f) },
-			//	vertices[i], degree))
-			//{
-			//	bool bPlayerBetweenCenterAndVertex = ((
-			//		FMath::Abs(StaticMaths::Distance2D(relativePlayerPosition, FVector2D(0.f, 0.f))) //distance between center and player
-			//		< FMath::Abs(StaticMaths::Distance2D(StaticMaths::ThreeDTo2D(vertices[i], EPlane::E_XY), FVector2D(0.f, 0.f))) //distance between center and vertex
-			//		) && degree < CLOUD_PLAYERROTATION_THRESHOLD);
+			if (distance <= CLOUD_MESH_VERTEX_DISTANCE_THRESHOLD )//|| bPlayerBetweenCenterAndVertex) //and the vertex and player are in roughly the same direction from the center
+																//if distance between vertex and player exceeds threshold 
+																//or if the player is between the center and the vertex
+			{
+				FVector2D newVertex;
+				newVertex.X = vertices[i].X;
+				newVertex.Y = vertices[i].Y;
 
 
-				if (distance <= CLOUD_MESH_VERTEX_DISTANCE_THRESHOLD )//|| bPlayerBetweenCenterAndVertex) //and the vertex and player are in roughly the same direction from the center
-																   //if distance between vertex and player exceeds threshold 
-																   //or if the player is between the center and the vertex
+				degree = 0;
+
+				if (StaticMaths::FindLookAtAngle2D(consumingPlayer->GetActorForwardVector(),
+					consumingPlayer->GetActorLocation() - this->GetActorLocation(), degree))
 				{
-					FVector2D newVertex;
-					newVertex.X = vertices[i].X;
-					newVertex.Y = vertices[i].Y;
 
-
-					degree = 0;
-
-					if (StaticMaths::FindLookAtAngle2D(consumingPlayer->GetActorForwardVector(),
-						consumingPlayer->GetActorLocation() - this->GetActorLocation(), degree))
+					if (degree <= CLOUD_PLAYERROTATION_THRESHOLD)
 					{
+						//Move vertex away from player
 
-						if (degree <= CLOUD_PLAYERROTATION_THRESHOLD)
-						{
-							//Move vertex away from player
+						//normalize the vector from the player to the vertex
+						distanceVector = distanceVector / distance;
 
-							//normalize the vector from the player to the vertex
-							distanceVector = distanceVector / distance;
-
-							newVertex.X += distanceVector.X * CLOUD_MESH_VERTEX_DELTA_MOVEMENT;
-							newVertex.Y += distanceVector.Y * CLOUD_MESH_VERTEX_DELTA_MOVEMENT;
-						}
+						newVertex.X += distanceVector.X * CLOUD_MESH_VERTEX_DELTA_MOVEMENT;
+						newVertex.Y += distanceVector.Y * CLOUD_MESH_VERTEX_DELTA_MOVEMENT;
 					}
-					//Move vertex inward
-
-					//correct the previous calculations so you can't enlarge the cloud
-					float n = vertices[i].Size2D();
-					newVertex.X -= (vertices[i] / n).X * CLOUD_MESH_VERTEX_DELTA_MOVEMENT;
-					newVertex.Y -= (vertices[i] / n).Y * CLOUD_MESH_VERTEX_DELTA_MOVEMENT;
-
-					vertices[i].X = newVertex.X;
-					vertices[i].Y = newVertex.Y;
-
-					//consume some of the cloud
-					value -= CLOUD_CONSUMPTION_RATE;
-					consumingPlayer->AddCompound(CLOUD_CONSUMPTION_RATE, type);
 				}
-			//}
+				//Move vertex inward
+
+				//correct the previous calculations so you can't enlarge the cloud
+				float n = vertices[i].Size2D();
+				newVertex.X -= (vertices[i] / n).X * CLOUD_MESH_VERTEX_DELTA_MOVEMENT;
+				newVertex.Y -= (vertices[i] / n).Y * CLOUD_MESH_VERTEX_DELTA_MOVEMENT;
+
+				vertices[i].X = newVertex.X;
+				vertices[i].Y = newVertex.Y;
+
+				//consume some of the cloud
+				value -= CLOUD_CONSUMPTION_RATE;
+				consumingPlayer->AddCompound(CLOUD_CONSUMPTION_RATE, type);
+
+				if(vertices[i].X == 0 && vertices[i].Y == 0)
+				{
+					if(!moveCenter)
+						moveCenterIndex = i;
+					
+					moveCenter = true;
+
+					//move all following meshes
+					moveCenterDirection = StaticMaths::Normalized2D(this->GetActorLocation() - consumingPlayer->GetActorLocation()) * CLOUD_MESH_CENTER_CELTA_MOVEMENT;
+
+					vertices[i] = vertices[i] + moveCenterDirection;
+				}
+
+			}
+		}
+
+		if(moveCenter)
+		{
+			//move all meshes until the index is reached
+			for(int i = 0; i < moveCenterIndex; i++)
+			{
+				vertices[i] = vertices[i] + moveCenterDirection;
+			}
 		}
 	}
+
+	//move center
+	this->SetActorLocation(this->GetActorLocation() + moveCenterDirection);
 
 	mesh->UpdateMeshSection_LinearColor(0, vertices, vertices, {}, {}, {});
 }
