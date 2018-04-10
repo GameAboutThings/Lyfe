@@ -1,11 +1,7 @@
 1. Cell movement:
-	- cells always moves towards courser (primary)
-	- cell can be controled via WASD (secundary)
+	- cells always moves towards courser
+	- cell can be controled via WASD
+        - cell moves towards position clicked on
 
 2. Camera:
 	- Camera always stays above cell (first try this out, might change later)
-
-
-
-In the world settings you can override GameModes!
-Create GameMode for each STAGE and for each EDITOR
