@@ -560,7 +560,7 @@ void ACompoundCloud_Cell::ReshapeMeshOnConsumption()
 					moveCenter = true;
 
 					//move all following meshes
-					moveCenterDirection = StaticMaths::Normalized2D(this->GetActorLocation() - consumingPlayer->GetActorLocation()) * CLOUD_MESH_CENTER_CELTA_MOVEMENT;
+					moveCenterDirection = StaticMaths::Normalized(this->GetActorLocation() - consumingPlayer->GetActorLocation()) * CLOUD_MESH_CENTER_CELTA_MOVEMENT;
 
 					vertices[i] = vertices[i] + moveCenterDirection;
 				}

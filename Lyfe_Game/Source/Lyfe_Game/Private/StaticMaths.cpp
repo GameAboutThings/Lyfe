@@ -93,6 +93,12 @@ FVector2D StaticMaths::Normalized2D(const FVector2D & a)
 	return (a / length);
 }
 
+FVector StaticMaths::Normalized(const FVector & a)
+{
+	float length = sqrt(pow(a.X, 2) + pow(a.Y, 2) + pow(a.Z, 2));
+	return (a / length);
+}
+
 bool StaticMaths::RandomBool()
 {
 	int random = (int)(rand()) % 2;

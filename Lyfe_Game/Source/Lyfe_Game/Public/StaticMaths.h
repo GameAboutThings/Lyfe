@@ -46,5 +46,7 @@ public:
 
 	static FVector2D Normalized2D(const FVector2D & a);
 
+	static FVector Normalized(const FVector & a);
+
 	static bool RandomBool();
 };
