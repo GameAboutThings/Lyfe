@@ -5,9 +5,8 @@
 #include "CoreMinimal.h"
 #include "Meta_CellStage.h"
 
-//#define GetCurrentDirectory ""
 #define LOG_DIRECTORY FString("/Lyfe/Logging") //Directory path
-#define LOG_FILENAME FString("Lyfe_logFile.txt") //Filename
+#define LOG_FILENAME FString("Lyfe_logFile.log") //Filename
 #define LOG_PATH FString(LOG_DIRECTORY + "/" + LOG_FILENAME) //path with filename
 
 /**
@@ -30,4 +29,8 @@ public:
 	static void Log(int inputInt, bool bConsole);
 
 	static void Log(ECompound inputCompound, bool bConsole);
+
+	static void Log(EPlayerState inputState, bool bConsole);
+
+	static void Log(EControlSettings inputControls, bool bConsole);
 };

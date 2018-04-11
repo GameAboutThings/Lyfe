@@ -38,8 +38,8 @@
 UENUM()
 enum class EPlayerState : uint8
 {
-	EDead,
-	EAlive
+	EDead UMETA(DisplayName = "Dead"),
+	EAlive UMETA(DisplayName = "Alive")
 };
 
 UENUM(BlueprintType)
@@ -56,9 +56,9 @@ enum ECompound
 UENUM()
 enum class EControlSettings : uint8
 {
-	EFollowMouse,
-	EWASD,
-	EClick
+	EFollowMouse UMETA(DisplayName = "FollowMouse"),
+	EWASD UMETA(DisplayName = "WASD"),
+	EClick UMETA(DisplayName = "Click")
 };
 
 UENUM()

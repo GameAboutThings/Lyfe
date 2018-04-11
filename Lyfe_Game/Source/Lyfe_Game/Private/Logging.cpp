@@ -129,3 +129,36 @@ void Logging::Log(ECompound inputCompound, bool bConsole)
 	}
 	Logging::Log(log, bConsole);
 }
+
+void Logging::Log(EPlayerState inputState, bool bConsole)
+{
+	FString log = FString(" EPLAYERSTATE : ");
+	switch (inputState)
+	{
+	case EPlayerState::EDead:
+		log.Append(" Dead ");
+		break;
+	case EPlayerState::EAlive:
+		log.Append(" Alive ");
+		break;
+	}
+	Logging::Log(log, bConsole);
+}
+
+void Logging::Log(EControlSettings inputControls, bool bConsole)
+{
+	FString log = FString(" ECONTROLSETTING : ");
+	switch (inputControls)
+	{
+	case EControlSettings::EFollowMouse:
+		log.Append(" FollowMouse ");
+		break;
+	case EControlSettings::EWASD:
+		log.Append(" WASD ");
+		break;
+	case EControlSettings::EClick:
+		log.Append(" Click ");
+		break;
+	}
+	Logging::Log(log, bConsole);
+}
