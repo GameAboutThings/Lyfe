@@ -20,17 +20,37 @@ public:
 
 	static void Log(FString inputString, bool bConsole);
 
+	static void Log(FString inputString);
+
+	static void Log(const char inputString[], bool bConsole);
+
+	static void Log(const char inputString[]);
+
 	static void Log(FVector inputVector, bool bConsole);
+
+	static void Log(FVector inputVector);
 
 	static void Log(FVector2D inputVector, bool bConsole);
 
+	static void Log(FVector2D inputVector);
+
 	static void Log(float inputFloat, bool bConsole);
+
+	static void Log(float inputFloat);
 
 	static void Log(int inputInt, bool bConsole);
 
+	static void Log(int inputInt);
+
 	static void Log(ECompound inputCompound, bool bConsole);
+
+	static void Log(ECompound inputCompound);
 
 	static void Log(EPlayerState inputState, bool bConsole);
 
+	static void Log(EPlayerState inputState);
+
 	static void Log(EControlSettings inputControls, bool bConsole);
+
+	static void Log(EControlSettings inputControls);
 };

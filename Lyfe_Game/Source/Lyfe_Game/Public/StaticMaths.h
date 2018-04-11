@@ -49,4 +49,7 @@ public:
 	static FVector Normalized(const FVector & a);
 
 	static bool RandomBool();
+
+	/** Returns whether the given value lies between the other two */
+	static bool Between(float value, float a, float b);
 };

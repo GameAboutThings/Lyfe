@@ -99,7 +99,7 @@ public:
 private:
 	void CreateCube();
 
-	/** Create a random 3d shape for the cloud */
+	/** Creates random mesh*/
 	UFUNCTION(BlueprintCallable, Category = "CELL|CELL_Compound")
 	void CreateCloudMesh(FMeshBounds _b);
 

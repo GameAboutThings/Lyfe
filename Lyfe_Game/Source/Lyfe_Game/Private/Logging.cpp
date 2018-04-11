@@ -51,6 +51,19 @@ void Logging::Log(FString inputString, bool bConsole)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("*** Couldn't create log file ***"));
 			UE_LOG(LogTemp, Warning, TEXT("*** *** Trying to create log file ..."));
+
+			if (!FPlatformFileManager::Get().GetPlatformFile().FileExists(*LOG_PATH))
+			{
+				UE_LOG(LogTemp, Warning, TEXT("*** *** *** Couldn't create log file ***"));
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("*** *** *** Log file created ***"));
+			}
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("*** *** *** Log file created ***"));
 		}
 	}
 	else
@@ -67,6 +80,21 @@ void Logging::Log(FString inputString, bool bConsole)
 	}
 }
 
+void Logging::Log(FString inputString)
+{
+	Logging::Log(inputString, false);
+}
+
+void Logging::Log(const char inputString[], bool bConsole)
+{
+	Logging::Log(FString(inputString), bConsole);
+}
+
+void Logging::Log(const char inputString[])
+{
+	Logging::Log(inputString, false);
+}
+
 void Logging::Log(FVector inputVector, bool bConsole)
 {
 	FString log = " VECTOR : { X: ";
@@ -80,6 +108,11 @@ void Logging::Log(FVector inputVector, bool bConsole)
 	Log(log, bConsole);
 }
 
+void Logging::Log(FVector inputVector)
+{
+	Logging::Log(inputVector, false);
+}
+
 void Logging::Log(FVector2D inputVector, bool bConsole)
 {
 	FString log = " VECTOR2D : { X: ";
@@ -91,16 +124,31 @@ void Logging::Log(FVector2D inputVector, bool bConsole)
 	Log(log, bConsole);
 }
 
+void Logging::Log(FVector2D inputVector)
+{
+	Logging::Log(inputVector, false);
+}
+
 void Logging::Log(float inputFloat, bool bConsole)
 {
 	FString log = FString(" FLOAT : ").Append(FString::SanitizeFloat(inputFloat));
 	Log(log, bConsole);
 }
 
+void Logging::Log(float inputFloat)
+{
+	Logging::Log(inputFloat, false);
+}
+
 void Logging::Log(int inputInt, bool bConsole)
 {
 	FString log = FString(" INTEGER : ").Append(FString::SanitizeFloat(inputInt));
 	Log(log, bConsole);
+}
+
+void Logging::Log(int inputInt)
+{
+	Logging::Log(inputInt, false);
 }
 
 void Logging::Log(ECompound inputCompound, bool bConsole)
@@ -130,6 +178,11 @@ void Logging::Log(ECompound inputCompound, bool bConsole)
 	Logging::Log(log, bConsole);
 }
 
+void Logging::Log(ECompound inputCompound)
+{
+	Logging::Log(inputCompound, false);
+}
+
 void Logging::Log(EPlayerState inputState, bool bConsole)
 {
 	FString log = FString(" EPLAYERSTATE : ");
@@ -143,6 +196,11 @@ void Logging::Log(EPlayerState inputState, bool bConsole)
 		break;
 	}
 	Logging::Log(log, bConsole);
+}
+
+void Logging::Log(EPlayerState inputState)
+{
+	Logging::Log(inputState, false);
 }
 
 void Logging::Log(EControlSettings inputControls, bool bConsole)
@@ -161,4 +219,9 @@ void Logging::Log(EControlSettings inputControls, bool bConsole)
 		break;
 	}
 	Logging::Log(log, bConsole);
+}
+
+void Logging::Log(EControlSettings inputControls)
+{
+	Logging::Log(inputControls, false);
 }

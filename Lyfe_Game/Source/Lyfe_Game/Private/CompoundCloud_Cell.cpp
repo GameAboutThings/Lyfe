@@ -40,6 +40,25 @@ void ACompoundCloud_Cell::BeginPlay()
 	{
 		controller->GetWorldTimerManager().SetTimer(despawnTimer, this, &ACompoundCloud_Cell::DespawnTick, 5.f, false);
 	}
+
+	if (value == 0 || value == NULL)
+	{
+		value = StaticMaths::RR(7000.f, 13000.f);
+	}
+
+	float modifier = value / 10000.f;
+
+	FMeshBounds bounds = {
+		StaticMaths::RR(-10.f, 10.f) * modifier,
+		StaticMaths::RR(40.f, 60.f) * modifier,
+		StaticMaths::RR(90.f, 110.f) * modifier,
+		StaticMaths::RR(140.f, 160.f) * modifier,
+		StaticMaths::RR(190.f, 210.f) * modifier,
+	};
+
+	CreateCloudMesh(bounds);
+
+	type = ECompound(rand() % 5);
 }
 
 void ACompoundCloud_Cell::PostActorCreated()
@@ -62,8 +81,7 @@ void ACompoundCloud_Cell::PostActorCreated()
 	};
 
 	CreateCloudMesh(bounds);
-
-	type = ECompound(rand()%5);
+	type = ECompound(rand() % 5);
 }
 
 void ACompoundCloud_Cell::PostLoad()
@@ -86,7 +104,6 @@ void ACompoundCloud_Cell::PostLoad()
 	};
 
 	CreateCloudMesh(bounds);
-
 	type = ECompound(rand() % 5);
 }
 
@@ -168,32 +185,15 @@ void ACompoundCloud_Cell::CreateCube()
 
 	//normals on every vertex
 	TArray<FVector> normals;
-	//normals.Add(FVector(1, 0, 0));
-	//normals.Add(FVector(1, 0, 0));
-	//normals.Add(FVector(1, 0, 0));
-	//normals.Add(FVector(1, 1, 0));
 
 	//// ?????????????????????
 	TArray<FVector2D> uv0;
-	//uv0.Add(FVector2D(0, 0));
-	//uv0.Add(FVector2D(10, 0));
-	//uv0.Add(FVector2D(0, 10));
-
-	//uv0.Add(FVector2D(0, 0));
-	//uv0.Add(FVector2D(10, 0));
-	//uv0.Add(FVector2D(0, 10));
 
 	//// ?????????????????????????????
 	TArray<FProcMeshTangent> tangents;
-	//tangents.Add(FProcMeshTangent(0, 1, 0));
-	//tangents.Add(FProcMeshTangent(0, 1, 0));
-	//tangents.Add(FProcMeshTangent(0, 1, 0));
 
 	////The colors applied to every vertex and blended on the surfaces
 	TArray<FLinearColor> vertexColors;
-	//vertexColors.Add(FLinearColor(0.75f, 0.75f, 0.75f, 1.0f));
-	//vertexColors.Add(FLinearColor(0.75f, 0.75f, 0.75f, 1.0f));
-	//vertexColors.Add(FLinearColor(0.75f, 0.75f, 0.75f, 1.0f));
 
 	mesh->CreateMeshSection_LinearColor(0, vertices, triangles, normals, uv0, vertexColors, tangents, true);
 
@@ -485,6 +485,7 @@ void ACompoundCloud_Cell::CreateCloudMesh(FMeshBounds _b)
 	mesh->ContainsPhysicsTriMeshData(false);
 	//mesh->UpdateMeshSection_LinearColor(0, vertices, normals, uv0, vertexColors, tangents);
 }
+
 void ACompoundCloud_Cell::ReshapeMeshOnConsumption()
 {
 	bool moveCenter = false;
@@ -549,10 +550,11 @@ void ACompoundCloud_Cell::ReshapeMeshOnConsumption()
 				vertices[i].Y = newVertex.Y;
 
 				//consume some of the cloud
+				//TODO make calculation of volume change instead of fixed value
 				value -= CLOUD_CONSUMPTION_RATE;
 				consumingPlayer->AddCompound(CLOUD_CONSUMPTION_RATE, type);
 
-				if(vertices[i].X == 0 && vertices[i].Y == 0)
+				if(StaticMaths::Between(vertices[i].X, 5.f, -5.f) && StaticMaths::Between(vertices[i].Y, 5.f, -5.f))
 				{
 					if(!moveCenter)
 						moveCenterIndex = i;
@@ -560,26 +562,30 @@ void ACompoundCloud_Cell::ReshapeMeshOnConsumption()
 					moveCenter = true;
 
 					//move all following meshes
-					moveCenterDirection = StaticMaths::Normalized(this->GetActorLocation() - consumingPlayer->GetActorLocation()) * CLOUD_MESH_CENTER_CELTA_MOVEMENT;
-
-					vertices[i] = vertices[i] + moveCenterDirection;
+					moveCenterDirection = StaticMaths::Normalized((this->GetActorLocation() - consumingPlayer->GetActorLocation())) * CLOUD_MESH_CENTER_CELTA_MOVEMENT;
 				}
 
+			}
+
+			if (moveCenter)
+			{
+				vertices[i] = vertices[i] - moveCenterDirection;
 			}
 		}
 
 		if(moveCenter)
 		{
 			//move all meshes until the index is reached
-			for(int i = 0; i < moveCenterIndex; i++)
+			for(int j = 0; j < moveCenterIndex; j++)
 			{
-				vertices[i] = vertices[i] + moveCenterDirection;
+				vertices[j] = vertices[j] - moveCenterDirection;
 			}
 		}
 	}
 
 	//move center
-	this->SetActorLocation(this->GetActorLocation() + moveCenterDirection);
+	FVector targetLocation = this->GetActorLocation() + moveCenterDirection;
+	this->SetActorLocation(targetLocation);
 
 	mesh->UpdateMeshSection_LinearColor(0, vertices, vertices, {}, {}, {});
 }

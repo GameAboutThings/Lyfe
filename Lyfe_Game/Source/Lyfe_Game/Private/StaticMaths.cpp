@@ -106,3 +106,11 @@ bool StaticMaths::RandomBool()
 
 	return random_2 ? random : !random;
 }
+
+bool StaticMaths::Between(float value, float a, float b)
+{
+	if ((value >= a && value <= b) || (value >= b && value <= a))
+		return true;
+
+	return false;
+}
