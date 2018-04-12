@@ -18,38 +18,83 @@ public:
 	Logging();
 	~Logging();
 
+	//String
+	static void Log(FString inputString, const char comment[], bool bConsole);
+
 	static void Log(FString inputString, bool bConsole);
 
 	static void Log(FString inputString);
+
+	static void Log(FString inputString, const char comment[]);
+
+
+	//char
+	static void Log(const char inputString[], const char comment[], bool bConsole);
 
 	static void Log(const char inputString[], bool bConsole);
 
 	static void Log(const char inputString[]);
 
+	static void Log(const char inputString[], const char comment[]);
+
+
+	//Vector 3D
+	static void Log(FVector inputVector, const char comment[], bool bConsole);
+
 	static void Log(FVector inputVector, bool bConsole);
 
 	static void Log(FVector inputVector);
+
+	static void Log(FVector inputVector, const char comment[]);
+
+
+	//Vector 2D
+	static void Log(FVector2D inputVector, const char comment[], bool bConsole);
 
 	static void Log(FVector2D inputVector, bool bConsole);
 
 	static void Log(FVector2D inputVector);
 
+	static void Log(FVector2D inputVector, const char comment[]);
+
+
+	//Float
+	static void Log(float inputFloat, const char comment[], bool bConsole);
+
 	static void Log(float inputFloat, bool bConsole);
 
 	static void Log(float inputFloat);
+
+	static void Log(float inputFloat, const char comment[]);
+
+
+	//Integer
+	static void Log(int inputInt, const char comment[], bool bConsole);
 
 	static void Log(int inputInt, bool bConsole);
 
 	static void Log(int inputInt);
 
+	static void Log(int inputInt, const char comment[]);
+
+
+	//Compound
+	static void Log(ECompound inputCompound, const char comment[], bool bConsole);
+
 	static void Log(ECompound inputCompound, bool bConsole);
 
 	static void Log(ECompound inputCompound);
 
+	static void Log(ECompound inputCompound, const char comment[]);
+
+
+	//Player State
 	static void Log(EPlayerState inputState, bool bConsole);
 
 	static void Log(EPlayerState inputState);
 
+
+	//ControlSetting
 	static void Log(EControlSettings inputControls, bool bConsole);
 
 	static void Log(EControlSettings inputControls);
