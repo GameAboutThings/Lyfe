@@ -89,13 +89,21 @@ public:
 
 
 	//Player State
+	static void Log(EPlayerState inputState, const char comment[], bool bConsole);
+
 	static void Log(EPlayerState inputState, bool bConsole);
 
 	static void Log(EPlayerState inputState);
 
+	static void Log(EPlayerState inputState, const char comment[]);
+
 
 	//ControlSetting
+	static void Log(EControlSettings inputControls, const char comment[], bool bConsole);
+
 	static void Log(EControlSettings inputControls, bool bConsole);
 
 	static void Log(EControlSettings inputControls);
+
+	static void Log(EControlSettings inputControls, const char comment[]);
 };

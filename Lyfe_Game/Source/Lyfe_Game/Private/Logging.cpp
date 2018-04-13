@@ -86,7 +86,7 @@ void Logging::Log(FString inputString, const char comment[], bool bConsole)
 
 void Logging::Log(FString inputString, bool bConsole)
 {
-	Logging::Log(inputString, FString(""), bConsole);
+	Logging::Log(inputString, "", bConsole);
 }
 
 void Logging::Log(FString inputString)
@@ -173,7 +173,7 @@ void Logging::Log(FVector2D inputVector)
 	Logging::Log(inputVector, false);
 }
 
-void Logging::Log(FVector2D, const char comment[], inputVector)
+void Logging::Log(FVector2D inputVector, const char comment[])
 {
 	Logging::Log(inputVector, comment, false);
 }
@@ -268,7 +268,7 @@ void Logging::Log(ECompound inputCompound, const char comment[])
 }
 
 //Player State
-void Logging::Log(EPlayerState inputState, bool bConsole)
+void Logging::Log(EPlayerState inputState, const char comment[], bool bConsole)
 {
 	FString log = FString(" EPLAYERSTATE : ");
 	switch (inputState)
@@ -280,7 +280,7 @@ void Logging::Log(EPlayerState inputState, bool bConsole)
 		log.Append(" Alive ");
 		break;
 	}
-	Logging::Log(log, bConsole);
+	Logging::Log(log, comment, bConsole);
 }
 
 void Logging::Log(EPlayerState inputState, bool bConsole)
@@ -299,7 +299,7 @@ void Logging::Log(EPlayerState inputState, const char comment[])
 }
 
 //Control Setting
-void Logging::Log(EControlSettings inputControls, bool bConsole)
+void Logging::Log(EControlSettings inputControls, const char comment[], bool bConsole)
 {
 	FString log = FString(" ECONTROLSETTING : ");
 	switch (inputControls)
