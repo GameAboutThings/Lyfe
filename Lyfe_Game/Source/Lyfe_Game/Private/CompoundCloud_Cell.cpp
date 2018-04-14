@@ -19,6 +19,7 @@ ACompoundCloud_Cell::ACompoundCloud_Cell()
 	PrimaryActorTick.bCanEverTick = true;
 
 	mesh = CreateDefaultSubobject<UProceduralMeshComponent>(TEXT("GeneratedMesh"));
+	cloudFX = CreateDefaultSubobject<UCompound_ParticleComponent_Cell>(TEXT("CloudParticles"));
 	RootComponent = mesh;
 	
 	mesh->bUseAsyncCooking = true;
@@ -26,13 +27,30 @@ ACompoundCloud_Cell::ACompoundCloud_Cell()
 	//mesh->OnComponentBeginOverlap.AddDynamic(this, &ACompoundCloud_Cell::BeginOverlap);
 	//mesh->OnComponentEndOverlap.AddDynamic(this, &ACompoundCloud_Cell::EndOverlap);
 
+	if (value == 0 || value == NULL)
+	{
+		value = StaticMaths::RR(4000.f, 6000.f);
+	}
+
+	float modifier = value / 5000.f;
+
+	FMeshBounds bounds = {
+		StaticMaths::RR(-10.f, 10.f) * modifier,
+		StaticMaths::RR(40.f, 60.f) * modifier,
+		StaticMaths::RR(90.f, 110.f) * modifier,
+		StaticMaths::RR(140.f, 160.f) * modifier,
+		StaticMaths::RR(190.f, 210.f) * modifier,
+	};
+
+	CreateCloudVerticesAndIndices(bounds);
+
 }
 
 // Called when the game starts or when spawned
 void ACompoundCloud_Cell::BeginPlay()
 {
 	Super::BeginPlay();
-	value = StaticMaths::RR(7000.f, 13000.f);
+	value = StaticMaths::RR(4000.f, 6000.f);
 
 	//First of all set the volume back on the player
 	ACharacter_SingleCelled* controller = Cast<ACharacter_SingleCelled>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
@@ -41,22 +59,7 @@ void ACompoundCloud_Cell::BeginPlay()
 		controller->GetWorldTimerManager().SetTimer(despawnTimer, this, &ACompoundCloud_Cell::DespawnTick, 5.f, false);
 	}
 
-	if (value == 0 || value == NULL)
-	{
-		value = StaticMaths::RR(7000.f, 13000.f);
-	}
-
-	float modifier = value / 10000.f;
-
-	FMeshBounds bounds = {
-		StaticMaths::RR(-10.f, 10.f) * modifier,
-		StaticMaths::RR(40.f, 60.f) * modifier,
-		StaticMaths::RR(90.f, 110.f) * modifier,
-		StaticMaths::RR(140.f, 160.f) * modifier,
-		StaticMaths::RR(190.f, 210.f) * modifier,
-	};
-
-	CreateCloudMesh(bounds);
+	CreateCloudMesh();
 
 	type = ECompound(rand() % 5);
 }
@@ -65,22 +68,7 @@ void ACompoundCloud_Cell::PostActorCreated()
 {
 	Super::PostActorCreated();
 
-	if (value == 0 || value == NULL)
-	{
-		value = StaticMaths::RR(7000.f, 13000.f);
-	}
-
-	float modifier = value / 10000.f;
-
-	FMeshBounds bounds = {
-		StaticMaths::RR(-10.f, 10.f) * modifier,
-		StaticMaths::RR(40.f, 60.f) * modifier,
-		StaticMaths::RR(90.f, 110.f) * modifier,
-		StaticMaths::RR(140.f, 160.f) * modifier,
-		StaticMaths::RR(190.f, 210.f) * modifier,
-	};
-
-	CreateCloudMesh(bounds);
+	CreateCloudMesh();
 	type = ECompound(rand() % 5);
 }
 
@@ -88,22 +76,7 @@ void ACompoundCloud_Cell::PostLoad()
 {
 	Super::PostLoad();
 
-	if (value == 0 || value == NULL)
-	{
-		value = StaticMaths::RR(7000.f, 13000.f);
-	}
-
-	float modifier = value / 10000.f;
-
-	FMeshBounds bounds = {
-		StaticMaths::RR(-10.f, 10.f) * modifier,
-		StaticMaths::RR(40.f, 60.f) * modifier,
-		StaticMaths::RR(90.f, 110.f) * modifier,
-		StaticMaths::RR(140.f, 160.f) * modifier,
-		StaticMaths::RR(190.f, 210.f) * modifier,
-	};
-
-	CreateCloudMesh(bounds);
+	CreateCloudMesh();
 	type = ECompound(rand() % 5);
 }
 
@@ -203,7 +176,7 @@ void ACompoundCloud_Cell::CreateCube()
 	//mesh->SetSimulatePhysics(true);
 }
 
-void ACompoundCloud_Cell::CreateCloudMesh(FMeshBounds _b)
+void ACompoundCloud_Cell::CreateCloudVerticesAndIndices(FMeshBounds _b)
 {
 	//vertex buffer
 	//TArray<FVector> vertices;
@@ -454,14 +427,16 @@ void ACompoundCloud_Cell::CreateCloudMesh(FMeshBounds _b)
 	indices.Add(13);
 	indices.Add(19);
 	indices.Add(14);
+}
 
-
+void ACompoundCloud_Cell::CreateCloudMesh()
+{
 	TArray<FVector> normals;
 	for (int i = 0; i < vertices.Num(); i++)
 	{
 		normals.Add(vertices[i] / vertices[i].Size());
 	}
-	
+
 
 	//// ?????????????????????
 	TArray<FVector2D> uv0;
@@ -626,7 +601,7 @@ void ACompoundCloud_Cell::DespawnTick()
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////
  //////////////////////////////// PROTECTED ///////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 void ACompoundCloud_Cell::BeginOverlap(AActor* otherActor)
@@ -670,4 +645,19 @@ ECompound ACompoundCloud_Cell::GetType()
   //////////////////////////////////////////////////////////////////////////////
  ///////////////////////////////// PUBLIC /////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+
+TArray<FVector> ACompoundCloud_Cell::GetVertices()
+{
+	return vertices;
+}
+
+TArray<int32> ACompoundCloud_Cell::GetIndices()
+{
+	return indices;
+}
+
+UProceduralMeshComponent * ACompoundCloud_Cell::GetMesh()
+{
+	return mesh;
+}
 

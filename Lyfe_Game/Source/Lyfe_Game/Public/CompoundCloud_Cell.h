@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "ProceduralMeshComponent.h"
+#include "Compound_ParticleComponent_Cell.h"
 #include "Meta_CellStage.h"
 
 #include "CompoundCloud_Cell.generated.h"
@@ -42,7 +43,7 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	/*---------------------------------------------------------------------------------------*/
+/*---------------------------------------------------------------------------------------*/
 
 
   //////////////////////////////////////////////////////////////////////////////
@@ -71,25 +72,29 @@ private:
 
 protected:
 	/** The editable mesh for the compound cloud */
-	UPROPERTY(BlueprintReadWrite, Category = "CELL|CELL_Compound")
+	UPROPERTY(BlueprintReadWrite, Category = "CELL|CompoundCloud|Mesh")
 	UProceduralMeshComponent * mesh;
 
+	/** This component has a particle system for every vertex on the procedural mesh */
+	UPROPERTY(EditAnywhere, Category = "CELL|CompoundCloud|FX")
+	UCompound_ParticleComponent_Cell * cloudFX;
+
 	/** The vertexbuffer for the compound cloud */
-	UPROPERTY(BlueprintReadWrite, Category = "CELL|CELL_Compound")
+	UPROPERTY(BlueprintReadWrite, Category = "CELL|CompoundCloud|Mesh")
 	TArray<FVector> vertices;
 
 	/** The indexbuffer for the compound cloud */
-	UPROPERTY(BlueprintReadWrite, Category = "CELL|CELL_Compound")
+	UPROPERTY(BlueprintReadWrite, Category = "CELL|CompoundCloud|Mesh")
 	TArray<int32> indices;
 
 	/** Will point to the player as long as he/she is consuming the compound cloud; else nullptr*/
-	UPROPERTY(BlueprintReadWrite, Category = "CELL|CELL_Compound")
+	UPROPERTY(BlueprintReadWrite, Category = "CELL|CompoundCloud|Consumption")
 	class ACharacter_SingleCelled* consumingPlayer;
 
 	/** Will point to a cell as long as it is consuming the compound cloud; else nullptr 
 	* No class for this so far so don't use it
 	*/
-	UPROPERTY(BlueprintReadWrite, Category = "CELL|CELL_Compound")
+	UPROPERTY(BlueprintReadWrite, Category = "CELL|CompoundCloud|Consumption")
 	class AActor* consumingCell;
 public:
 
@@ -99,9 +104,12 @@ public:
 private:
 	void CreateCube();
 
-	/** Creates random mesh*/
-	UFUNCTION(BlueprintCallable, Category = "CELL|CELL_Compound")
-	void CreateCloudMesh(FMeshBounds _b);
+	/** Creates random vertices and adds indices for them storing them in member variable vertices and indices*/
+	UFUNCTION(BlueprintCallable, Category = "CELL|CompoundCloud|Mesh")
+	void CreateCloudVerticesAndIndices(FMeshBounds _b);
+
+	UFUNCTION(BlueprintCallable, Category = "CELL|CompoundCloud|Mesh")
+	void CreateCloudMesh();
 
 	/** Reshapes the mesh away from the object that is consuming the cloud */
 	UFUNCTION()
@@ -114,15 +122,24 @@ private:
 	UFUNCTION()
 	void DespawnTick();
 protected:
-	UFUNCTION(BlueprintCallable, Category = "CELL|CELL_Collision")
+	UFUNCTION(BlueprintCallable, Category = "CELL|CompoundCloud|Collision")
 	void BeginOverlap(AActor* otherActor);
 
-	UFUNCTION(BlueprintCallable, Category = "CELL|CELL_Collision")
+	UFUNCTION(BlueprintCallable, Category = "CELL|CompoundCloud|Collision")
 	void EndOverlap(AActor* otherActor);
 
-	UFUNCTION(BlueprintCallable, Category = "CELL|CELL_Compound")
+	/** Returns the type of the Compound Cloud as the Compound Enum*/
+	UFUNCTION(BlueprintCallable, Category = "CELL|CompoundCloud|Compound")
 	ECompound GetType();
-
 public:
-	
+	/** Returns the vertices for the procedural mesh*/
+	UFUNCTION(BlueprintCallable, Category = "CELL|CompoundCloud|Mesh")
+	TArray<FVector> GetVertices();
+
+	/** Returns the indices for the procedural mesh*/
+	UFUNCTION(BlueprintCallable, Category = "CELL|CompoundCloud|Mesh")
+	TArray<int32> GetIndices();
+
+	UFUNCTION(BlueprintCallable, Category = "CELL|CompoundCloud|Mesh")
+	UProceduralMeshComponent* GetMesh();
 };
