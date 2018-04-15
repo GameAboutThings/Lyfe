@@ -3,3 +3,8 @@ enum instances: _e<name>
 variables: first letter is lower case ("movementSpeed")
 functions: first letter is upper case ("GetMovementSpeed")
 booleans: b<name>
+
+Filenames: <Name>_<Stage>
+<Stage> -> Cell|Microbe|Crature|Civ|Space
+
+Metas are all derived of Object
