@@ -3,12 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Components/SceneComponent.h"
+#include "Components/StaticMeshComponent.h"
 #include "CellEditor_ArrowComponent.generated.h"
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class LYFE_GAME_API UCellEditor_ArrowComponent : public USceneComponent
+class LYFE_GAME_API UCellEditor_ArrowComponent : public UStaticMeshComponent
 {
 	GENERATED_BODY()
 
@@ -39,11 +39,11 @@ public:
 //////////////////////////////////////////////////////////////////////////////
 private:
 protected:
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "CELL|Editor|Sculpting")
-	class UStaticMeshComponent* arrowRepresentation;
+	//UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "CELL|Editor|Sculpting")
+	//class UStaticMeshComponent* arrowRepresentation;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "CELL|Editor|Sculpting")
-	class UStaticMesh* arrowMesh;
+	class UStaticMesh* arrowRepresentation;
 public:
   /////////////////////////////////////////////////////////////////////////////
  ////////////////////////////// FUNCTIONS ////////////////////////////////////

@@ -1,8 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "CellEditor_NodeComponent.h"
-#include "Runtime/Engine/Classes/Components/StaticMeshComponent.h"
+#include "Runtime/CoreUObject/Public/UObject/ConstructorHelpers.h"
 #include "Logging.h"
+#include "Runtime/Engine/Public/PrimitiveSceneProxy.h"
 
 
 // Sets default values for this component's properties
@@ -13,8 +14,19 @@ UCellEditor_NodeComponent::UCellEditor_NodeComponent()
 	PrimaryComponentTick.bCanEverTick = true;
 	
 	//Create the visual representation for this node
-	sphereRepresentation = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Sphere"));
-	sphereRepresentation->SetupAttachment(this);
+	//sphereRepresentation = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Sphere"));
+	//sphereRepresentation->SetupAttachment(this);
+
+	auto meshAsset = ConstructorHelpers::FObjectFinder<UStaticMesh>(TEXT("StaticMesh'/Game/Meshes/Ball.Ball'"));
+	if (meshAsset.Object != nullptr)
+	{
+		sphereRepresentation = meshAsset.Object;
+		SetStaticMesh(sphereRepresentation);
+	}
+	else
+	{
+		Logging::Log("Could not find Asset at path in CellEditor_NodeComponent()");
+	}
 }
 
 
@@ -54,12 +66,17 @@ void UCellEditor_NodeComponent::SetType(ENodeType newType)
 	this->type = newType;
 }
 
-UStaticMeshComponent * UCellEditor_NodeComponent::GetMesh()
+ENodeType UCellEditor_NodeComponent::GetType()
+{
+	return type;
+}
+
+UStaticMesh * UCellEditor_NodeComponent::GetMesh()
 {
 	return sphereRepresentation;
 }
 
-void UCellEditor_NodeComponent::AttachChildNode(EPosition position)
+void UCellEditor_NodeComponent::CreateAndAttachChildNodeBase(EPosition position)
 {
 	if(position == EPosition::EAbove)
 	{
@@ -87,7 +104,7 @@ void UCellEditor_NodeComponent::AttachChildNode(EPosition position)
 	}
 }
 
-void UCellEditor_NodeComponent::AttachChildNode()
+void UCellEditor_NodeComponent::CreateAndAttachChildNode()
 {
 	child = CreateDefaultSubobject<UCellEditor_NodeComponent>(TEXT("ChildNode"));
 	child->SetupAttachment(this);
@@ -95,10 +112,10 @@ void UCellEditor_NodeComponent::AttachChildNode()
 	UCellEditor_NodeComponent* parentNode = Cast<UCellEditor_NodeComponent>(this->GetOwner());
 	if(parentNode != nullptr)
 	{
-		FVector pos = this->GetRelativeLocation();
-		FVector parPos = parentNode->GetRelativeLocation();
+		FVector pos = this->GetRelativeTransform().GetLocation();
+		FVector parPos = parentNode->GetRelativeTransform().GetLocation();
 		FVector childPos = pos - parPos;
-		child->SetRelativeLocation(childPos);
+		child->SetRelativeLocation(childPos);		
 	}
 	else
 	{
@@ -106,7 +123,7 @@ void UCellEditor_NodeComponent::AttachChildNode()
 	}
 }
 
-UCellEditor_NodeComponent* UCellEditor_NodeComponent::GetChild(EPosition position)
+UCellEditor_NodeComponent* UCellEditor_NodeComponent::GetChildBase(EPosition position)
 {
 	if(position == EPosition::EAbove)
 	{
@@ -124,6 +141,8 @@ UCellEditor_NodeComponent* UCellEditor_NodeComponent::GetChild(EPosition positio
 	{
 		return baseChild4;
 	}
+
+	return nullptr;
 }
 
 UCellEditor_NodeComponent* UCellEditor_NodeComponent::GetChild()

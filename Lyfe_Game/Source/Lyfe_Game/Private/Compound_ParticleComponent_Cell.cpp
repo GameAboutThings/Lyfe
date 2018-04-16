@@ -34,6 +34,7 @@ UCompound_ParticleComponent_Cell::UCompound_ParticleComponent_Cell()
 			particleSystems[i]->Activate();
 			particleSystems[i]->bIsActive = true;
 			particleSystems[i]->bVisible = true;
+			particleSystems[i]->CreateSceneProxy();
 		}
 	}
 }

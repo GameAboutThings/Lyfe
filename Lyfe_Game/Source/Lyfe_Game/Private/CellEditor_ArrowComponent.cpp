@@ -1,8 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "CellEditor_ArrowComponent.h"
-#include "Runtime/Engine/Classes/Components/StaticMeshComponent.h"
-
+#include "Runtime/CoreUObject/Public/UObject/ConstructorHelpers.h"
+#include "Logging.h"
 
 // Sets default values for this component's properties
 UCellEditor_ArrowComponent::UCellEditor_ArrowComponent()
@@ -16,7 +16,16 @@ UCellEditor_ArrowComponent::UCellEditor_ArrowComponent()
 	//arrowRepresentation->SetupAttachment(this);
 
 	//The mesh not as a component but directly as mesh in this component
-
+	auto meshAsset = ConstructorHelpers::FObjectFinder<UStaticMesh>(TEXT("StaticMesh'/Game/Meshes/Arrow.Arrow'"));
+	if (meshAsset.Object != nullptr)
+	{
+		arrowRepresentation = meshAsset.Object;
+		SetStaticMesh(arrowRepresentation);
+	}
+	else
+	{
+		Logging::Log("Could not find Asset at path in CellEditor_ArrowComponent()");
+	}
 }
 
 
@@ -53,6 +62,6 @@ void UCellEditor_ArrowComponent::TickComponent(float DeltaTime, ELevelTick TickT
 //////////////////////////////////////////////////////////////////////////////
 UStaticMeshComponent * UCellEditor_ArrowComponent::GetMeshComponent()
 {
-	return arrowRepresentation;
+	return nullptr;// arrowRepresentation;
 }
 

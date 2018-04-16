@@ -22,19 +22,23 @@ AEditorBase_Cell::AEditorBase_Cell()
 	//Create the 4 arrows that are used for creating and deleting nodes
 	arrowUp = CreateDefaultSubobject<UCellEditor_ArrowComponent>(TEXT("UP"));
 	arrowUp->SetupAttachment(RootComponent);
-	arrowUp->SetRelativeLocation(FVector(EDITOR_ARROW_DISTANCEFROMBASE, 0.f, 0.f));
+	arrowUp->AddRelativeLocation(FVector(EDITOR_ARROW_DISTANCEFROMBASE, 0.f, 0.f));
+	arrowUp->SetRelativeRotation(FRotator(90, 0, 0));
 
 	arrowDown = CreateDefaultSubobject<UCellEditor_ArrowComponent>(TEXT("DOWN"));
 	arrowDown->SetupAttachment(RootComponent);
-	arrowDown->SetRelativeLocation(FVector(-EDITOR_ARROW_DISTANCEFROMBASE, 0.f, 0.f));
+	arrowDown->AddRelativeLocation(FVector(-EDITOR_ARROW_DISTANCEFROMBASE, 0.f, 0.f));
+	arrowUp->SetRelativeRotation(FRotator(0, 90, 0));
 
 	arrowLeft = CreateDefaultSubobject<UCellEditor_ArrowComponent>(TEXT("LEFT"));
 	arrowLeft->SetupAttachment(RootComponent);
-	arrowLeft->SetRelativeLocation(FVector(0.f, -EDITOR_ARROW_DISTANCEFROMBASE, 0.f));
+	arrowLeft->AddRelativeLocation(FVector(0.f, -EDITOR_ARROW_DISTANCEFROMBASE, 0.f));
+	arrowUp->SetRelativeRotation(FRotator(-90, 0, 0));
 
 	arrowRight = CreateDefaultSubobject<UCellEditor_ArrowComponent>(TEXT("RIGHT"));
 	arrowRight->SetupAttachment(RootComponent);
-	arrowRight->SetRelativeLocation(FVector(0.f, EDITOR_ARROW_DISTANCEFROMBASE, 0.f));
+	arrowRight->AddRelativeLocation(FVector(0.f, EDITOR_ARROW_DISTANCEFROMBASE, 0.f));
+	arrowUp->SetRelativeRotation(FRotator(0, -90, 0));
 
 	//Use a spring arm to give the camera smooth, natural-feeling motion
 	USpringArmComponent* cameraArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraAttachmentArm"));
