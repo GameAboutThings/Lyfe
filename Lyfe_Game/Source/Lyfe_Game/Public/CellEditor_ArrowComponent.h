@@ -41,6 +41,9 @@ private:
 protected:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "CELL|Editor|Sculpting")
 	class UStaticMeshComponent* arrowRepresentation;
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "CELL|Editor|Sculpting")
+	class UStaticMesh* arrowMesh;
 public:
   /////////////////////////////////////////////////////////////////////////////
  ////////////////////////////// FUNCTIONS ////////////////////////////////////

@@ -52,12 +52,16 @@ protected:
 
 
 	//Children of this node is the base node
+	/** above */
 	UPROPERTY()
 	UCellEditor_NodeComponent* baseChild1;
+	/** right */
 	UPROPERTY()
 	UCellEditor_NodeComponent* baseChild2;
+	/** below */
 	UPROPERTY()
 	UCellEditor_NodeComponent* baseChild3;
+	/** left */
 	UPROPERTY()
 	UCellEditor_NodeComponent* baseChild4;
 
@@ -79,4 +83,18 @@ public:
 	/** Returns the mesh component */
 	UFUNCTION(BlueprintCallable, Category = "CELL|Editor|Sculpting")
 	UStaticMeshComponent* GetMesh();
+
+	/** Use this function only for baseNode; for normal nodes use withou position */
+	UFUNCTION(Category = "CELL|Editor|Sculpting")
+	void CreateAndAttachChildNode(EPosition position);
+
+	UFUNCTION(Category = "CELL|Editor|Sculpting")
+	void CreateAndAttachChildNode();
+
+	/** Use this function only for baseNode; for normal nodes use withou position */
+	UFUNCTION(BlueprintCallable, Category = "CELL|Editor|Sculpting")
+	UCellEditor_NodeComponent* GetChild(EPosition, position);
+
+	UFUNCTION(BlueprintCallable, Category = "CELL|Editor|Sculpting")
+	UCellEditor_NodeComponent* GetChild();
 };

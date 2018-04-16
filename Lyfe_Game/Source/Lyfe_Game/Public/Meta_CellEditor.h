@@ -19,6 +19,7 @@
 //#define EDITOR_ARROW_SCALE FVector(5.f)
 #define EDITOR_NODE_SIZE_MIN 50.f
 #define EDITOR_NODE_SIZE_MAX 150.f
+#define EDITOR_NODE_DISTANCE 50.f
 
 
 UENUM()
@@ -26,6 +27,15 @@ enum class ENodeType : uint8
 {
 	EBase UMETA(DisplayName = "Base"),
 	ENormal UMETA(DisplayName = "Normal")
+};
+
+UENUM()
+enum class EPosition : uint8
+{
+	EAbove UMETA(DisplayNAme = "above"),
+	EBelow UMETA(DisplayNAme = "below"),
+	ERight UMETA(DisplayNAme = "right"),
+	ELeft UMETA(DisplayNAme = "left")
 };
 
 /**

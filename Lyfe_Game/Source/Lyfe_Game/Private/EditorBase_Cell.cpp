@@ -22,19 +22,19 @@ AEditorBase_Cell::AEditorBase_Cell()
 	//Create the 4 arrows that are used for creating and deleting nodes
 	arrowUp = CreateDefaultSubobject<UCellEditor_ArrowComponent>(TEXT("UP"));
 	arrowUp->SetupAttachment(RootComponent);
-	//arrowUp->SetRelativeLocation(FVector(EDITOR_ARROW_DISTANCEFROMBASE, 0.f, 0.f));
+	arrowUp->SetRelativeLocation(FVector(EDITOR_ARROW_DISTANCEFROMBASE, 0.f, 0.f));
 
 	arrowDown = CreateDefaultSubobject<UCellEditor_ArrowComponent>(TEXT("DOWN"));
 	arrowDown->SetupAttachment(RootComponent);
-	//arrowDown->SetRelativeLocation(FVector(-EDITOR_ARROW_DISTANCEFROMBASE, 0.f, 0.f));
+	arrowDown->SetRelativeLocation(FVector(-EDITOR_ARROW_DISTANCEFROMBASE, 0.f, 0.f));
 
 	arrowLeft = CreateDefaultSubobject<UCellEditor_ArrowComponent>(TEXT("LEFT"));
 	arrowLeft->SetupAttachment(RootComponent);
-	//arrowLeft->SetRelativeLocation(FVector(0.f, -EDITOR_ARROW_DISTANCEFROMBASE, 0.f));
+	arrowLeft->SetRelativeLocation(FVector(0.f, -EDITOR_ARROW_DISTANCEFROMBASE, 0.f));
 
 	arrowRight = CreateDefaultSubobject<UCellEditor_ArrowComponent>(TEXT("RIGHT"));
 	arrowRight->SetupAttachment(RootComponent);
-	//arrowRight->SetRelativeLocation(FVector(0.f, EDITOR_ARROW_DISTANCEFROMBASE, 0.f));
+	arrowRight->SetRelativeLocation(FVector(0.f, EDITOR_ARROW_DISTANCEFROMBASE, 0.f));
 
 	//Use a spring arm to give the camera smooth, natural-feeling motion
 	USpringArmComponent* cameraArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraAttachmentArm"));
@@ -68,3 +68,16 @@ void AEditorBase_Cell::Tick(float DeltaTime)
 
 }
 
+/*---------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+
+  //////////////////////////////////////////////////////////////////////////////
+ ///////////////////////////////// PRIVATE ////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+
+  //////////////////////////////////////////////////////////////////////////////
+ //////////////////////////////// PROTECTED ///////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+
+  //////////////////////////////////////////////////////////////////////////////
+ ///////////////////////////////// PUBLIC /////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
