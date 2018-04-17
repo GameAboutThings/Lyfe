@@ -14,6 +14,17 @@ UCompound_ParticleComponent_Cell::UCompound_ParticleComponent_Cell()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 
+	//The mesh not as a component but directly as mesh in this component
+	auto psAsset = ConstructorHelpers::FObjectFinder<UStaticMesh>(TEXT("ParticleSystem'/Game/ParticleSystems/PS_CompoundCloud_SingleCelled.PS_CompoundCloud_SingleCelled'"));
+	if (psAsset.Object != nullptr)
+	{
+		particleSystemType = psAsset.Object;
+	}
+	else
+	{
+		Logging::Log("Could not find Asset at path in Compound_ParticleComponent_Cell");
+	}
+
 	ACompoundCloud_Cell* parentCloud = Cast<ACompoundCloud_Cell>(this->GetOwner());
 	if (parentCloud != nullptr)
 	{
@@ -23,18 +34,15 @@ UCompound_ParticleComponent_Cell::UCompound_ParticleComponent_Cell()
 		{			
 			std::string name = "ParticleSystem_";
 			name.append({ static_cast<char>(i) });
-
-			Logging::Log(name.c_str());
 			
 			particleSystems.Add(CreateDefaultSubobject<UParticleSystemComponent>(name.c_str()));
 			particleSystems[i]->AttachTo(parentCloud->GetRootComponent());
 			particleSystems[i]->SetRelativeLocation(vertices[i]);
 			particleSystems[i]->Template = particleSystemType;
-			particleSystems[i]->SetActive(true);
-			particleSystems[i]->Activate();
-			particleSystems[i]->bIsActive = true;
+			//particleSystems[i]->SetActive(true);
+			particleSystems[i]->ActivateSystem(true);
+			//particleSystems[i]->bIsActive = true;
 			particleSystems[i]->bVisible = true;
-			particleSystems[i]->CreateSceneProxy();
 		}
 	}
 }

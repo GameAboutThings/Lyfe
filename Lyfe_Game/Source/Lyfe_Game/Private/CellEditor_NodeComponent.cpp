@@ -4,6 +4,7 @@
 #include "Runtime/CoreUObject/Public/UObject/ConstructorHelpers.h"
 #include "Logging.h"
 #include "Runtime/Engine/Public/PrimitiveSceneProxy.h"
+#include "StaticMaths.h"
 
 
 // Sets default values for this component's properties
@@ -114,7 +115,8 @@ void UCellEditor_NodeComponent::CreateAndAttachChildNode()
 	{
 		FVector pos = this->GetRelativeTransform().GetLocation();
 		FVector parPos = parentNode->GetRelativeTransform().GetLocation();
-		FVector childPos = pos - parPos;
+		FVector dir = StaticMaths::Normalized(pos - parPos);
+		FVector childPos = (pos + dir) * EDITOR_NODE_DISTANCE;
 		child->SetRelativeLocation(childPos);		
 	}
 	else
