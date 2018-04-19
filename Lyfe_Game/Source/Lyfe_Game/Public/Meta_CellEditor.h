@@ -28,9 +28,18 @@ enum class ENodeType : uint8
 	//Only the Editor Base has the base node. This can't be deleted.
 	//Every third node can become a split node
 	//Every other node is a normal node
+	/*
+	* Every node starts out as normal except for the base node obviously
+	* When one node is split it becomes a split 
+	* it's parent^2 and child^2 on the not split axis become a single
+	* base is a special case it stays on that type
+	* condition for split:
+	* node is a normal not a single
+	*/
 	EBase UMETA(DisplayName = "Base"),
 	ENormal UMETA(DisplayName = "Normal"),
-	ESplit UMETA(DisplayName = "Split")
+	ESplit UMETA(DisplayName = "Split"),
+	ESingle UMETA(DisplayName = "Single")
 };
 
 UENUM()
