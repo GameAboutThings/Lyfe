@@ -5,6 +5,7 @@
 #include "CompoundCloud_Cell.h"
 #include "Logging.h"
 #include <string>
+#include "Runtime/CoreUObject/Public/UObject/ConstructorHelpers.h"
 
 
 // Sets default values for this component's properties
@@ -15,7 +16,7 @@ UCompound_ParticleComponent_Cell::UCompound_ParticleComponent_Cell()
 	PrimaryComponentTick.bCanEverTick = true;
 
 	//The mesh not as a component but directly as mesh in this component
-	auto psAsset = ConstructorHelpers::FObjectFinder<UStaticMesh>(TEXT("ParticleSystem'/Game/ParticleSystems/PS_CompoundCloud_SingleCelled.PS_CompoundCloud_SingleCelled'"));
+	auto psAsset = ConstructorHelpers::FObjectFinder<UParticleSystem>(TEXT("ParticleSystem'/Game/ParticleSystems/PS_CompoundCloud_SingleCelled.PS_CompoundCloud_SingleCelled'"));
 	if (psAsset.Object != nullptr)
 	{
 		particleSystemType = psAsset.Object;

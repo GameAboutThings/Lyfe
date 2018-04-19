@@ -44,18 +44,6 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CELL|Editor|Sculpting")
 	class UCellEditor_NodeComponent* baseNode;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CELL|Editor|Sculpting")
-	class UCellEditor_ArrowComponent* arrowUp;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CELL|Editor|Sculpting")
-	class UCellEditor_ArrowComponent* arrowDown;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CELL|Editor|Sculpting")
-	class UCellEditor_ArrowComponent* arrowLeft;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CELL|Editor|Sculpting")
-	class UCellEditor_ArrowComponent* arrowRight;
-
 	/** The camera that follows your cell around */
 	UPROPERTY(BlueprintReadWrite, Category = "CELL|Editor|Camera")
 	class UCameraComponent* camera;

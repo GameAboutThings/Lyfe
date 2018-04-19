@@ -25,17 +25,22 @@
 UENUM()
 enum class ENodeType : uint8
 {
+	//Only the Editor Base has the base node. This can't be deleted.
+	//Every third node can become a split node
+	//Every other node is a normal node
 	EBase UMETA(DisplayName = "Base"),
-	ENormal UMETA(DisplayName = "Normal")
+	ENormal UMETA(DisplayName = "Normal"),
+	ESplit UMETA(DisplayName = "Split")
 };
 
 UENUM()
 enum class EPosition : uint8
 {
-	EAbove UMETA(DisplayNAme = "above"),
-	EBelow UMETA(DisplayNAme = "below"),
-	ERight UMETA(DisplayNAme = "right"),
-	ELeft UMETA(DisplayNAme = "left")
+	EAbove UMETA(DisplayName = "above"),
+	EBelow UMETA(DisplayName = "below"),
+	ERight UMETA(DisplayName = "right"),
+	ELeft UMETA(DisplayName = "left"),
+	EBase UMETA(DisplayName = "base")
 };
 
 /**
