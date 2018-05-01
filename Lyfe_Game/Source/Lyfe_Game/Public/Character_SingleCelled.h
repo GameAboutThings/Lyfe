@@ -69,23 +69,23 @@ private:
 		FVector targetLocationPrev;
 	};
 
-	/** One single compound*/
-	struct Compound
-	{
-		int current;
-		int maximum;
-		int balance;
-	};
+	///** One single compound*/
+	//struct Compound
+	//{
+	//	int current;
+	//	int maximum;
+	//	int balance;
+	//};
 
 	/** Saves all compunds within the player */
-	struct Compounds
-	{
-		Compound _CO2;
-		Compound _O2;
-		Compound _AminoAcid;
-		Compound _Glucose;
-		Compound _Lipid;
-	};
+	//struct Compounds
+	//{
+	//	Compound _CO2;
+	//	Compound _O2;
+	//	Compound _AminoAcid;
+	//	Compound _Glucose;
+	//	Compound _Lipid;
+	//};
 
 protected:
 
@@ -135,13 +135,16 @@ private:
 	bool bIsRotating;
 
 	/** stores all compounds for the player */
-	Compounds _playerCompounds;
+	//Compounds _playerCompounds;
 
-	/** stores current and max Protein */
-	Compound _protein;
+	///** stores current and max Protein */
+	//Compound _protein;
 
 	/** Whether the mouse influences Gameplay or the GUI */
 	bool bInteractGUI;
+
+	/** A class that stores all compounds including proteins */
+	class UCompoundStorageComponent_Cell* compoundStorage;
 
 protected:
 	UPROPERTY(BlueprintReadWrite)
@@ -181,10 +184,10 @@ private:
 	/** Called when the player clicks the right mouse button */
 	void OnRightClick();
 
-	/** Sets compounds when world is loaded.
-	* Should not be called anywhere else.
-	*/
-	void SetCompounds();
+	///** Sets compounds when world is loaded.
+	//* Should not be called anywhere else.
+	//*/
+	//void SetCompounds();
 
 	/** Sets whether the player interacts with the GUI or with the Game. This is mostly relevant for EFollowMouse*/
 	UFUNCTION(BlueprintCallable, Category = "CELL|CELL_HUD")
@@ -194,10 +197,10 @@ private:
 	UFUNCTION(BlueprintCallable, Category = "CELL|CELL_HUD")
 	void SetInteractGUITrue();
 
-	/** Enforces the balance saved for every compound; Called every frame to reduce compound or rather metabolize it*/
-	void EnforceCompoundBalance();
+	///** Enforces the balance saved for every compound; Called every frame to reduce compound or rather metabolize it*/
+	//void EnforceCompoundBalance();
 
-	FString GetCompoundName(ECompound compound);
+	/*FString GetCompoundName(ECompound compound);*/
 
 protected:
 	/** Bound to the MoveForward Axis */
@@ -205,77 +208,49 @@ protected:
 	void SetForwardMotion(float input);
 
 	/** Bound to the MoveRight Axis */
-	UFUNCTION(BlueprintCallable, Category = "CELL|CELL_Movement")
+	UFUNCTION(BlueprintCallable, Category = "CELL|Movement")
 	void SetRightMotion(float input);
 
 	/** Returns the cells rotation speed */
-	UFUNCTION(BlueprintCallable, Category = "CELL|CELL_Movement")
+	UFUNCTION(BlueprintCallable, Category = "CELL|Movement")
 	float GetRotationSpeed();
 
 	/** Returns the cells movement speed */
-	UFUNCTION(BlueprintCallable, Category = "CELL|CELL_Movement")
+	UFUNCTION(BlueprintCallable, Category = "CELL|Movement")
 	float GetMovementSpeed();
 
 	/** Returns the cell's maximum health */
-	UFUNCTION(BlueprintCallable, Category = "CELL|CELL_Health")
+	UFUNCTION(BlueprintCallable, Category = "CELL|Health")
 	float GetMaxHealth();
 
 public:
 	/** Returns the cells wight
 	* Public because this is also used to determine dominant cell for absorbing
 	*/
-	UFUNCTION(BlueprintCallable, Category = "CELL|CELL_Movement")
+	UFUNCTION(BlueprintCallable, Category = "CELL|Movement")
 	float GetWeight();
 
 	/** Returns the cell's current health */
-	UFUNCTION(BlueprintCallable, Category = "CELL|CELL_Health")
+	UFUNCTION(BlueprintCallable, Category = "CELL|Health")
 	float GetCurrentHealth();
 
 	/** Used to manipulate the cell's health 
 	* @param amount can be positive or negative
 	*/
-	UFUNCTION(BlueprintCallable, Category = "CELL|CELL_Health")
+	UFUNCTION(BlueprintCallable, Category = "CELL|Health")
 	void AddHealth(float amount);
 
 	/** Allows to set the state for the player */
-	UFUNCTION(BlueprintCallable, Category = "CELL|CELL_State")
+	UFUNCTION(BlueprintCallable, Category = "CELL|State")
 	void SetPlayerState(EPlayerState newState);
 
 	/** Allows to acces the state of the player */
-	UFUNCTION(BlueprintCallable, Category = "CELL|CELL_State")
+	UFUNCTION(BlueprintCallable, Category = "CELL|State")
 	EPlayerState GetPlayerState();
 
-	UFUNCTION(BlueprintCallable, Category = "CELL|CELL_Movement")
+	UFUNCTION(BlueprintCallable, Category = "CELL|Movement")
 	bool PlayerIsMoving();
 
-	/** Adds to or reduces a compound
-	* It's up to the programmer to see if the compound is already 0. For debugging reasons it will be mentioned in the console, though.
-	* @param amound Can be positive or negative
-	* @param compound can be [carbon, oxygen, nitrogen, sulfur, phosphor]
-	*/
-	UFUNCTION(BlueprintCallable, Category = "CELL|CELL_Compound")
-	void AddCompound(int amount, ECompound compound);
-
-	/** Returns the amount left of that compound
-	* @param amound Can be positive or negative
-	* @param compound can be [carbon, oxygen, nitrogen, sulfur, phosphor]
-	* @param bMax whether the maximum should be returned or the current; true => maximum
-	*/
-	UFUNCTION(BlueprintCallable, Category = "CELL|CELL_Compound")
-	int GetCompound(ECompound compound, bool bMax);
-
-	/** Allows the programmer to add or reduce Protein */
-	UFUNCTION(BlueprintCallable, Category = "CELL|CELL_Protein")
-	void AddProtein(int amount);
-
-	/** Allows the programmer to get the current Protein value 
-	* @param bMax whether the maximum should be returned or the current; true => maximum
-	*/
-	UFUNCTION(BlueprintCallable, Category = "CELL|CELL_Protein")
-	int GetProtein(bool bMax);
-
-	/** Returns the balance for the input compound; */
-	UFUNCTION(BlueprintCallable, Category = "CELL|CELL_Compound")
-	int GetCompoundBalance(ECompound compound);
-
+	UFUNCTION(BlueprintCallable, Category = "CELL|Movement")
+	UCompoundStorageComponent_Cell* GetCompoundStorage();
 };

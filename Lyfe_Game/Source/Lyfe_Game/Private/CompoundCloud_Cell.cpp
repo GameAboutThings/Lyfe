@@ -10,6 +10,7 @@
 #include "Character_SingleCelled.h"
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 #include "StaticMaths.h"
+#include "CompoundStorageComponent_Cell.h"
 
 
 // Sets default values
@@ -527,7 +528,7 @@ void ACompoundCloud_Cell::ReshapeMeshOnConsumption()
 				//consume some of the cloud
 				//TODO make calculation of volume change instead of fixed value
 				value -= CLOUD_CONSUMPTION_RATE;
-				consumingPlayer->AddCompound(CLOUD_CONSUMPTION_RATE, type);
+				consumingPlayer->GetCompoundStorage()->AddCompound(CLOUD_CONSUMPTION_RATE, type);
 
 				if(StaticMaths::Between(vertices[i].X, 5.f, -5.f) && StaticMaths::Between(vertices[i].Y, 5.f, -5.f))
 				{

@@ -35,7 +35,7 @@ UCellEditor_NodeComponent::UCellEditor_NodeComponent()
 		UMaterialInterface * mInterface = Cast<UMaterialInterface>(materialAsset.Object);
 		if (mInterface != nullptr)
 		{
-			SetMaterial(0, mInterface);
+			SetMaterial(0, materialAsset.Object);
 		}
 		else
 		{

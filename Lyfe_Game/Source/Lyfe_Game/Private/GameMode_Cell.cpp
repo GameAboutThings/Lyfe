@@ -4,6 +4,7 @@
 #include "Character_SingleCelled.h"
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 #include "Logging.h"
+#include "CompoundStorageComponent_Cell.h"
 
   //////////////////////////////////////////////////////////////////////////////
  ////////////////////////////////// PRIVATE ///////////////////////////////////
@@ -32,12 +33,12 @@ void AGameMode_Cell::UpdateLowCompound()
 		//start at that value in the array and go to the next one that is low and set it
 
 
-		//											current amount		/									maximum			<= 0.1f
-		isLow[0] = ((float)controller->GetCompound(ECompound::ECO2, false)		/ (float)controller->GetCompound(ECompound::ECO2, true))	<= 0.1f;
-		isLow[1] = ((float)controller->GetCompound(ECompound::EO2, false)	/ (float)controller->GetCompound(ECompound::EO2, true)) <= 0.1f;
-		isLow[2] = ((float)controller->GetCompound(ECompound::EAminoAcid, false)		/ (float)controller->GetCompound(ECompound::EAminoAcid, true))	<= 0.1f;
-		isLow[3] = ((float)controller->GetCompound(ECompound::EGlucose, false)	/ (float)controller->GetCompound(ECompound::EGlucose, true)) <= 0.1f;
-		isLow[4] = ((float)controller->GetCompound(ECompound::ELipid, false) / (float)controller->GetCompound(ECompound::ELipid, true)) <= 0.1f;
+		//											current amount										/									maximum											<= 0.1f
+		isLow[0] = ((float)controller->GetCompoundStorage()->GetCompound(ECompound::ECO2, false)		/ (float)controller->GetCompoundStorage()->GetCompound(ECompound::ECO2, true))		<= 0.1f;
+		isLow[1] = ((float)controller->GetCompoundStorage()->GetCompound(ECompound::EO2, false)			/ (float)controller->GetCompoundStorage()->GetCompound(ECompound::EO2, true))		<= 0.1f;
+		isLow[2] = ((float)controller->GetCompoundStorage()->GetCompound(ECompound::EAminoAcid, false)	/ (float)controller->GetCompoundStorage()->GetCompound(ECompound::EAminoAcid, true))<= 0.1f;
+		isLow[3] = ((float)controller->GetCompoundStorage()->GetCompound(ECompound::EGlucose, false)	/ (float)controller->GetCompoundStorage()->GetCompound(ECompound::EGlucose, true))	<= 0.1f;
+		isLow[4] = ((float)controller->GetCompoundStorage()->GetCompound(ECompound::ELipid, false)		/ (float)controller->GetCompoundStorage()->GetCompound(ECompound::ELipid, true))	<= 0.1f;
 
 		if (!isLow[0] && !isLow[1] && !isLow[2] && !isLow[3] && !isLow[4])
 		{
