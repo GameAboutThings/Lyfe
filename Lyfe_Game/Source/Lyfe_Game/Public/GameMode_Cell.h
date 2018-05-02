@@ -39,16 +39,10 @@ public:
 private:
 	/** The active control setting */
 	EControlSettings _eControlSetting;
-	ECompound _eLowCompound;
+	
 	playerSurroundings _playerSurroundings;
 
 protected:
-	/** Will change every few frames */
-	UPROPERTY(BlueprintReadWrite, Category = "CELL|CELL_Compound")
-	FString lowCompound;
-
-	FTimerHandle lowCompoundRefreshTimer;
-
 public:
 
 
@@ -56,13 +50,9 @@ public:
  ////////////////////////////// FUNCTIONS ////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 private:
-	UFUNCTION(BlueprintCallable, Category = "CELL|CELL_Compound")
-	void UpdateLowCompound();
 
 protected:
-	/** Called on BeginPlay(). Starts a Timer to get the next low compound every few seconds. */
-	UFUNCTION(Blueprintcallable, Category = "CELL|CELL_Compound")
-	void StartLowCompoundCycle();
+
 public:
 	/** Set the control setting
 	* EFollowMouse -> Cell follows the cursor
@@ -79,10 +69,6 @@ public:
 	/** Returns whether the courser should be displayed or not */
 	UFUNCTION(BlueprintCallable, Category = "CELL|CELL_GUI")
 	bool DisableWASDInput();
-
-	/** Returns one compound that is low at this moment. Used for display in the GUI*/
-	UFUNCTION(BlueprintCallable, Category = "CELL|CELL_Compound")
-	FString GetLowCompound();
 
 	/** Returns the number of a chosen spawnable object */
 	UFUNCTION(BlueprintCallable, Category = "CELL|CELL_Spawn")

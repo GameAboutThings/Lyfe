@@ -39,6 +39,8 @@ ACharacter_SingleCelled::ACharacter_SingleCelled()
 	playerDirection = CreateDefaultSubobject<UArrowComponent>(TEXT("PlayerDirection"));
 	playerDirection->SetupAttachment(RootComponent, USpringArmComponent::SocketName);
 
+	compoundStorage = CreateDefaultSubobject<UCompoundStorageComponent_Cell>(TEXT("Compound Storage"));
+
 	//Allow user to control this character
 	AutoPossessPlayer = EAutoReceiveInput::Player0;
 
@@ -66,7 +68,7 @@ void ACharacter_SingleCelled::BeginPlay()
 	currentHealth = maxHealth;
 
 	//set compounds
-	compoundStorage->SetCompounds();
+	//compoundStorage->SetCompounds();
 
 	//Sets the movement variables to neutral.
 	_movement = { 50.f, //rotationSpeed || needs to be called from function later on

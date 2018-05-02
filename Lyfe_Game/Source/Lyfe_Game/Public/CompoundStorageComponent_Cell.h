@@ -61,7 +61,14 @@ private:
 	FCompound _protein;
 
 	FTimerHandle consumptionTimer;
+
+	ECompound _eLowCompound;
 protected:
+	/** Will change every few frames */
+	UPROPERTY(BlueprintReadWrite, Category = "CELL|CELL_Compound")
+	FString lowCompound;
+
+	FTimerHandle lowCompoundRefreshTimer;
 public:
   /////////////////////////////////////////////////////////////////////////////
  ////////////////////////////// FUNCTIONS ////////////////////////////////////
@@ -74,7 +81,13 @@ private:
 	/** Returns name of compound enum */
 	UFUNCTION()
 	FString GetCompoundName(ECompound compound);
+
+	UFUNCTION(BlueprintCallable, Category = "CELL|CELL_Compound")
+	void UpdateLowCompound();
 protected:
+	/** Called on BeginPlay(). Starts a Timer to get the next low compound every few seconds. */
+	UFUNCTION(Blueprintcallable, Category = "CELL|CELL_Compound")
+	void StartLowCompoundCycle();
 public:
 	/** Sets compounds when world is loaded.
 	* Should not be called anywhere else.
@@ -111,4 +124,8 @@ public:
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CELL|CELL_Protein")
 	int GetProtein(bool bMax);
+
+	/** Returns one compound that is low at this moment. Used for display in the GUI*/
+	UFUNCTION(BlueprintCallable, Category = "CELL|CELL_Compound")
+	FString GetLowCompound();
 };
