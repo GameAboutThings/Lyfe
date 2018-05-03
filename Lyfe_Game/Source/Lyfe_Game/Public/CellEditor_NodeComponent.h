@@ -39,6 +39,8 @@ public:
  //////////////////////////////// VARIABLES ///////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 private:
+	/** The radius for the sphere that will surround this node */
+	int radius;
 protected:
 	/** If this node is a base node or just a regular one */
 	UPROPERTY(VisibleAnywhere, Category = "CELL|Editor|Sculpting")
@@ -148,4 +150,8 @@ public:
 	/** This doesn't create a new node; this is simply used to assign a node to the child pointer*/
 	UFUNCTION()
 	void SetChildNode(EPosition _ePosition, UCellEditor_NodeComponent* node);
+
+	/** Returns the radius for the sphere arround this node the editor base will calculate */
+	UFUNCTION()
+	int GetRadius();
 };

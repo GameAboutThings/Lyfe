@@ -104,7 +104,7 @@ bool StaticMaths::RandomBool()
 	int random = (int)(rand()) % 2;
 	int random_2 = (int)(rand()) % 2;
 
-	return random_2 ? random : !random;
+	return (bool) (random_2 ? random : !random);
 }
 
 bool StaticMaths::Between(float value, float a, float b)

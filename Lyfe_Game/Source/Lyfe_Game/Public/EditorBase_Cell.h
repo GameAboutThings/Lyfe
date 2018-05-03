@@ -51,6 +51,10 @@ protected:
 	/** The springarm the camera is attached to */
 	UPROPERTY(BlueprintReadWrite, Category = "CELL|Editor|Camera")
 	class USpringArmComponent* cameraAttachmentArm;
+
+	/** The mesh that basically represents the body of your cell */
+	UPROPERTY(VisibleAnywhere, Category = "CELL|Editor|Sculpting")
+	class UProceduralMeshComponent bodyMesh;
 public:
   /////////////////////////////////////////////////////////////////////////////
  ////////////////////////////// FUNCTIONS ////////////////////////////////////
@@ -58,4 +62,7 @@ public:
 private:
 protected:
 public:
+	/** Generates the body mesh of the cell */
+	UFUNCTION(BlueprintCallable, Category = "CELL|Editor|Sculpting")
+	void GenerateBodyMesh();
 };

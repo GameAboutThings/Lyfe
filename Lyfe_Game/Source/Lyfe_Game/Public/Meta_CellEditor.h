@@ -20,6 +20,7 @@
 #define EDITOR_NODE_SIZE_MIN 50.f
 #define EDITOR_NODE_SIZE_MAX 150.f
 #define EDITOR_NODE_DISTANCE 15.f
+#define EDITOR_BODY_SPHERE_VERT_NUM 4.f * 25.f //for fucks sake keep the 4 in there. The 4 is needed to calculate the vertices
 
 
 UENUM()

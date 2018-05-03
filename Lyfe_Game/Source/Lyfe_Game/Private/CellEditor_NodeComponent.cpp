@@ -285,3 +285,9 @@ void UCellEditor_NodeComponent::SetChildNode(EPosition _ePosition, UCellEditor_N
 		child4 = node;
 	}
 }
+
+
+int UCellEditor_NodeComponent::GetRadius()
+{
+	return radius;
+}
