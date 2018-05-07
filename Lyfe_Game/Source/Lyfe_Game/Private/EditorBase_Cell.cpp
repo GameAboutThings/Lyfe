@@ -13,11 +13,14 @@ AEditorBase_Cell::AEditorBase_Cell()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	idCounter = 0;
+
 	//Create the base node for this cell
 	baseNode = CreateDefaultSubobject<UCellEditor_NodeComponent>(TEXT("BaseNode"));
 	RootComponent = baseNode;
 	baseNode->SetRelativeLocation(FVector(0, 0, 0));
 	baseNode->PostConstructor(ENodeType::EBase, EPosition::EBase);
+	baseNode->SetEditorBase(this);
 
 	//Use a spring arm to give the camera smooth, natural-feeling motion
 	USpringArmComponent* cameraArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraAttachmentArm"));
@@ -41,7 +44,7 @@ AEditorBase_Cell::AEditorBase_Cell()
 void AEditorBase_Cell::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	idCounter = 0;
 }
 
 // Called every frame
@@ -78,46 +81,7 @@ void AEditorBase_Cell::GenerateBodyMesh()
 	uint_8 latBands = 20;
 	uint_8 longBands = 20;
 
-	//generating all the vertices
-	for(uint_8 latNumber = 0; latNumber <= latBands; latNumber ++)
-	{
-		float theta = latNumber * FMath::pi / longBands;
-		float sinTheta = FMath::Sin(theta);
-		float cosTheta = FMath::Cos(theta);
-
-		for(uint_8 longNumber = 0; longNumber <= longBands; longNumber++)
-		{
-			float phi = longNumber * 2 * FMath::pi / longBands;
-			float sinPhi = FMath::Sin(phi);
-			float cosPhi = FMath::Cos(phi);
-
-			normals.Add(FVector(
-				cosPhi * sinTheta,
-				cosTheta,
-				sinPhi * sinTheta
-			) + centerOffsetTemp
-			);
-			vertices.Add(normals[i] * radiusTemp);
-		}
-	}
-
-	//generating indices
-	for(uint_8 latNumber = 0; latNumber < latBands; latNumber++)
-	{
-		for(uint_8 longNumber = 0; longNumber < longBands; longNumber++)
-		{
-			uint_8 first = (latNumber * (longBands + 1)) + longNumber;
-			uint_8 second = first + longBands + 1;
-
-			indices.Add(first);
-			indices.Add(second);
-			indices.Add(first + 1);
-
-			indices.Add(second);
-			indices.Add(second + 1);
-			indices.Add(first + 1);
-		}
-	}
+	StaticMaths:AddSphereToCellMesh(latBands, longBands, radiusTemp, centerOffsetTemp, &vertices, &normals, &indices);
 
 	//After the base node continue with its children
 	//Offset when adding to the index buffer is always the length of the vertex buffer when starting a new sphere
@@ -128,6 +92,36 @@ void AEditorBase_Cell::GenerateBodyMesh()
 		UCellEditor_NodeComponent* curNode = baseNode->GetChild(pos[i]);
 		centerOffsetTemp = curNode->GetRelativeLocation();
 		radiusTemp = curNode->GetRadius();
+		//Get current child node of the base and add its sphere
+		StaticMaths:AddSphereToCellMesh(latBands, longBands, radiusTemp, centerOffsetTemp, &vertices, &normals, &indices);
+
+		//Move on along the arm of this node one step
+		TArray<EPosition> pos_2 = curNode->GetChildrenPositions();
+		for(uint_8 i_2; i_2 < pos_2.Num; i_2 ++)
+		{
+			UCellEditor_NodeComponent* curNode_2 = curNode->GetChild(pos[i]);
+			centerOffsetTemp = curNode_2->GetRelativeLocation();
+			radiusTemp = curNode_2->GetRadius();
+			StaticMaths:AddSphereToCellMesh(latBands, longBands, radiusTemp, centerOffsetTemp, &vertices, &normals, &indices);
+
+			TArray<EPosition> pos_3 = curNode_2->GetChildrenPositions();
+			for(uint_8 i_3; i_3 < pos_3.Num; i_3 ++)
+			{
+				UCellEditor_NodeComponent* curNode_3 = curNode_2->GetChild(pos[i]);
+				centerOffsetTemp = curNode_3->GetRelativeLocation();
+				radiusTemp = curNode_3->GetRadius();
+				StaticMaths:AddSphereToCellMesh(latBands, longBands, radiusTemp, centerOffsetTemp, &vertices, &normals, &indices);
+
+				TArray<EPosition> pos_4 = curNode_3->GetChildrenPositions();
+				for(uint_8 i_4; i_4 < pos_4.Num; i_4 ++)
+				{
+					UCellEditor_NodeComponent* curNode_4 = curNode_3->GetChild(pos[i]);
+					centerOffsetTemp = curNode_4->GetRelativeLocation();
+					radiusTemp = curNode_4->GetRadius();
+					StaticMaths:AddSphereToCellMesh(latBands, longBands, radiusTemp, centerOffsetTemp, &vertices, &normals, &indices);
+				}
+			}
+		}
 	}
 
 
@@ -155,4 +149,10 @@ void AEditorBase_Cell::GenerateBodyMesh()
 	mesh->SetCollisionConvexMeshes({ vertices });
 	mesh->ContainsPhysicsTriMeshData(false);
 	//mesh->UpdateMeshSection_LinearColor(0, vertices, normals, uv0, vertexColors, tangents);*/
+}
+
+int EditorBase_Cell::GetIdConuter()
+{
+	idCounter++;
+	return idCounter;
 }

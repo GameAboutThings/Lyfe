@@ -67,6 +67,11 @@ UCellEditor_NodeComponent::UCellEditor_NodeComponent()
 	arrowRight->SetupAttachment(this);
 	arrowRight->AddRelativeLocation(FVector(0.f, EDITOR_ARROW_DISTANCEFROMBASE, 0.f));
 	arrowRight->SetRelativeRotation(FRotator(0, 0, 90));
+
+	isMouseOver = false;
+
+	//acces parent; if parent is editor-base the cast will fail but that doesn't matter because in that case the editor base will be set in the variable anyway
+	editorBase = Cast<AEditorBase_Cell>(GetOwner()->GetEditorBase());
 }
 
 
@@ -85,7 +90,15 @@ void UCellEditor_NodeComponent::TickComponent(float DeltaTime, ELevelTick TickTy
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	// ...
+	if((isSelected || isMouseOver) /* && scroll wheel*/)
+	{
+		//add or subtract from radius;
+	}
+
+	if(isSelected /* && delete */)
+	{
+		this->DestroyComponent();
+	}
 }
 
 /*---------------------------------------------------------------------------------------------------------------------------------------------------------------*/
@@ -93,6 +106,10 @@ void UCellEditor_NodeComponent::TickComponent(float DeltaTime, ELevelTick TickTy
   //////////////////////////////////////////////////////////////////////////////
  ///////////////////////////////// PRIVATE ////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+void UCellEditor_NodeComponent::SetID()
+{
+	id = editorBase->GetIdCounter();
+}
 
   //////////////////////////////////////////////////////////////////////////////
  //////////////////////////////// PROTECTED ///////////////////////////////////
@@ -286,8 +303,55 @@ void UCellEditor_NodeComponent::SetChildNode(EPosition _ePosition, UCellEditor_N
 	}
 }
 
-
 int UCellEditor_NodeComponent::GetRadius()
 {
 	return radius;
+}
+
+void UCellEditor_NodeComponent::SetMouseOver(bool state)
+{
+	isMouseOver = state;
+}
+
+bool UCellEditor_NodeComponent::GetMouseOver()
+{
+	//if mouse ismouseover oder selected and scroll-wheel: change radius
+	return isMouseOver;
+}
+
+void UCellEditor_NodeComponent::SetIsSelected(bool state)
+{
+	isSelected = state;
+}
+
+bool UCellEditor_NodeComponent::GetIsSelected()
+{
+	//if mouse ismouseover oder selected and scroll-wheel: change radius
+	return isSelected;
+}
+
+FString UCellEditor_NodeComponent::ToString()
+{
+	int parentID = 0;
+	UCellEditor_NodeComponent* parent = Cast<UCellEDitor_NodeComponent>(GetOwner());
+	if(parent == nullptr)
+	{
+		parentID = -1;
+	}
+	else
+	{
+		parentID = parent->GetID();
+	}
+
+	FVector toParent = this->GetRelativeLocation() - parent->GetRelativeLocation();
+
+	FString str = "#NODE ";
+	str.Append(id + " "); //ID
+	str.Append(parentID + " ") //parent ID
+	str.Append(Util::VectorToString(toParent) + " "); //Vector to parent
+	str.Append(Util::EnumToString(_ePositionToParent) + " "); //Position to Parent
+	str.Append(radius + " "); //radius
+	str.Append(Util::EnumToString(_eType) + " "); //node type
+
+	return str;
 }

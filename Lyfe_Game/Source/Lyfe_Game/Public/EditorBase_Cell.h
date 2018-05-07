@@ -39,6 +39,7 @@ public:
  //////////////////////////////// VARIABLES ///////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 private:
+	int idCounter;
 protected:
 	/** The root of the node system that will form the sculpting */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CELL|Editor|Sculpting")
@@ -62,7 +63,12 @@ public:
 private:
 protected:
 public:
-	/** Generates the body mesh of the cell */
+	/** Generates the body mesh of the cell 
+	 * Expand this method if EDITOR_MAXNUM_NODES_PER_ARM in Meta_CellEditor changes
+	*/
 	UFUNCTION(BlueprintCallable, Category = "CELL|Editor|Sculpting")
 	void GenerateBodyMesh();
+
+	UFUNCTION()
+	int GetIdCounter();
 };

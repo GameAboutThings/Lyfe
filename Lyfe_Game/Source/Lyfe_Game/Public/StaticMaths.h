@@ -52,4 +52,16 @@ public:
 
 	/** Returns whether the given value lies between the other two */
 	static bool Between(float value, float a, float b);
+
+	/** 
+	 * Adds the vertices, indices and normals for the sphere mesh around nodes in the cell editor
+	 * @param latBands Number of latitude bands around the sphere
+	 * @param longBands Number of longitude bands around the sphere
+	 * @param radius Radius of the sphere
+	 * @param centerOffset The relative location of the sphere center towards the editor-base
+	 * @param vertices Pointer to the vertexBuffer
+	 * @param normals Pointer to the normalBuffer
+	 * @param indices Pointer to the indexBuffer
+	*/
+	static void AddSphereToCellMesh(int latBands, int longBands, int radius, FVector centerOffset, TArray<FVector>* vertices, TArray<FVector>* normals, TArry<int>* indices);
 };

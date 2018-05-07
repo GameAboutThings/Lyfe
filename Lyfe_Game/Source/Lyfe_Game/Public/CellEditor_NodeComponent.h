@@ -41,6 +41,10 @@ public:
 private:
 	/** The radius for the sphere that will surround this node */
 	int radius;
+	bool isMouseOver;
+	bool isSelected;
+	int id;
+	class EditorBase_Cell* editorBase;
 protected:
 	/** If this node is a base node or just a regular one */
 	UPROPERTY(VisibleAnywhere, Category = "CELL|Editor|Sculpting")
@@ -93,6 +97,8 @@ public:
 	////////////////////////////// FUNCTIONS ////////////////////////////////////
 	/////////////////////////////////////////////////////////////////////////////
 private:
+	UFUNCTION()
+	void SetID();
 protected:
 public:
 	/** Call this after creating a new node 
@@ -154,4 +160,25 @@ public:
 	/** Returns the radius for the sphere arround this node the editor base will calculate */
 	UFUNCTION()
 	int GetRadius();
+
+	UFUNCTION(BlueprintCallable, Category = "CELL|Editor|Sculpting")
+	void SetMouseOver(bool state);
+
+	UFUNCTION(BlueprintCallable, Category = "CELL|Editor|Sculpting")
+	bool GetMouseOver();
+
+	UFUNCTION(BlueprintCallable, Category = "CELL|Editor|Sculpting")
+	void SetIsSelected(bool state);
+
+	UFUNCTION(BlueprintCallable, Category = "CELL|Editor|Sculpting")
+	bool GetIsSelected();
+
+	UFUNCTION(BlueprintCallable, Category = "CELL|Editor|Sculpting")
+	void SetEditorBase(EditorBase_Cell* base);
+
+	UFUNCTION(BlueprintCallable, Category = "CELL|Editor|Sculpting")
+	EditorBase_Cell* GetEditorBase();
+
+	UFUNCTION()
+	FString ToString();
 };
