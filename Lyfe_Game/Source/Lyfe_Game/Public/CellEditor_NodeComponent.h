@@ -44,7 +44,7 @@ private:
 	bool isMouseOver;
 	bool isSelected;
 	int id;
-	class EditorBase_Cell* editorBase;
+	class AEditorBase_Cell* editorBase;
 protected:
 	/** If this node is a base node or just a regular one */
 	UPROPERTY(VisibleAnywhere, Category = "CELL|Editor|Sculpting")
@@ -174,10 +174,13 @@ public:
 	bool GetIsSelected();
 
 	UFUNCTION(BlueprintCallable, Category = "CELL|Editor|Sculpting")
-	void SetEditorBase(EditorBase_Cell* base);
+	void SetEditorBase(AEditorBase_Cell* base);
 
 	UFUNCTION(BlueprintCallable, Category = "CELL|Editor|Sculpting")
-	EditorBase_Cell* GetEditorBase();
+	AEditorBase_Cell* GetEditorBase();
+
+	UFUNCTION(BlueprintCallable, Category = "CELL|Editor|Sculpting")
+	int GetID();
 
 	UFUNCTION()
 	FString ToString();

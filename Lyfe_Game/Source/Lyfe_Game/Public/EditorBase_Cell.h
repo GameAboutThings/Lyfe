@@ -55,7 +55,7 @@ protected:
 
 	/** The mesh that basically represents the body of your cell */
 	UPROPERTY(VisibleAnywhere, Category = "CELL|Editor|Sculpting")
-	class UProceduralMeshComponent bodyMesh;
+	class UProceduralMeshComponent* bodyMesh;
 public:
   /////////////////////////////////////////////////////////////////////////////
  ////////////////////////////// FUNCTIONS ////////////////////////////////////

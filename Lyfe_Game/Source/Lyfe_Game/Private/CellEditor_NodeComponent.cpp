@@ -8,6 +8,9 @@
 #include "CellEditor_ArrowComponent.h"
 #include "Runtime/Engine/Classes/Materials/Material.h"
 #include "Runtime/Engine/Classes/Engine/StaticMesh.h"
+#include "EditorBase_Cell.h"
+#include "Util.h"
+//#include "../Private/Util.cpp"
 
 
 // Sets default values for this component's properties
@@ -71,7 +74,12 @@ UCellEditor_NodeComponent::UCellEditor_NodeComponent()
 	isMouseOver = false;
 
 	//acces parent; if parent is editor-base the cast will fail but that doesn't matter because in that case the editor base will be set in the variable anyway
-	editorBase = Cast<AEditorBase_Cell>(GetOwner()->GetEditorBase());
+	//editorBase = Cast<AEditorBase_Cell>(Cast<UCellEditor_NodeComponent>(GetOwner())->GetEditorBase());
+	UCellEditor_NodeComponent* parent = Cast<UCellEditor_NodeComponent>(GetOwner());
+	if (parent != nullptr)
+	{
+		editorBase = Cast<AEditorBase_Cell>(parent->GetEditorBase());
+	}
 }
 
 
@@ -330,10 +338,25 @@ bool UCellEditor_NodeComponent::GetIsSelected()
 	return isSelected;
 }
 
+void UCellEditor_NodeComponent::SetEditorBase(AEditorBase_Cell * base)
+{
+	editorBase = base;
+}
+
+AEditorBase_Cell * UCellEditor_NodeComponent::GetEditorBase()
+{
+	return editorBase;
+}
+
+int UCellEditor_NodeComponent::GetID()
+{
+	return id;
+}
+
 FString UCellEditor_NodeComponent::ToString()
 {
 	int parentID = 0;
-	UCellEditor_NodeComponent* parent = Cast<UCellEDitor_NodeComponent>(GetOwner());
+	UCellEditor_NodeComponent* parent = Cast<UCellEditor_NodeComponent>(GetOwner());
 	if(parent == nullptr)
 	{
 		parentID = -1;
@@ -343,15 +366,16 @@ FString UCellEditor_NodeComponent::ToString()
 		parentID = parent->GetID();
 	}
 
-	FVector toParent = this->GetRelativeLocation() - parent->GetRelativeLocation();
+	FVector toParent = this->GetRelativeTransform().GetLocation() - parent->GetRelativeTransform().GetLocation();
 
 	FString str = "#NODE ";
 	str.Append(id + " "); //ID
-	str.Append(parentID + " ") //parent ID
-	str.Append(Util::VectorToString(toParent) + " "); //Vector to parent
+	str.Append(parentID + " "); //parent ID
+	str.Append(Util::Vector3DToString(toParent) + " "); //Vector to parent
 	str.Append(Util::EnumToString(_ePositionToParent) + " "); //Position to Parent
 	str.Append(radius + " "); //radius
 	str.Append(Util::EnumToString(_eType) + " "); //node type
+	str.Append("\n");
 
 	return str;
 }

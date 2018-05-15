@@ -5,6 +5,7 @@
 #include <ctime>
 #include <cstdlib>
 #include "Logging.h"
+#include <math.h>
 
 StaticMaths::StaticMaths()
 {
@@ -115,38 +116,39 @@ bool StaticMaths::Between(float value, float a, float b)
 	return false;
 }
 
-void StaticMaths::AddSphereToCellMesh(int latBands, int longBands, int radius, FVector centerOffset, TArray<FVector>* vertices, TArray<FVector>* normals, TArry<int>* indices)
+void StaticMaths::AddSphereToCellMesh(int latBands, int longBands, int radius, FVector centerOffset, TArray<FVector>* vertices, TArray<FVector>* normals, TArray<int>* indices)
 {
 	//generating all the vertices
-	for(uint_8 latNumber = 0; latNumber <= latBands; latNumber ++)
+	for(uint8 latNumber = 0; latNumber <= latBands; latNumber ++)
 	{
-		float theta = latNumber * Math::pi / longBands;
+		float theta = latNumber * PI / longBands;
 		float sinTheta = FMath::Sin(theta);
 		float cosTheta = FMath::Cos(theta);
 
-		for(uint_8 longNumber = 0; longNumber <= longBands; longNumber++)
+		for(uint8 longNumber = 0; longNumber <= longBands; longNumber++)
 		{
-			float phi = longNumber * 2 * Math::pi / longBands;
+			float phi = longNumber * 2 * PI / longBands;
 			float sinPhi = FMath::Sin(phi);
 			float cosPhi = FMath::Cos(phi);
 
-			normals->Add(FVector(
+			FVector normal = FVector(
 				cosPhi * sinTheta,
 				cosTheta,
 				sinPhi * sinTheta
-			) + centerOffsetTemp
-			);
-			vertices->Add(normals*[i] * radiusTemp);
+			) + centerOffset;
+
+			normals->Add(normal);
+			vertices->Add(normal * radius);
 		}
 	}
 
 	//generating indices
-	for(uint_8 latNumber = 0; latNumber < latBands; latNumber++)
+	for(uint8 latNumber = 0; latNumber < latBands; latNumber++)
 	{
-		for(uint_8 longNumber = 0; longNumber < longBands; longNumber++)
+		for(uint8 longNumber = 0; longNumber < longBands; longNumber++)
 		{
-			uint_8 first = (latNumber * (longBands + 1)) + longNumber;
-			uint_8 second = first + longBands + 1;
+			uint8 first = (latNumber * (longBands + 1)) + longNumber;
+			uint8 second = first + longBands + 1;
 
 			indices->Add(first);
 			indices->Add(second);

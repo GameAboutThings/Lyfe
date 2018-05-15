@@ -76,8 +76,8 @@ protected:
 	UProceduralMeshComponent * mesh;
 
 	/** This component has a particle system for every vertex on the procedural mesh */
-	UPROPERTY(EditAnywhere, Category = "CELL|CompoundCloud|FX")
-	UCompound_ParticleComponent_Cell * cloudFX;
+	UPROPERTY(VisibleAnywhere, Category = "CELL|CompoundCloud|FX")
+	TArray<UCompound_ParticleComponent_Cell *> particles;
 
 	/** The vertexbuffer for the compound cloud */
 	UPROPERTY(BlueprintReadWrite, Category = "CELL|CompoundCloud|Mesh")

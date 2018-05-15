@@ -4,6 +4,8 @@
 #include "Runtime/Core/Public/Misc/FileHelper.h"
 #include "Runtime/Core/Public/HAL/PlatformFilemanager.h"
 #include "Runtime/Core/Public/Misc/DateTime.h"
+//#include "Util.h"
+//#include "../Private/Util.cpp"
 
 Logging::Logging()
 {
@@ -228,27 +230,28 @@ void Logging::Log(int inputInt, const char comment[])
 void Logging::Log(ECompound inputCompound, const char comment[], bool bConsole)
 {
 	FString log = FString(" ECOMPOUND : ");
-	switch (inputCompound)
-	{
-	case ECompound::EO2:
-		log.Append(" O2 ");
-		break;
-	case ECompound::ECO2:
-		log.Append(" CO2 ");
-		break;
-	case ECompound::EAminoAcid:
-		log.Append(" Amino Acid ");
-		break;
-	case ECompound::EGlucose:
-		log.Append(" Glucose ");
-		break;
-	case ECompound::ELipid:
-		log.Append(" Lipid ");
-		break;
-	case ECompound::ENothing:
-		log.Append(" Nothing ");
-		break;
-	}
+	log.Append(Util::EnumToString(inputCompound));
+	//switch (inputCompound)
+	//{
+	//case ECompound::EO2:
+	//	log.Append(" O2 ");
+	//	break;
+	//case ECompound::ECO2:
+	//	log.Append(" CO2 ");
+	//	break;
+	//case ECompound::EAminoAcid:
+	//	log.Append(" Amino Acid ");
+	//	break;
+	//case ECompound::EGlucose:
+	//	log.Append(" Glucose ");
+	//	break;
+	//case ECompound::ELipid:
+	//	log.Append(" Lipid ");
+	//	break;
+	//case ECompound::ENothing:
+	//	log.Append(" Nothing ");
+	//	break;
+	//}
 	Logging::Log(log, comment, bConsole);
 }
 
@@ -271,15 +274,16 @@ void Logging::Log(ECompound inputCompound, const char comment[])
 void Logging::Log(EPlayerState inputState, const char comment[], bool bConsole)
 {
 	FString log = FString(" EPLAYERSTATE : ");
-	switch (inputState)
-	{
-	case EPlayerState::EDead:
-		log.Append(" Dead ");
-		break;
-	case EPlayerState::EAlive:
-		log.Append(" Alive ");
-		break;
-	}
+	log.Append(Util::EnumToString(inputState));
+	//switch (inputState)
+	//{
+	//case EPlayerState::EDead:
+	//	log.Append(" Dead ");
+	//	break;
+	//case EPlayerState::EAlive:
+	//	log.Append(" Alive ");
+	//	break;
+	//}
 	Logging::Log(log, comment, bConsole);
 }
 
@@ -302,18 +306,19 @@ void Logging::Log(EPlayerState inputState, const char comment[])
 void Logging::Log(EControlSettings inputControls, const char comment[], bool bConsole)
 {
 	FString log = FString(" ECONTROLSETTING : ");
-	switch (inputControls)
-	{
-	case EControlSettings::EFollowMouse:
-		log.Append(" FollowMouse ");
-		break;
-	case EControlSettings::EWASD:
-		log.Append(" WASD ");
-		break;
-	case EControlSettings::EClick:
-		log.Append(" Click ");
-		break;
-	}
+	log.Append(Util::EnumToString(inputControls));
+	//switch (inputControls)
+	//{
+	//case EControlSettings::EFollowMouse:
+	//	log.Append(" FollowMouse ");
+	//	break;
+	//case EControlSettings::EWASD:
+	//	log.Append(" WASD ");
+	//	break;
+	//case EControlSettings::EClick:
+	//	log.Append(" Click ");
+	//	break;
+	//}
 	Logging::Log(log, bConsole);
 }
 

@@ -3,12 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Components/ActorComponent.h"
+#include "Components/SceneComponent.h"
 #include "Compound_ParticleComponent_Cell.generated.h"
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class LYFE_GAME_API UCompound_ParticleComponent_Cell : public UActorComponent
+class LYFE_GAME_API UCompound_ParticleComponent_Cell : public USceneComponent
 {
 	GENERATED_BODY()
 
@@ -40,10 +40,13 @@ public:
 //////////////////////////////////////////////////////////////////////////////
 private:
 	UPROPERTY(VisibleAnywhere, Category = "CELL|CompoundCloud|FX")
-	TArray<class UParticleSystemComponent* > particleSystems;
+	class UParticleSystemComponent* particleSystem;
 
 	UPROPERTY(EditAnywhere, Category = "CELL|CompoundCloud|FX")
 	class UParticleSystem* particleSystemType;
+
+	UPROPERTY(EditAnywhere, Category = "CELL|CompoundCloud|Collision")
+	class UStaticMeshComponent* mesh;
 protected:
 public:
 
@@ -53,14 +56,9 @@ public:
 private:
 protected:
 public:
-
-	/** Give the spawn positions for the particle systems
-	* @param vertices The vertices of the procedural mesh
-	* @param indices The indices of the procedural mesh (not used currently)
-	*/
 	UFUNCTION(BlueprintCallable, Category = "CELL|CompoundCloud|FX")
-	void UpdateSpawnPositions(TArray<FVector> vertices, TArray<int32> indices);
+	class UParticleSystemComponent* GetParticleSystem();
 
-	UFUNCTION(BlueprintCallable, Category = "CELL|CompoundCloud|FX")
-	TArray<class UParticleSystemComponent*> GetParticleSystems();
+	UFUNCTION(BlueprintCallable, Category = "CELL|CompoundCloud|Collision")
+	class UStaticMeshComponent* GetMesh();
 };

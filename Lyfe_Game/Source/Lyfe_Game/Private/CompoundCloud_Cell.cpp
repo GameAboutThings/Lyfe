@@ -11,6 +11,8 @@
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 #include "StaticMaths.h"
 #include "CompoundStorageComponent_Cell.h"
+#include <string>
+//#include "Character_SingleCelled.h"
 
 
 // Sets default values
@@ -20,8 +22,39 @@ ACompoundCloud_Cell::ACompoundCloud_Cell()
 	PrimaryActorTick.bCanEverTick = true;
 
 	mesh = CreateDefaultSubobject<UProceduralMeshComponent>(TEXT("GeneratedMesh"));
-	cloudFX = CreateDefaultSubobject<UCompound_ParticleComponent_Cell>(TEXT("CloudParticles"));
-	RootComponent = mesh;
+
+	
+	//RootComponent = temp;
+
+	int particleCount = StaticMaths::RR(CLOUD_PARTICLE_MIN, CLOUD_PARTICLE_MAX);
+
+	Logging::Log(particleCount, "particleCount");
+	UE_LOG(LogTemp, Warning, TEXT("particleCount"));
+
+	for (int i = 0; i < particleCount; i++)
+	{
+		/*std::string name = "particle" + i;*/
+		std::string name = "ParticleSystem_";
+		name.append({ static_cast<char>(i) });
+		UCompound_ParticleComponent_Cell* temp = CreateDefaultSubobject<UCompound_ParticleComponent_Cell>(name.c_str());
+		particles.Add(temp);
+		temp->SetupAttachment(RootComponent);
+
+		double a = rand() * 2 * PI;
+		double r = CLOUD_RADIUS * sqrt(rand());
+
+		//double x = r * cos(a);
+		//double y = r * sin(a);
+
+		//FVector location = FVector(x, y, 0);
+
+		//temp->SetRelativeLocation(location);
+	}
+
+
+
+
+	mesh->SetupAttachment(RootComponent);
 	
 	mesh->bUseAsyncCooking = true;
 
@@ -43,7 +76,7 @@ ACompoundCloud_Cell::ACompoundCloud_Cell()
 		StaticMaths::RR(190.f, 210.f) * modifier,
 	};
 
-	CreateCloudVerticesAndIndices(bounds);
+	//CreateCloudVerticesAndIndices(bounds);
 
 }
 
@@ -60,7 +93,7 @@ void ACompoundCloud_Cell::BeginPlay()
 		controller->GetWorldTimerManager().SetTimer(despawnTimer, this, &ACompoundCloud_Cell::DespawnTick, 5.f, false);
 	}
 
-	CreateCloudMesh();
+	//CreateCloudMesh();
 
 	type = ECompound(rand() % 5);
 }

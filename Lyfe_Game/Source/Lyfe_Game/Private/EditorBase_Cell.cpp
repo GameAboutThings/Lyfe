@@ -5,6 +5,8 @@
 #include "Runtime/Engine/Classes/Camera/CameraComponent.h"
 #include "CellEditor_NodeComponent.h"
 #include "CellEditor_ArrowComponent.h"
+#include "StaticMaths.h"
+#include "ProceduralMeshComponent.h"
 
 
 // Sets default values
@@ -76,49 +78,49 @@ void AEditorBase_Cell::GenerateBodyMesh()
 
 	//start with the base node and calculate the
 	int radiusTemp = baseNode->GetRadius();
-	FVector centerOffsetTemp = baseNode->GetRelativeLocation();
+	FVector centerOffsetTemp = baseNode->GetRelativeTransform().GetLocation();
 
-	uint_8 latBands = 20;
-	uint_8 longBands = 20;
+	uint8 latBands = 20;
+	uint8 longBands = 20;
 
-	StaticMaths:AddSphereToCellMesh(latBands, longBands, radiusTemp, centerOffsetTemp, &vertices, &normals, &indices);
+	StaticMaths::AddSphereToCellMesh(latBands, longBands, radiusTemp, centerOffsetTemp, &vertices, &normals, &indices);
 
 	//After the base node continue with its children
 	//Offset when adding to the index buffer is always the length of the vertex buffer when starting a new sphere
 	//This iteration over children has to be done 4x
 	TArray<EPosition> pos = baseNode->GetChildrenPositions();
-	for(uint_8 i = 0; i < pos.Num; i++)
+	for(uint8 i = 0; i < pos.Num(); i++)
 	{
 		UCellEditor_NodeComponent* curNode = baseNode->GetChild(pos[i]);
-		centerOffsetTemp = curNode->GetRelativeLocation();
+		centerOffsetTemp = curNode->GetRelativeTransform().GetLocation();
 		radiusTemp = curNode->GetRadius();
 		//Get current child node of the base and add its sphere
-		StaticMaths:AddSphereToCellMesh(latBands, longBands, radiusTemp, centerOffsetTemp, &vertices, &normals, &indices);
+		StaticMaths::AddSphereToCellMesh(latBands, longBands, radiusTemp, centerOffsetTemp, &vertices, &normals, &indices);
 
 		//Move on along the arm of this node one step
 		TArray<EPosition> pos_2 = curNode->GetChildrenPositions();
-		for(uint_8 i_2; i_2 < pos_2.Num; i_2 ++)
+		for(uint8 i_2 = 0; i_2 < pos_2.Num(); i_2 ++)
 		{
 			UCellEditor_NodeComponent* curNode_2 = curNode->GetChild(pos[i]);
-			centerOffsetTemp = curNode_2->GetRelativeLocation();
+			centerOffsetTemp = curNode_2->GetRelativeTransform().GetLocation();
 			radiusTemp = curNode_2->GetRadius();
-			StaticMaths:AddSphereToCellMesh(latBands, longBands, radiusTemp, centerOffsetTemp, &vertices, &normals, &indices);
+			StaticMaths::AddSphereToCellMesh(latBands, longBands, radiusTemp, centerOffsetTemp, &vertices, &normals, &indices);
 
 			TArray<EPosition> pos_3 = curNode_2->GetChildrenPositions();
-			for(uint_8 i_3; i_3 < pos_3.Num; i_3 ++)
+			for(uint8 i_3 = 0; i_3 < pos_3.Num(); i_3 ++)
 			{
 				UCellEditor_NodeComponent* curNode_3 = curNode_2->GetChild(pos[i]);
-				centerOffsetTemp = curNode_3->GetRelativeLocation();
+				centerOffsetTemp = curNode_3->GetRelativeTransform().GetLocation();
 				radiusTemp = curNode_3->GetRadius();
-				StaticMaths:AddSphereToCellMesh(latBands, longBands, radiusTemp, centerOffsetTemp, &vertices, &normals, &indices);
+				StaticMaths::AddSphereToCellMesh(latBands, longBands, radiusTemp, centerOffsetTemp, &vertices, &normals, &indices);
 
 				TArray<EPosition> pos_4 = curNode_3->GetChildrenPositions();
-				for(uint_8 i_4; i_4 < pos_4.Num; i_4 ++)
+				for(uint8 i_4 = 0; i_4 < pos_4.Num(); i_4 ++)
 				{
 					UCellEditor_NodeComponent* curNode_4 = curNode_3->GetChild(pos[i]);
-					centerOffsetTemp = curNode_4->GetRelativeLocation();
+					centerOffsetTemp = curNode_4->GetRelativeTransform().GetLocation();
 					radiusTemp = curNode_4->GetRadius();
-					StaticMaths:AddSphereToCellMesh(latBands, longBands, radiusTemp, centerOffsetTemp, &vertices, &normals, &indices);
+					StaticMaths::AddSphereToCellMesh(latBands, longBands, radiusTemp, centerOffsetTemp, &vertices, &normals, &indices);
 				}
 			}
 		}
@@ -137,7 +139,7 @@ void AEditorBase_Cell::GenerateBodyMesh()
 		bodyMesh->UnregisterComponent();
 	}
 
-	bodyMesh->CreateMeshSection_LinearColor(0, vertices, indices, normals, uv0, vertexColors, tangents, true);
+	bodyMesh->CreateMeshSection_LinearColor(0, vertices, indices, normals, {}, {}, {}, true);
 	/*mesh->SetMobility(EComponentMobility::Movable);
 	mesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	mesh->SetCollisionProfileName("OverlapAll");
@@ -151,7 +153,7 @@ void AEditorBase_Cell::GenerateBodyMesh()
 	//mesh->UpdateMeshSection_LinearColor(0, vertices, normals, uv0, vertexColors, tangents);*/
 }
 
-int EditorBase_Cell::GetIdConuter()
+int AEditorBase_Cell::GetIdCounter()
 {
 	idCounter++;
 	return idCounter;

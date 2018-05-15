@@ -63,5 +63,5 @@ public:
 	 * @param normals Pointer to the normalBuffer
 	 * @param indices Pointer to the indexBuffer
 	*/
-	static void AddSphereToCellMesh(int latBands, int longBands, int radius, FVector centerOffset, TArray<FVector>* vertices, TArray<FVector>* normals, TArry<int>* indices);
+	static void AddSphereToCellMesh(int latBands, int longBands, int radius, FVector centerOffset, TArray<FVector>* vertices, TArray<FVector>* normals, TArray<int>* indices);
 };
