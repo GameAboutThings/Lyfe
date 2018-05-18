@@ -43,12 +43,12 @@ ACompoundCloud_Cell::ACompoundCloud_Cell()
 		double a = rand() * 2 * PI;
 		double r = CLOUD_RADIUS * sqrt(rand());
 
-		//double x = r * cos(a);
-		//double y = r * sin(a);
+		double x = r * cos(a);
+		double y = r * sin(a);
 
-		//FVector location = FVector(x, y, 0);
+		FVector location = FVector(x, y, 0);
 
-		//temp->SetRelativeLocation(location);
+		temp->SetRelativeLocation(location);
 	}
 
 
