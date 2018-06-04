@@ -47,6 +47,9 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "CELL|CompoundCloud|Collision")
 	class UStaticMeshComponent* mesh;
+
+	/** The value of this one particle */
+	uint8 value;
 protected:
 public:
 
@@ -55,6 +58,14 @@ public:
 /////////////////////////////////////////////////////////////////////////////
 private:
 protected:
+	UFUNCTION(BlueprintCallable, Category = "CELL|CompoundCloud|Collision")
+	void Consumption();
+
+	UFUNCTION(BlueprintCallable, Category = "CELL|CompoundCloud|Collision")
+	void BeginOverlap(AActor* otherActor);
+
+	UFUNCTION(BlueprintCallable, Category = "CELL|CompoundCloud|Collision")
+	void EndOverlap(AActor* otherActor);
 public:
 	UFUNCTION(BlueprintCallable, Category = "CELL|CompoundCloud|FX")
 	class UParticleSystemComponent* GetParticleSystem();

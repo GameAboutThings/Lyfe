@@ -70,7 +70,61 @@ void UCompound_ParticleComponent_Cell::TickComponent(float DeltaTime, ELevelTick
   //////////////////////////////////////////////////////////////////////////////
  //////////////////////////////// PROTECTED ///////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+void UCompound_ParticleComponent_Cell::Consumption()
+{
+	CompoundCloud_Cell* parent = Cast<CompoundCloud_Cell>(GetOwner());
+	if(parent != nullptr)
+	{
+		parent->AddValue(-1);
 
+		ACharacter_SingleCelled* controller = Cast<ACharacter_SingleCelled>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+		if (controller != nullptr)
+		{
+			controller->GetCompoundStorage()->AddCompound(value, parent->GetType());
+		}
+		else
+		{
+			Logging::Log("ERROR in Consumption: controller could not be referenced ", true);
+		}
+
+		this->Destroy();
+	}
+	else
+	{
+		Logging::Log("ERROR in Consumption: parent could not be referenced ", true);
+	}	
+}
+
+void UCompound_ParticleComponent_Cell::BeginOverlap(AActor* otherActor)
+{
+	if ((otherActor != nullptr) && (otherActor != this))
+	{
+		//If the player is on the compound cloud
+		ACharacter_SingleCelled* controller = Cast<ACharacter_SingleCelled>(otherActor);
+		if (controller != nullptr)
+		{
+			Consumption();
+		}
+
+		//If a cell is on the compound cloud
+	}
+}
+
+void UCompound_ParticleComponent_Cell::EndOverlap(AActor* otherActor)
+{
+	if ((otherActor != nullptr) && (otherActor != this))
+	{
+		//If the player is on the compound cloud
+		ACharacter_SingleCelled* controller = Cast<ACharacter_SingleCelled>(otherActor);
+		if (controller != nullptr)
+		{
+
+		}
+
+
+		//If a cell is on the compound cloud
+	}
+}
 
   //////////////////////////////////////////////////////////////////////////////
  ///////////////////////////////// PUBLIC /////////////////////////////////////
@@ -85,4 +139,3 @@ UStaticMeshComponent * UCompound_ParticleComponent_Cell::GetMesh()
 {
 	return mesh;
 }
-

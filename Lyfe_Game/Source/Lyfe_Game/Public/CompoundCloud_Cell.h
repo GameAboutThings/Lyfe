@@ -57,11 +57,12 @@ public:
  //////////////////////////////// VARIABLES ///////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 private:
+	/** The count of Compound_ParticleComponent_Cells */
 	UPROPERTY()
 	uint32 value;
 
-	UPROPERTY()
-	bool bBeingConsumed;
+	//UPROPERTY()
+	//bool bBeingConsumed;
 
 	UPROPERTY()
 	FTimerHandle despawnTimer;
@@ -72,30 +73,30 @@ private:
 
 protected:
 	/** The editable mesh for the compound cloud */
-	UPROPERTY(BlueprintReadWrite, Category = "CELL|CompoundCloud|Mesh")
-	UProceduralMeshComponent * mesh;
+	//UPROPERTY(BlueprintReadWrite, Category = "CELL|CompoundCloud|Mesh")
+	//UProceduralMeshComponent * mesh;
 
-	/** This component has a particle system for every vertex on the procedural mesh */
+	/** This array contains all the particles that can be consumed by the player*/
 	UPROPERTY(VisibleAnywhere, Category = "CELL|CompoundCloud|FX")
 	TArray<UCompound_ParticleComponent_Cell *> particles;
 
 	/** The vertexbuffer for the compound cloud */
-	UPROPERTY(BlueprintReadWrite, Category = "CELL|CompoundCloud|Mesh")
-	TArray<FVector> vertices;
+	//UPROPERTY(BlueprintReadWrite, Category = "CELL|CompoundCloud|Mesh")
+	//TArray<FVector> vertices;
 
 	/** The indexbuffer for the compound cloud */
-	UPROPERTY(BlueprintReadWrite, Category = "CELL|CompoundCloud|Mesh")
-	TArray<int32> indices;
+	//UPROPERTY(BlueprintReadWrite, Category = "CELL|CompoundCloud|Mesh")
+	//TArray<int32> indices;
 
 	/** Will point to the player as long as he/she is consuming the compound cloud; else nullptr*/
-	UPROPERTY(BlueprintReadWrite, Category = "CELL|CompoundCloud|Consumption")
-	class ACharacter_SingleCelled* consumingPlayer;
+	//UPROPERTY(BlueprintReadWrite, Category = "CELL|CompoundCloud|Consumption")
+	//class ACharacter_SingleCelled* consumingPlayer;
 
 	/** Will point to a cell as long as it is consuming the compound cloud; else nullptr 
 	* No class for this so far so don't use it
 	*/
-	UPROPERTY(BlueprintReadWrite, Category = "CELL|CompoundCloud|Consumption")
-	class AActor* consumingCell;
+	//UPROPERTY(BlueprintReadWrite, Category = "CELL|CompoundCloud|Consumption")
+	//class AActor* consumingCell;
 public:
 
   /////////////////////////////////////////////////////////////////////////////
@@ -118,9 +119,12 @@ private:
 	UFUNCTION()
 	void CloudFinishConsumption();
 
-	/** Called every 5 seconds */
+	/** Called every 5 seconds 
+	 * Despawns the compound cloud if the player is too far away
+	*/
 	UFUNCTION()
 	void DespawnTick();
+
 protected:
 	UFUNCTION(BlueprintCallable, Category = "CELL|CompoundCloud|Collision")
 	void BeginOverlap(AActor* otherActor);
@@ -142,4 +146,10 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "CELL|CompoundCloud|Mesh")
 	UProceduralMeshComponent* GetMesh();
+
+	/** Allows to manipulate the value of this compound cloud
+	 * @param amount positive or negative
+	*/
+	UFUNCTION()
+	void AddValue(int amount);
 };

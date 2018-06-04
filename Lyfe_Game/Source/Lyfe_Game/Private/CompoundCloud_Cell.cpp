@@ -21,17 +21,17 @@ ACompoundCloud_Cell::ACompoundCloud_Cell()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	mesh = CreateDefaultSubobject<UProceduralMeshComponent>(TEXT("GeneratedMesh"));
+	//mesh = CreateDefaultSubobject<UProceduralMeshComponent>(TEXT("GeneratedMesh"));
 
 	
 	//RootComponent = temp;
 
-	int particleCount = StaticMaths::RR(CLOUD_PARTICLE_MIN, CLOUD_PARTICLE_MAX);
+	uint8 particleCount = StaticMaths::RR(CLOUD_PARTICLE_MIN, CLOUD_PARTICLE_MAX);
 
 	Logging::Log(particleCount, "particleCount");
 	UE_LOG(LogTemp, Warning, TEXT("particleCount"));
 
-	for (int i = 0; i < particleCount; i++)
+	for (uint8 i = 0; i < particleCount; i++)
 	{
 		/*std::string name = "particle" + i;*/
 		std::string name = "ParticleSystem_";
@@ -51,17 +51,19 @@ ACompoundCloud_Cell::ACompoundCloud_Cell()
 		temp->SetRelativeLocation(location);
 	}
 
+	value = particleCount;
 
 
 
-	mesh->SetupAttachment(RootComponent);
+
+	//mesh->SetupAttachment(RootComponent);
 	
-	mesh->bUseAsyncCooking = true;
+	//mesh->bUseAsyncCooking = true;
 
 	//mesh->OnComponentBeginOverlap.AddDynamic(this, &ACompoundCloud_Cell::BeginOverlap);
 	//mesh->OnComponentEndOverlap.AddDynamic(this, &ACompoundCloud_Cell::EndOverlap);
 
-	if (value == 0 || value == NULL)
+	/*if (value == 0 || value == NULL)
 	{
 		value = StaticMaths::RR(4000.f, 6000.f);
 	}
@@ -74,7 +76,7 @@ ACompoundCloud_Cell::ACompoundCloud_Cell()
 		StaticMaths::RR(90.f, 110.f) * modifier,
 		StaticMaths::RR(140.f, 160.f) * modifier,
 		StaticMaths::RR(190.f, 210.f) * modifier,
-	};
+	};*/
 
 	//CreateCloudVerticesAndIndices(bounds);
 
@@ -84,7 +86,7 @@ ACompoundCloud_Cell::ACompoundCloud_Cell()
 void ACompoundCloud_Cell::BeginPlay()
 {
 	Super::BeginPlay();
-	value = StaticMaths::RR(4000.f, 6000.f);
+	//value = StaticMaths::RR(4000.f, 6000.f);
 
 	//First of all set the volume back on the player
 	ACharacter_SingleCelled* controller = Cast<ACharacter_SingleCelled>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
@@ -102,7 +104,7 @@ void ACompoundCloud_Cell::PostActorCreated()
 {
 	Super::PostActorCreated();
 
-	CreateCloudMesh();
+	//CreateCloudMesh();
 	type = ECompound(rand() % 5);
 }
 
@@ -110,7 +112,7 @@ void ACompoundCloud_Cell::PostLoad()
 {
 	Super::PostLoad();
 
-	CreateCloudMesh();
+	//CreateCloudMesh();
 	type = ECompound(rand() % 5);
 }
 
@@ -497,7 +499,7 @@ void ACompoundCloud_Cell::CreateCloudMesh()
 
 void ACompoundCloud_Cell::ReshapeMeshOnConsumption()
 {
-	bool moveCenter = false;
+	/*bool moveCenter = false;
 	int moveCenterIndex = 0;
 	FVector moveCenterDirection = FVector();
 
@@ -596,7 +598,7 @@ void ACompoundCloud_Cell::ReshapeMeshOnConsumption()
 	FVector targetLocation = this->GetActorLocation() + moveCenterDirection;
 	this->SetActorLocation(targetLocation);
 
-	mesh->UpdateMeshSection_LinearColor(0, vertices, vertices, {}, {}, {});
+	mesh->UpdateMeshSection_LinearColor(0, vertices, vertices, {}, {}, {});*/
 }
 
 void ACompoundCloud_Cell::CloudFinishConsumption()
@@ -695,3 +697,7 @@ UProceduralMeshComponent * ACompoundCloud_Cell::GetMesh()
 	return mesh;
 }
 
+void ACompoundCloud_Cell::AddValue(int amount)
+{
+	value += amount;
+}
