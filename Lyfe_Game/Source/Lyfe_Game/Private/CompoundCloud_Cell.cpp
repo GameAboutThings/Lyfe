@@ -120,14 +120,6 @@ void ACompoundCloud_Cell::PostLoad()
 void ACompoundCloud_Cell::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	if(bBeingConsumed)
-	{
-		ReshapeMeshOnConsumption();
-		if (value <= 0.f)
-		{
-			CloudFinishConsumption();
-		}
-	}
 }
 
 /* ------------------------------------------------------------------------------------------------- */
@@ -700,4 +692,9 @@ UProceduralMeshComponent * ACompoundCloud_Cell::GetMesh()
 void ACompoundCloud_Cell::AddValue(int amount)
 {
 	value += amount;
+
+	if (value <= 0.f)
+	{
+		CloudFinishConsumption();
+	}
 }
