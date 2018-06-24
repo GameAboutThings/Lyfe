@@ -7,6 +7,9 @@
 #include <string>
 #include "Runtime/CoreUObject/Public/UObject/ConstructorHelpers.h"
 #include "Components/StaticMeshComponent.h"
+#include "Character_SingleCelled.h"
+#include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
+#include "CompoundStorageComponent_Cell.h"
 
 
 // Sets default values for this component's properties
@@ -72,7 +75,7 @@ void UCompound_ParticleComponent_Cell::TickComponent(float DeltaTime, ELevelTick
 //////////////////////////////////////////////////////////////////////////////
 void UCompound_ParticleComponent_Cell::Consumption()
 {
-	CompoundCloud_Cell* parent = Cast<CompoundCloud_Cell>(GetOwner());
+	ACompoundCloud_Cell* parent = Cast<ACompoundCloud_Cell>(GetOwner());
 	if(parent != nullptr)
 	{
 		parent->AddValue(-1);
@@ -87,7 +90,7 @@ void UCompound_ParticleComponent_Cell::Consumption()
 			Logging::Log("ERROR in Consumption: controller could not be referenced ", true);
 		}
 
-		this->Destroy();
+		this->DestroyComponent();
 	}
 	else
 	{
@@ -97,7 +100,7 @@ void UCompound_ParticleComponent_Cell::Consumption()
 
 void UCompound_ParticleComponent_Cell::BeginOverlap(AActor* otherActor)
 {
-	if ((otherActor != nullptr) && (otherActor != this))
+	if ((otherActor != nullptr) /*&& (otherActor != this)*/)
 	{
 		//If the player is on the compound cloud
 		ACharacter_SingleCelled* controller = Cast<ACharacter_SingleCelled>(otherActor);
@@ -112,7 +115,7 @@ void UCompound_ParticleComponent_Cell::BeginOverlap(AActor* otherActor)
 
 void UCompound_ParticleComponent_Cell::EndOverlap(AActor* otherActor)
 {
-	if ((otherActor != nullptr) && (otherActor != this))
+	if ((otherActor != nullptr) /*&& (otherActor != this)*/)
 	{
 		//If the player is on the compound cloud
 		ACharacter_SingleCelled* controller = Cast<ACharacter_SingleCelled>(otherActor);

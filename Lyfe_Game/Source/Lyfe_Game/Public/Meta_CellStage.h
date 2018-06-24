@@ -27,9 +27,9 @@
 #define CLOUD_MESH_CENTER_CELTA_MOVEMENT 50.f
 #define CLOUD_CONSUMPTION_RATE 11.f //How much of a cloud is consumed each frame
 #define CLOUD_PLAYERROTATION_THRESHOLD 30.f //degree the player can face away from the compoud cloud for it to still move the vertices actievly away from him/her
-#define CLOUD_PARTICLE_MIN 15.f
-#define CLOUD_PARTICLE_MAX 30.f
-#define CLOUD_RADIUS 1000.f
+#define CLOUD_PARTICLE_MIN 30.f
+#define CLOUD_PARTICLE_MAX 50.f
+#define CLOUD_RADIUS 25.f
 
 /* SPAWNING AND DESPAWNING */
 #define SURROUNDINGS_DESPAWN_DISTANCE 2000.f

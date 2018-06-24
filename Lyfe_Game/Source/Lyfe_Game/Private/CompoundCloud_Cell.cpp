@@ -29,8 +29,8 @@ ACompoundCloud_Cell::ACompoundCloud_Cell()
 	uint8 particleCount = StaticMaths::RR(CLOUD_PARTICLE_MIN, CLOUD_PARTICLE_MAX);
 
 	Logging::Log(particleCount, "particleCount");
-	UE_LOG(LogTemp, Warning, TEXT("particleCount"));
 
+	//place <particleCount> number of sub particles
 	for (uint8 i = 0; i < particleCount; i++)
 	{
 		/*std::string name = "particle" + i;*/
@@ -40,8 +40,10 @@ ACompoundCloud_Cell::ACompoundCloud_Cell()
 		particles.Add(temp);
 		temp->SetupAttachment(RootComponent);
 
-		double a = rand() * 2 * PI;
-		double r = CLOUD_RADIUS * sqrt(rand());
+
+		//set up random location within a circle
+		double a = (((double)rand() / (RAND_MAX)) + 1) * 2 * PI;
+		double r = CLOUD_RADIUS * sqrt(((double)rand() / (RAND_MAX)) + 1);
 
 		double x = r * cos(a);
 		double y = r * sin(a);
@@ -54,7 +56,7 @@ ACompoundCloud_Cell::ACompoundCloud_Cell()
 	value = particleCount;
 
 
-
+	//---------------------------------------------
 
 	//mesh->SetupAttachment(RootComponent);
 	
@@ -196,11 +198,11 @@ void ACompoundCloud_Cell::CreateCube()
 	////The colors applied to every vertex and blended on the surfaces
 	TArray<FLinearColor> vertexColors;
 
-	mesh->CreateMeshSection_LinearColor(0, vertices, triangles, normals, uv0, vertexColors, tangents, true);
+	//mesh->CreateMeshSection_LinearColor(0, vertices, triangles, normals, uv0, vertexColors, tangents, true);
 
 	//Enable collision data
-	mesh->ContainsPhysicsTriMeshData(true);
-	mesh->bUseComplexAsSimpleCollision = false;
+	//mesh->ContainsPhysicsTriMeshData(true);
+	//mesh->bUseComplexAsSimpleCollision = false;
 	//mesh->SetSimulatePhysics(true);
 }
 
@@ -209,284 +211,284 @@ void ACompoundCloud_Cell::CreateCloudVerticesAndIndices(FMeshBounds _b)
 	//vertex buffer
 	//TArray<FVector> vertices;
 	//Front
-	vertices.Add(FVector(_b.one, -_b.one, -_b.one));//0
-	vertices.Add(FVector(_b.one, _b.zero, -_b.one));
-	vertices.Add(FVector(_b.one, _b.one, -_b.one));
-	vertices.Add(FVector(StaticMaths::RR(_b.one, _b.three), StaticMaths::RR(-_b.three,-_b.one), _b.zero));
-	vertices.Add(FVector(StaticMaths::RR(_b.two, _b.four), _b.zero, _b.zero));
-	vertices.Add(FVector(StaticMaths::RR(_b.one, _b.three), StaticMaths::RR(_b.one, _b.three), _b.zero));//5
-	vertices.Add(FVector(_b.one, -_b.one, _b.one));
-	vertices.Add(FVector(_b.one, _b.zero, _b.one));
-	vertices.Add(FVector(_b.one, _b.one, _b.one));
+	//vertices.Add(FVector(_b.one, -_b.one, -_b.one));//0
+	//vertices.Add(FVector(_b.one, _b.zero, -_b.one));
+	//vertices.Add(FVector(_b.one, _b.one, -_b.one));
+	//vertices.Add(FVector(StaticMaths::RR(_b.one, _b.three), StaticMaths::RR(-_b.three,-_b.one), _b.zero));
+	//vertices.Add(FVector(StaticMaths::RR(_b.two, _b.four), _b.zero, _b.zero));
+	//vertices.Add(FVector(StaticMaths::RR(_b.one, _b.three), StaticMaths::RR(_b.one, _b.three), _b.zero));//5
+	//vertices.Add(FVector(_b.one, -_b.one, _b.one));
+	//vertices.Add(FVector(_b.one, _b.zero, _b.one));
+	//vertices.Add(FVector(_b.one, _b.one, _b.one));
 
 	//Left
 	//2
-	vertices.Add(FVector(_b.zero, _b.one, -_b.one));
-	vertices.Add(FVector(-_b.one, _b.one, -_b.one)); //10
-	//5
-	vertices.Add(FVector(_b.zero, StaticMaths::RR(_b.two, _b.four), _b.zero));
-	vertices.Add(FVector(StaticMaths::RR(-_b.three, -_b.one), StaticMaths::RR(_b.one, _b.three), _b.zero));
-	//8
-	vertices.Add(FVector(_b.zero, _b.one, _b.one));
-	vertices.Add(FVector(-_b.one, _b.one, _b.one));
+	//vertices.Add(FVector(_b.zero, _b.one, -_b.one));
+	//vertices.Add(FVector(-_b.one, _b.one, -_b.one)); //10
+	////5
+	//vertices.Add(FVector(_b.zero, StaticMaths::RR(_b.two, _b.four), _b.zero));
+	//vertices.Add(FVector(StaticMaths::RR(-_b.three, -_b.one), StaticMaths::RR(_b.one, _b.three), _b.zero));
+	////8
+	//vertices.Add(FVector(_b.zero, _b.one, _b.one));
+	//vertices.Add(FVector(-_b.one, _b.one, _b.one));
 
-	//Back
-	//10
-	vertices.Add(FVector(-_b.one, _b.zero, -_b.one)); //15
-	vertices.Add(FVector(-_b.one, -_b.one, -_b.one));
-	//12
-	vertices.Add(FVector(StaticMaths::RR(-_b.four, -_b.two), _b.zero, _b.zero));
-	vertices.Add(FVector(StaticMaths::RR(-_b.three, -_b.one), StaticMaths::RR(-_b.three, -_b.one), _b.zero));
-	//14
-	vertices.Add(FVector(-_b.one, _b.zero, _b.one));
-	vertices.Add(FVector(-_b.one, -_b.one, _b.one));//20
+	////Back
+	////10
+	//vertices.Add(FVector(-_b.one, _b.zero, -_b.one)); //15
+	//vertices.Add(FVector(-_b.one, -_b.one, -_b.one));
+	////12
+	//vertices.Add(FVector(StaticMaths::RR(-_b.four, -_b.two), _b.zero, _b.zero));
+	//vertices.Add(FVector(StaticMaths::RR(-_b.three, -_b.one), StaticMaths::RR(-_b.three, -_b.one), _b.zero));
+	////14
+	//vertices.Add(FVector(-_b.one, _b.zero, _b.one));
+	//vertices.Add(FVector(-_b.one, -_b.one, _b.one));//20
 
-	//Left
-	//16
-	vertices.Add(FVector(_b.zero, -_b.one, -_b.one));
-	//0
-	//18
-	vertices.Add(FVector(_b.zero, StaticMaths::RR(-_b.four, -_b.two), _b.zero));
-	//3
-	//20
-	vertices.Add(FVector(_b.zero, -_b.one, _b.one));
-	//6
+	////Left
+	////16
+	//vertices.Add(FVector(_b.zero, -_b.one, -_b.one));
+	////0
+	////18
+	//vertices.Add(FVector(_b.zero, StaticMaths::RR(-_b.four, -_b.two), _b.zero));
+	////3
+	////20
+	//vertices.Add(FVector(_b.zero, -_b.one, _b.one));
+	////6
 
-	//Bottom
-	//16
-	//15
-	//10
-	//21
-	vertices.Add(FVector(_b.zero, _b.zero, -_b.one));
-	//9
-	//0
-	//1
-	//2
+	////Bottom
+	////16
+	////15
+	////10
+	////21
+	//vertices.Add(FVector(_b.zero, _b.zero, -_b.one));
+	////9
+	////0
+	////1
+	////2
 
-	//Top
-	//6
-	//7
-	//8
-	//23
-	vertices.Add(FVector(_b.zero, _b.zero, _b.one)); //25
-	//13
-	//20
-	//19
-	//14
+	////Top
+	////6
+	////7
+	////8
+	////23
+	//vertices.Add(FVector(_b.zero, _b.zero, _b.one)); //25
+	////13
+	////20
+	////19
+	////14
 
 
-	//index buffer
-	//+++++ Front
-	//Lower Left
-	indices.Add(3);
-	indices.Add(1);
-	indices.Add(0);
-	indices.Add(1);
-	indices.Add(3);
-	indices.Add(4);
-	//Lower Right
-	indices.Add(4);
-	indices.Add(2);
-	indices.Add(1);
-	indices.Add(2);
-	indices.Add(4);
-	indices.Add(5);
-	//Upper Left
-	indices.Add(6);
-	indices.Add(4);
-	indices.Add(3);
-	indices.Add(4);
-	indices.Add(6);
-	indices.Add(7);
-	//Upper Right
-	indices.Add(7);
-	indices.Add(5);
-	indices.Add(4);
-	indices.Add(5);
-	indices.Add(7);
-	indices.Add(8);
+	////index buffer
+	////+++++ Front
+	////Lower Left
+	//indices.Add(3);
+	//indices.Add(1);
+	//indices.Add(0);
+	//indices.Add(1);
+	//indices.Add(3);
+	//indices.Add(4);
+	////Lower Right
+	//indices.Add(4);
+	//indices.Add(2);
+	//indices.Add(1);
+	//indices.Add(2);
+	//indices.Add(4);
+	//indices.Add(5);
+	////Upper Left
+	//indices.Add(6);
+	//indices.Add(4);
+	//indices.Add(3);
+	//indices.Add(4);
+	//indices.Add(6);
+	//indices.Add(7);
+	////Upper Right
+	//indices.Add(7);
+	//indices.Add(5);
+	//indices.Add(4);
+	//indices.Add(5);
+	//indices.Add(7);
+	//indices.Add(8);
 
-	//+++++ Right
-	//Lower Left
-	indices.Add(5);
-	indices.Add(9);
-	indices.Add(2);
-	indices.Add(9);
-	indices.Add(5);
-	indices.Add(11);
-	//Lower Right
-	indices.Add(11);
-	indices.Add(10);
-	indices.Add(9);
-	indices.Add(10);
-	indices.Add(11);
-	indices.Add(12);
-	//Upper Left
-	indices.Add(8);
-	indices.Add(11);
-	indices.Add(5);
-	indices.Add(11);
-	indices.Add(8);
-	indices.Add(13);
-	//Upper Right
-	indices.Add(13);
-	indices.Add(12);
-	indices.Add(11);
-	indices.Add(12);
-	indices.Add(13);
-	indices.Add(14);
+	////+++++ Right
+	////Lower Left
+	//indices.Add(5);
+	//indices.Add(9);
+	//indices.Add(2);
+	//indices.Add(9);
+	//indices.Add(5);
+	//indices.Add(11);
+	////Lower Right
+	//indices.Add(11);
+	//indices.Add(10);
+	//indices.Add(9);
+	//indices.Add(10);
+	//indices.Add(11);
+	//indices.Add(12);
+	////Upper Left
+	//indices.Add(8);
+	//indices.Add(11);
+	//indices.Add(5);
+	//indices.Add(11);
+	//indices.Add(8);
+	//indices.Add(13);
+	////Upper Right
+	//indices.Add(13);
+	//indices.Add(12);
+	//indices.Add(11);
+	//indices.Add(12);
+	//indices.Add(13);
+	//indices.Add(14);
 
-	//+++++ Back
-	//Lower Left
-	indices.Add(12);
-	indices.Add(15);
-	indices.Add(10);
-	indices.Add(15);
-	indices.Add(12);
-	indices.Add(17);
-	//LowerRight
-	indices.Add(17);
-	indices.Add(16);
-	indices.Add(15);
-	indices.Add(16);
-	indices.Add(17);
-	indices.Add(18);
-	//Upper Left
-	indices.Add(14);
-	indices.Add(17);
-	indices.Add(12);
-	indices.Add(17);
-	indices.Add(14);
-	indices.Add(19);
-	//Upper Right
-	indices.Add(19);
-	indices.Add(18);
-	indices.Add(17);
-	indices.Add(18);
-	indices.Add(19);
-	indices.Add(20);
+	////+++++ Back
+	////Lower Left
+	//indices.Add(12);
+	//indices.Add(15);
+	//indices.Add(10);
+	//indices.Add(15);
+	//indices.Add(12);
+	//indices.Add(17);
+	////LowerRight
+	//indices.Add(17);
+	//indices.Add(16);
+	//indices.Add(15);
+	//indices.Add(16);
+	//indices.Add(17);
+	//indices.Add(18);
+	////Upper Left
+	//indices.Add(14);
+	//indices.Add(17);
+	//indices.Add(12);
+	//indices.Add(17);
+	//indices.Add(14);
+	//indices.Add(19);
+	////Upper Right
+	//indices.Add(19);
+	//indices.Add(18);
+	//indices.Add(17);
+	//indices.Add(18);
+	//indices.Add(19);
+	//indices.Add(20);
 
-	//+++++ Left
-	//Lower Left
-	indices.Add(18);
-	indices.Add(21);
-	indices.Add(16);
-	indices.Add(21);
-	indices.Add(18);
-	indices.Add(22);
-	//Lower Right
-	indices.Add(22);
-	indices.Add(0);
-	indices.Add(21);
-	indices.Add(0);
-	indices.Add(22);
-	indices.Add(3);
-	//Upper Left
-	indices.Add(20);
-	indices.Add(22);
-	indices.Add(18);
-	indices.Add(22);
-	indices.Add(20);
-	indices.Add(23);
-	//Upper Right
-	indices.Add(23);
-	indices.Add(3);
-	indices.Add(22);
-	indices.Add(3);
-	indices.Add(23);
-	indices.Add(6);
+	////+++++ Left
+	////Lower Left
+	//indices.Add(18);
+	//indices.Add(21);
+	//indices.Add(16);
+	//indices.Add(21);
+	//indices.Add(18);
+	//indices.Add(22);
+	////Lower Right
+	//indices.Add(22);
+	//indices.Add(0);
+	//indices.Add(21);
+	//indices.Add(0);
+	//indices.Add(22);
+	//indices.Add(3);
+	////Upper Left
+	//indices.Add(20);
+	//indices.Add(22);
+	//indices.Add(18);
+	//indices.Add(22);
+	//indices.Add(20);
+	//indices.Add(23);
+	////Upper Right
+	//indices.Add(23);
+	//indices.Add(3);
+	//indices.Add(22);
+	//indices.Add(3);
+	//indices.Add(23);
+	//indices.Add(6);
 
-	//+++++ Bottom
-	//Lower Left
-	indices.Add(21);
-	indices.Add(15);
-	indices.Add(16);
-	indices.Add(15);
-	indices.Add(21);
-	indices.Add(24);
-	//Lower Right
-	indices.Add(24);
-	indices.Add(10);
-	indices.Add(15);
-	indices.Add(10);
-	indices.Add(24);
-	indices.Add(9);
-	//Upper Left
-	indices.Add(0);
-	indices.Add(24);
-	indices.Add(21);
-	indices.Add(24);
-	indices.Add(0);
-	indices.Add(1);
-	//Upper Right
-	indices.Add(1);
-	indices.Add(9);
-	indices.Add(24);
-	indices.Add(9);
-	indices.Add(1);
-	indices.Add(2);
+	////+++++ Bottom
+	////Lower Left
+	//indices.Add(21);
+	//indices.Add(15);
+	//indices.Add(16);
+	//indices.Add(15);
+	//indices.Add(21);
+	//indices.Add(24);
+	////Lower Right
+	//indices.Add(24);
+	//indices.Add(10);
+	//indices.Add(15);
+	//indices.Add(10);
+	//indices.Add(24);
+	//indices.Add(9);
+	////Upper Left
+	//indices.Add(0);
+	//indices.Add(24);
+	//indices.Add(21);
+	//indices.Add(24);
+	//indices.Add(0);
+	//indices.Add(1);
+	////Upper Right
+	//indices.Add(1);
+	//indices.Add(9);
+	//indices.Add(24);
+	//indices.Add(9);
+	//indices.Add(1);
+	//indices.Add(2);
 
-	//+++++ Top
-	//Lower Left
-	indices.Add(23);
-	indices.Add(7);
-	indices.Add(6);
-	indices.Add(7);
-	indices.Add(23);
-	indices.Add(25);
-	//Lower Right
-	indices.Add(25);
-	indices.Add(8);
-	indices.Add(7);
-	indices.Add(8);
-	indices.Add(25);
-	indices.Add(13);
-	//Upper Left
-	indices.Add(20);
-	indices.Add(25);
-	indices.Add(23);
-	indices.Add(25);
-	indices.Add(20);
-	indices.Add(19);
-	//Upper Right
-	indices.Add(19);
-	indices.Add(13);
-	indices.Add(25);
-	indices.Add(13);
-	indices.Add(19);
-	indices.Add(14);
+	////+++++ Top
+	////Lower Left
+	//indices.Add(23);
+	//indices.Add(7);
+	//indices.Add(6);
+	//indices.Add(7);
+	//indices.Add(23);
+	//indices.Add(25);
+	////Lower Right
+	//indices.Add(25);
+	//indices.Add(8);
+	//indices.Add(7);
+	//indices.Add(8);
+	//indices.Add(25);
+	//indices.Add(13);
+	////Upper Left
+	//indices.Add(20);
+	//indices.Add(25);
+	//indices.Add(23);
+	//indices.Add(25);
+	//indices.Add(20);
+	//indices.Add(19);
+	////Upper Right
+	//indices.Add(19);
+	//indices.Add(13);
+	//indices.Add(25);
+	//indices.Add(13);
+	//indices.Add(19);
+	//indices.Add(14);
 }
 
 void ACompoundCloud_Cell::CreateCloudMesh()
 {
-	TArray<FVector> normals;
-	for (int i = 0; i < vertices.Num(); i++)
-	{
-		normals.Add(vertices[i] / vertices[i].Size());
-	}
+	//TArray<FVector> normals;
+	//for (int i = 0; i < vertices.Num(); i++)
+	//{
+	//	normals.Add(vertices[i] / vertices[i].Size());
+	//}
 
 
-	//// ?????????????????????
-	TArray<FVector2D> uv0;
+	////// ?????????????????????
+	//TArray<FVector2D> uv0;
 
-	//// ?????????????????????????????
-	TArray<FProcMeshTangent> tangents;
+	////// ?????????????????????????????
+	//TArray<FProcMeshTangent> tangents;
 
-	////The colors applied to every vertex and blended on the surfaces
-	TArray<FLinearColor> vertexColors;
+	//////The colors applied to every vertex and blended on the surfaces
+	//TArray<FLinearColor> vertexColors;
 
-	mesh->CreateMeshSection_LinearColor(0, vertices, indices, normals, uv0, vertexColors, tangents, true);
-	mesh->SetMobility(EComponentMobility::Movable);
-	mesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-	mesh->SetCollisionProfileName("OverlapAll");
-	SetActorEnableCollision(true);
-	//mesh->bUseComplexAsSimpleCollision = true;
-	//mesh->SetSimulatePhysics(false);
-	//mesh->SetCollisionObjectType(ECollisionChannel::ECC_WorldDynamic);
-	mesh->bGenerateOverlapEvents = true;
-	mesh->SetCollisionConvexMeshes({ vertices });
-	mesh->ContainsPhysicsTriMeshData(false);
-	//mesh->UpdateMeshSection_LinearColor(0, vertices, normals, uv0, vertexColors, tangents);
+	//mesh->CreateMeshSection_LinearColor(0, vertices, indices, normals, uv0, vertexColors, tangents, true);
+	//mesh->SetMobility(EComponentMobility::Movable);
+	//mesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	//mesh->SetCollisionProfileName("OverlapAll");
+	//SetActorEnableCollision(true);
+	////mesh->bUseComplexAsSimpleCollision = true;
+	////mesh->SetSimulatePhysics(false);
+	////mesh->SetCollisionObjectType(ECollisionChannel::ECC_WorldDynamic);
+	//mesh->bGenerateOverlapEvents = true;
+	//mesh->SetCollisionConvexMeshes({ vertices });
+	//mesh->ContainsPhysicsTriMeshData(false);
+	////mesh->UpdateMeshSection_LinearColor(0, vertices, normals, uv0, vertexColors, tangents);
 }
 
 void ACompoundCloud_Cell::ReshapeMeshOnConsumption()
@@ -640,8 +642,8 @@ void ACompoundCloud_Cell::BeginOverlap(AActor* otherActor)
 		ACharacter_SingleCelled* controller = Cast<ACharacter_SingleCelled>(otherActor);
 		if (controller != nullptr)
 		{
-			bBeingConsumed = true;
-			consumingPlayer = controller;
+			//bBeingConsumed = true;
+			//consumingPlayer = controller;
 		}
 
 		//If a cell is on the compound cloud
@@ -656,8 +658,8 @@ void ACompoundCloud_Cell::EndOverlap(AActor* otherActor)
 		ACharacter_SingleCelled* controller = Cast<ACharacter_SingleCelled>(otherActor);
 		if (controller != nullptr)
 		{
-			bBeingConsumed = false;
-			consumingPlayer = nullptr;
+			//bBeingConsumed = false;
+			//consumingPlayer = nullptr;
 		}
 
 
@@ -665,28 +667,29 @@ void ACompoundCloud_Cell::EndOverlap(AActor* otherActor)
 	}
 }
 
+
+
+  //////////////////////////////////////////////////////////////////////////////
+ ///////////////////////////////// PUBLIC /////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
 ECompound ACompoundCloud_Cell::GetType()
 {
 	return type;
 }
 
-  //////////////////////////////////////////////////////////////////////////////
- ///////////////////////////////// PUBLIC /////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-
 TArray<FVector> ACompoundCloud_Cell::GetVertices()
 {
-	return vertices;
+	return TArray<FVector>();
 }
 
 TArray<int32> ACompoundCloud_Cell::GetIndices()
 {
-	return indices;
+	return TArray<int32>();
 }
 
 UProceduralMeshComponent * ACompoundCloud_Cell::GetMesh()
 {
-	return mesh;
+	return nullptr;
 }
 
 void ACompoundCloud_Cell::AddValue(int amount)

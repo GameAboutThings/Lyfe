@@ -132,10 +132,12 @@ protected:
 	UFUNCTION(BlueprintCallable, Category = "CELL|CompoundCloud|Collision")
 	void EndOverlap(AActor* otherActor);
 
+
+public:
 	/** Returns the type of the Compound Cloud as the Compound Enum*/
 	UFUNCTION(BlueprintCallable, Category = "CELL|CompoundCloud|Compound")
 	ECompound GetType();
-public:
+
 	/** Returns the vertices for the procedural mesh*/
 	UFUNCTION(BlueprintCallable, Category = "CELL|CompoundCloud|Mesh")
 	TArray<FVector> GetVertices();
