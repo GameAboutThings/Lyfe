@@ -42,6 +42,7 @@ UCompound_ParticleComponent_Cell::UCompound_ParticleComponent_Cell()
 	if (meshAsset.Object != nullptr)
 	{
 		mesh->SetStaticMesh(meshAsset.Object);
+		mesh->SetVisibility(false);
 	}
 	else
 	{

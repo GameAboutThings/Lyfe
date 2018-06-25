@@ -12,7 +12,7 @@
 #include "StaticMaths.h"
 #include "CompoundStorageComponent_Cell.h"
 #include <string>
-//#include "Character_SingleCelled.h"
+#include <math.h>
 
 
 // Sets default values
@@ -31,29 +31,85 @@ ACompoundCloud_Cell::ACompoundCloud_Cell()
 	Logging::Log(particleCount, "particleCount");
 
 	//place <particleCount> number of sub particles
-	for (uint8 i = 0; i < particleCount; i++)
-	{
-		/*std::string name = "particle" + i;*/
-		std::string name = "ParticleSystem_";
-		name.append({ static_cast<char>(i) });
-		UCompound_ParticleComponent_Cell* temp = CreateDefaultSubobject<UCompound_ParticleComponent_Cell>(name.c_str());
-		particles.Add(temp);
-		temp->SetupAttachment(RootComponent);
+	//for (uint8 i = 0; i < particleCount; i++)
+	//{
+	//	/*std::string name = "particle" + i;*/
+	//	std::string name = "ParticleSystem_";
+	//	name.append({ static_cast<char>(i) });
+	//	UCompound_ParticleComponent_Cell* temp = CreateDefaultSubobject<UCompound_ParticleComponent_Cell>(name.c_str());
+	//	particles.Add(temp);
+	//	temp->SetupAttachment(RootComponent);
 
 
-		//set up random location within a circle
-		double a = (((double)rand() / (RAND_MAX)) + 1) * 2 * PI;
-		double r = CLOUD_RADIUS * sqrt(((double)rand() / (RAND_MAX)) + 1);
+	//	//set up random location within a circle
+	//	double a = (((double)rand() / (RAND_MAX)) + 1) * 2 * PI;
+	//	double r = CLOUD_RADIUS * sqrt(((double)rand() / (RAND_MAX)) + 1);
 
-		double x = r * cos(a);
-		double y = r * sin(a);
+	//	double x = r * cos(a);
+	//	double y = r * sin(a);
 
-		FVector location = FVector(x, y, 0);
+	//	FVector location = FVector(x, y, 0);
 
-		temp->SetRelativeLocation(location);
-	}
+	//	temp->SetRelativeLocation(location);
+	//}
 
 	value = particleCount;
+
+
+	//second idea for distribution of particle systems
+
+	std::string center = "CenterSystem";
+	UCompound_ParticleComponent_Cell* temp = CreateDefaultSubobject<UCompound_ParticleComponent_Cell>(center.c_str());
+	particles.Add(temp);
+	RootComponent = temp;
+
+	for (uint8 i = 0; i < 100; i++)
+	{
+		for (int j = 0; j < pow(i, 2); j++)
+		{
+			//define the name for the current particle system
+			//ParticleSystem_<circleNum>_<Num>_<randomSeed>
+			std::string name = "ParticleSystem_";
+			name.append({ static_cast<char>((i + 1)) });
+			name.append({ "_" });
+			name.append({ static_cast<char>(j + 1) });
+			name.append({ "_" });
+			name.append({ static_cast<char>(j + i) });
+
+			//create the particle system with the newly defined name
+			UCompound_ParticleComponent_Cell* temp = CreateDefaultSubobject<UCompound_ParticleComponent_Cell>(name.c_str());
+			particles.Add(temp);
+
+			temp->SetupAttachment(RootComponent);
+
+
+			//set up random location within a circle
+			double a = (((double)rand() / (RAND_MAX)) + 1) * 2 * PI;
+			double r = (CLOUD_RADIUS_STEPS * (i + 1)) * sqrt(((double)rand() / (RAND_MAX)) + 1);
+
+			double x = r * cos(a);
+			double y = r * sin(a);
+
+			FVector location = FVector(x, y, 0);
+
+			temp->SetRelativeLocation(location);
+
+
+			//finally: check if number of elements in array is particle count
+			//if so, stop this loop
+			if (particleCount - 1 == particles.Num())
+			{
+				break;
+				i = 100;
+				j = pow(i, 2);
+			}
+		}
+		if (particleCount - 1 == particles.Num())
+		{
+			break;
+			i = 100;
+		}
+	}
 
 
 	//---------------------------------------------
