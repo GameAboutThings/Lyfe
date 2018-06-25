@@ -154,4 +154,10 @@ public:
 	*/
 	UFUNCTION()
 	void AddValue(int amount);
+
+	/** 
+	* @return Array with all particle systems for the cloud representation
+	*/
+	UFUNCTION(BlueprintCallable, Category = "CELL|CompoundCloud|Compound")
+	TArray<UCompound_ParticleComponent_Cell*> GetParticleComponents();
 };

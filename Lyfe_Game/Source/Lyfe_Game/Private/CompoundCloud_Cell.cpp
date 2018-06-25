@@ -13,6 +13,7 @@
 #include "CompoundStorageComponent_Cell.h"
 #include <string>
 #include <math.h>
+#include "Runtime/Engine/Classes/Particles/ParticleSystemComponent.h"
 
 
 // Sets default values
@@ -55,6 +56,7 @@ ACompoundCloud_Cell::ACompoundCloud_Cell()
 
 	value = particleCount;
 
+	type = ECompound(rand() % 5);
 
 	//second idea for distribution of particle systems
 
@@ -93,6 +95,41 @@ ACompoundCloud_Cell::ACompoundCloud_Cell()
 			FVector location = FVector(x, y, 0);
 
 			temp->SetRelativeLocation(location);
+
+			//generate cloud color:
+			FColor color;
+			switch (type)
+			{
+			case ECompound::ECO2:
+				color = FColor(0.6, 1, 0.8, 0);
+				break;
+			case ECompound::EO2:
+				color = FColor(1, 0.6, 0.4, 0);
+				break;
+			case ECompound::EAminoAcid:
+				color = FColor(0.4, 1, 0.6, 0);
+				break;
+			case ECompound::EGlucose:
+				color = FColor(1, 1, 1, 0);
+				break;
+			case ECompound::ELipid:
+				color = FColor(1, 1, 0.6, 0);
+				break;
+			default:
+				break;
+			}
+
+			//change the color of the particle system
+			UParticleSystemComponent* particleSystem = temp->GetParticleSystem();
+
+			particleSystem->SetColorParameter(FName("Color"), color);
+
+			//UMaterialInterface* material = particleSystem->GetMaterial(0);
+			//UMaterialInstanceDynamic* dynMaterial = UMaterialInstanceDynamic::Create(material, this);
+			//dynMaterial->SetVectorParameterValue(FName("Color"), color);
+			//particleSystem->SetMaterial(0, dynMaterial);
+			
+			
 
 
 			//finally: check if number of elements in array is particle count
@@ -155,7 +192,7 @@ void ACompoundCloud_Cell::BeginPlay()
 
 	//CreateCloudMesh();
 
-	type = ECompound(rand() % 5);
+	
 }
 
 void ACompoundCloud_Cell::PostActorCreated()
@@ -163,7 +200,6 @@ void ACompoundCloud_Cell::PostActorCreated()
 	Super::PostActorCreated();
 
 	//CreateCloudMesh();
-	type = ECompound(rand() % 5);
 }
 
 void ACompoundCloud_Cell::PostLoad()
@@ -756,4 +792,9 @@ void ACompoundCloud_Cell::AddValue(int amount)
 	{
 		CloudFinishConsumption();
 	}
+}
+
+TArray<UCompound_ParticleComponent_Cell*> ACompoundCloud_Cell::GetParticleComponents()
+{
+	return particles;
 }
