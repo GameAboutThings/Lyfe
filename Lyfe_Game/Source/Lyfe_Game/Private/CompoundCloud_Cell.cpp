@@ -61,7 +61,7 @@ ACompoundCloud_Cell::ACompoundCloud_Cell()
 	//second idea for distribution of particle systems
 
 	std::string center = "CenterSystem";
-	UCompound_ParticleComponent_Cell* temp = CreateDefaultSubobject<UCompound_ParticleComponent_Cell>(center.c_str());
+	UCompound_ParticleComponent_Cell* temp = CreateDefaultSubobject<UCompound_ParticleComponent_Cell>(FName(center.c_str()));
 	particles.Add(temp);
 	RootComponent = temp;
 

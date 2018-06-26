@@ -26,16 +26,27 @@ UCompound_ParticleComponent_Cell::UCompound_ParticleComponent_Cell()
 	mesh->SetupAttachment(this);
 
 	//get the needed particle system and set it in the component
-	auto psAsset = ConstructorHelpers::FObjectFinder<UParticleSystem>(TEXT("ParticleSystem'/Game/ParticleSystems/PS_CompoundCloud_SingleCelled.PS_CompoundCloud_SingleCelled'"));
-	if (psAsset.Object != nullptr)
+	//For some fucking reason this line might give some trouble
+	try 
 	{
-		particleSystemType = psAsset.Object;
+		//static ConstructorHelpers::FObjectFinder<UParticleSystem> psAsset(TEXT("ParticleSystem'/Game/ParticleSystems/PS_CompoundCloud_SingleCelled.PS_CompoundCloud_SingleCelled'"));
+		auto psAsset = ConstructorHelpers::FObjectFinder<UParticleSystem>(TEXT("ParticleSystem'/Game/ParticleSystems/PS_CompoundCloud_SingleCelled.PS_CompoundCloud_SingleCelled'"));
+		if (psAsset.Object != nullptr)
+		{
+			particleSystemType = psAsset.Object;
+		}
+		else
+		{
+			Logging::Log("Could not find Asset 'PS_CompoundCloud_SingleCelled' at path in Compound_ParticleComponent_Cell");
+		}
+		particleSystem->Template = particleSystemType;
 	}
-	else
+	catch (int e)
 	{
-		Logging::Log("Could not find Asset 'PS_CompoundCloud_SingleCelled' at path in Compound_ParticleComponent_Cell");
+		Logging::Log("Could not find Asset 'PS_CompoundCloud_SingleCelled' at path in Compound_ParticleComponent_Cell\nCause: FObjectFinder Access Violation");
+		Logging::Log(e);
 	}
-	particleSystem->Template = particleSystemType;
+	
 
 	//get the mesh and set it
 	auto meshAsset = ConstructorHelpers::FObjectFinder<UStaticMesh>(TEXT("StaticMesh'/Game/Meshes/ball.ball'"));
