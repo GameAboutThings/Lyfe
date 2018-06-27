@@ -24,28 +24,6 @@ UCompound_ParticleComponent_Cell::UCompound_ParticleComponent_Cell()
 	mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	particleSystem->SetupAttachment(this);
 	mesh->SetupAttachment(this);
-
-	//get the needed particle system and set it in the component
-	//For some fucking reason this line might give some trouble
-	try 
-	{
-		//static ConstructorHelpers::FObjectFinder<UParticleSystem> psAsset(TEXT("ParticleSystem'/Game/ParticleSystems/PS_CompoundCloud_SingleCelled.PS_CompoundCloud_SingleCelled'"));
-		auto psAsset = ConstructorHelpers::FObjectFinder<UParticleSystem>(TEXT("ParticleSystem'/Game/ParticleSystems/PS_CompoundCloud_SingleCelled.PS_CompoundCloud_SingleCelled'"));
-		if (psAsset.Object != nullptr)
-		{
-			particleSystemType = psAsset.Object;
-		}
-		else
-		{
-			Logging::Log("Could not find Asset 'PS_CompoundCloud_SingleCelled' at path in Compound_ParticleComponent_Cell");
-		}
-		particleSystem->Template = particleSystemType;
-	}
-	catch (int e)
-	{
-		Logging::Log("Could not find Asset 'PS_CompoundCloud_SingleCelled' at path in Compound_ParticleComponent_Cell\nCause: FObjectFinder Access Violation");
-		Logging::Log(e);
-	}
 	
 
 	//get the mesh and set it
@@ -53,11 +31,34 @@ UCompound_ParticleComponent_Cell::UCompound_ParticleComponent_Cell()
 	if (meshAsset.Object != nullptr)
 	{
 		mesh->SetStaticMesh(meshAsset.Object);
-		mesh->SetVisibility(false);
+		//mesh->SetVisibility(false);
 	}
 	else
 	{
 		Logging::Log("Could not find Asset 'ball' at path in Compound_ParticleComponent_Cell");
+	}
+
+	//get the needed particle system and set it in the component
+	//For some fucking reason this line might give some trouble
+	try
+	{
+		////static ConstructorHelpers::FObjectFinder<UParticleSystem> psAsset(TEXT("ParticleSystem'/Game/ParticleSystems/PS_CompoundCloud_SingleCelled.PS_CompoundCloud_SingleCelled'"));
+		//auto psAsset = ConstructorHelpers::FObjectFinderOptional<UParticleSystem>(TEXT("'/Game/ParticleSystems/PS_CompoundCloud.PS_CompoundCloud'"));
+		//if (psAsset.Succeeded())
+		//{
+		//	particleSystemType = psAsset.Get();
+		//}
+		//else
+		//{
+		//	Logging::Log("Could not find Asset 'PS_CompoundCloud_SingleCelled' at path in Compound_ParticleComponent_Cell");
+		//}
+		////particleSystem->Template = particleSystemType;
+		//particleSystem->SetTemplate(particleSystemType);
+	}
+	catch (int e)
+	{
+		Logging::Log("Could not find Asset 'PS_CompoundCloud_SingleCelled' at path in Compound_ParticleComponent_Cell\nCause: FObjectFinder Access Violation");
+		Logging::Log(e);
 	}
 	
 }

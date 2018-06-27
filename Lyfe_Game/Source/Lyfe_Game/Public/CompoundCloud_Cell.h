@@ -7,20 +7,8 @@
 #include "ProceduralMeshComponent.h"
 #include "Compound_ParticleComponent_Cell.h"
 #include "Meta_CellStage.h"
-
 #include "CompoundCloud_Cell.generated.h"
 
-USTRUCT(BlueprintType)
-struct FMeshBounds
-{
-	GENERATED_BODY()
-
-	float zero;
-	float one;
-	float two;
-	float three;
-	float four;
-};
 
 UCLASS()
 class LYFE_GAME_API ACompoundCloud_Cell : public AActor
@@ -80,41 +68,14 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "CELL|CompoundCloud|FX")
 	TArray<UCompound_ParticleComponent_Cell *> particles;
 
-	/** The vertexbuffer for the compound cloud */
-	//UPROPERTY(BlueprintReadWrite, Category = "CELL|CompoundCloud|Mesh")
-	//TArray<FVector> vertices;
-
-	/** The indexbuffer for the compound cloud */
-	//UPROPERTY(BlueprintReadWrite, Category = "CELL|CompoundCloud|Mesh")
-	//TArray<int32> indices;
-
-	/** Will point to the player as long as he/she is consuming the compound cloud; else nullptr*/
-	//UPROPERTY(BlueprintReadWrite, Category = "CELL|CompoundCloud|Consumption")
-	//class ACharacter_SingleCelled* consumingPlayer;
-
-	/** Will point to a cell as long as it is consuming the compound cloud; else nullptr 
-	* No class for this so far so don't use it
-	*/
-	//UPROPERTY(BlueprintReadWrite, Category = "CELL|CompoundCloud|Consumption")
-	//class AActor* consumingCell;
 public:
 
   /////////////////////////////////////////////////////////////////////////////
  ////////////////////////////// FUNCTIONS ////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 private:
+	/** Mostly in here as an example */
 	void CreateCube();
-
-	/** Creates random vertices and adds indices for them storing them in member variable vertices and indices*/
-	UFUNCTION(BlueprintCallable, Category = "CELL|CompoundCloud|Mesh")
-	void CreateCloudVerticesAndIndices(FMeshBounds _b);
-
-	UFUNCTION(BlueprintCallable, Category = "CELL|CompoundCloud|Mesh")
-	void CreateCloudMesh();
-
-	/** Reshapes the mesh away from the object that is consuming the cloud */
-	UFUNCTION()
-	void ReshapeMeshOnConsumption();
 
 	UFUNCTION()
 	void CloudFinishConsumption();
