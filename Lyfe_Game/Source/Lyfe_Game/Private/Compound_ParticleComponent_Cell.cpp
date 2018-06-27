@@ -30,7 +30,8 @@ UCompound_ParticleComponent_Cell::UCompound_ParticleComponent_Cell()
 	try 
 	{
 		//static ConstructorHelpers::FObjectFinder<UParticleSystem> psAsset(TEXT("ParticleSystem'/Game/ParticleSystems/PS_CompoundCloud_SingleCelled.PS_CompoundCloud_SingleCelled'"));
-		auto psAsset = ConstructorHelpers::FObjectFinder<UParticleSystem>(TEXT("ParticleSystem'/Game/ParticleSystems/PS_CompoundCloud_SingleCelled.PS_CompoundCloud_SingleCelled'"));
+		ConstructorHelpers::FObjectFinder<UParticleSystem> psAsset (TEXT("ParticleSystem'/Game/ParticleSystems/PS_CompoundCloud_SingleCelled.PS_CompoundCloud_SingleCelled'"));
+
 		if (psAsset.Object != nullptr)
 		{
 			particleSystemType = psAsset.Object;
@@ -53,7 +54,7 @@ UCompound_ParticleComponent_Cell::UCompound_ParticleComponent_Cell()
 	if (meshAsset.Object != nullptr)
 	{
 		mesh->SetStaticMesh(meshAsset.Object);
-		mesh->SetVisibility(false);
+		//mesh->SetVisibility(false);
 	}
 	else
 	{

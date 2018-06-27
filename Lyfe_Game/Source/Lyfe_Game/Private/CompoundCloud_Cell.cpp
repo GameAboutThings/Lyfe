@@ -58,12 +58,12 @@ ACompoundCloud_Cell::ACompoundCloud_Cell()
 
 	type = ECompound(rand() % 5);
 
-	//second idea for distribution of particle systems
+	//second idea for distribution of particle systems (and it's much better except for the editor crashing)
 
-	std::string center = "CenterSystem";
-	UCompound_ParticleComponent_Cell* temp = CreateDefaultSubobject<UCompound_ParticleComponent_Cell>(FName(center.c_str()));
-	particles.Add(temp);
-	RootComponent = temp;
+	//std::string centerName = "CenterSystem";
+	UCompound_ParticleComponent_Cell* center = CreateDefaultSubobject<UCompound_ParticleComponent_Cell>(TEXT("CensterSystem"));
+	particles.Add(center);
+	RootComponent = center;
 
 	for (uint8 i = 0; i < 100; i++)
 	{
@@ -122,14 +122,28 @@ ACompoundCloud_Cell::ACompoundCloud_Cell()
 			//change the color of the particle system
 			UParticleSystemComponent* particleSystem = temp->GetParticleSystem();
 
-			particleSystem->SetColorParameter(FName("Color"), color);
+			//particleSystem->SetColorParameter(FName("Color"), color);
 
-			//UMaterialInterface* material = particleSystem->GetMaterial(0);
-			//UMaterialInstanceDynamic* dynMaterial = UMaterialInstanceDynamic::Create(material, this);
-			//dynMaterial->SetVectorParameterValue(FName("Color"), color);
-			//particleSystem->SetMaterial(0, dynMaterial);
-			
-			
+			//load up the material instance of the cloud emmission
+			/*auto materialAsset = ConstructorHelpers::FObjectFinder<UMaterialInstanceDynamic>(TEXT("MaterialInstanceDynamic'/Game/Materials/MI_CloudEmmission.MI_CloudEmmission'"));
+			if (materialAsset.Object != nullptr)
+			{
+				try
+				{
+					UMaterialInstanceDynamic* dynMaterial = materialAsset.Object;
+					dynMaterial->SetVectorParameterValue(FName("Color"), color);
+				}
+				catch (int e)
+				{
+					Logging::Log(e);
+				}
+				
+				particleSystem->SetMaterial(0, materialAsset.Object);
+			}
+			else
+			{
+				Logging::Log("Could not find Asset 'MI_CloudEmmission' at path in CompoundCloud_Cell");
+			}*/
 
 
 			//finally: check if number of elements in array is particle count
