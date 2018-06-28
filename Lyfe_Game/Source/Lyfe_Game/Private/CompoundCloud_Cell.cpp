@@ -13,7 +13,8 @@
 #include "CompoundStorageComponent_Cell.h"
 #include <string>
 #include <math.h>
-//#include "Runtime/Engine/Classes/Particles/ParticleSystemComponent.h"
+#include "Compound_ParticleComponent_Cell.h"
+#include "Runtime/Engine/Classes/Particles/ParticleSystemComponent.h"
 
 
 // Sets default values

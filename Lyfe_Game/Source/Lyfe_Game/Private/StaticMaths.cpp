@@ -105,7 +105,15 @@ bool StaticMaths::RandomBool()
 	int random = (int)(rand()) % 2;
 	int random_2 = (int)(rand()) % 2;
 
-	return (bool) (random_2 ? random : !random);
+	random_2 = (random_2 ? random : !random);
+	if(random_2 >= 1)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 bool StaticMaths::Between(float value, float a, float b)
