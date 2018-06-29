@@ -42,18 +42,18 @@ UCompound_ParticleComponent_Cell::UCompound_ParticleComponent_Cell()
 	//For some fucking reason this line might give some trouble
 	try
 	{
-		////static ConstructorHelpers::FObjectFinder<UParticleSystem> psAsset(TEXT("ParticleSystem'/Game/ParticleSystems/PS_CompoundCloud_SingleCelled.PS_CompoundCloud_SingleCelled'"));
-		//auto psAsset = ConstructorHelpers::FObjectFinderOptional<UParticleSystem>(TEXT("'/Game/ParticleSystems/PS_CompoundCloud.PS_CompoundCloud'"));
-		//if (psAsset.Succeeded())
-		//{
-		//	particleSystemType = psAsset.Get();
-		//}
-		//else
-		//{
-		//	Logging::Log("Could not find Asset 'PS_CompoundCloud_SingleCelled' at path in Compound_ParticleComponent_Cell");
-		//}
-		////particleSystem->Template = particleSystemType;
-		//particleSystem->SetTemplate(particleSystemType);
+		//static ConstructorHelpers::FObjectFinder<UParticleSystem> psAsset(TEXT("ParticleSystem'/Game/ParticleSystems/PS_CompoundCloud_SingleCelled.PS_CompoundCloud_SingleCelled'"));
+		auto psAsset = ConstructorHelpers::FObjectFinderOptional<UParticleSystem>(TEXT("'/Game/ParticleSystems/PS_CompoundCloud.PS_CompoundCloud'"));
+		if (psAsset.Succeeded())
+		{
+			particleSystemType = psAsset.Get();
+		}
+		else
+		{
+			Logging::Log("Could not find Asset 'PS_CompoundCloud_SingleCelled' at path in Compound_ParticleComponent_Cell");
+		}
+		//particleSystem->Template = particleSystemType;
+		particleSystem->SetTemplate(particleSystemType);
 	}
 	catch (int e)
 	{
