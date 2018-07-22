@@ -6,6 +6,7 @@
 #include "StaticMaths.h"
 #include "GameMode_Cell.h"
 #include "Logging.h"
+#include "Runtime/Engine/Classes/Engine/World.h"
 
 
 // Sets default values
@@ -17,6 +18,10 @@ ASpawnVolume_Cell::ASpawnVolume_Cell()
 	//create the bounds for the spawn volume
 	volume = CreateDefaultSubobject<UBoxComponent>(TEXT("Volume"));
 	RootComponent = Cast<USceneComponent>(volume);
+
+	
+	volume->bGenerateOverlapEvents = false;
+	
 }
 
 // Called when the game starts or when spawned

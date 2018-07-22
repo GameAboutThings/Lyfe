@@ -59,13 +59,14 @@ public:
 private:
 protected:
 	UFUNCTION(BlueprintCallable, Category = "CELL|CompoundCloud|Collision")
-	void Consumption();
+	void Consumption(AActor* consumer);
 
 	UFUNCTION(BlueprintCallable, Category = "CELL|CompoundCloud|Collision")
-	void BeginOverlap(AActor* otherActor);
+	void BeginOverlap(class UPrimitiveComponent* newComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	//void BeginOverlap(AActor* otherActor);
 
 	UFUNCTION(BlueprintCallable, Category = "CELL|CompoundCloud|Collision")
-	void EndOverlap(AActor* otherActor);
+	void EndOverlap(class UPrimitiveComponent* overlappedComp, class AActor* otherActor, class UPrimitiveComponent* otherComp, int32 otherBodyIndex);
 public:
 	UFUNCTION(BlueprintCallable, Category = "CELL|CompoundCloud|FX")
 	class UParticleSystemComponent* GetParticleSystem();

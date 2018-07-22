@@ -30,8 +30,6 @@ ACompoundCloud_Cell::ACompoundCloud_Cell()
 
 	uint8 particleCount = StaticMaths::RR(CLOUD_PARTICLE_MIN, CLOUD_PARTICLE_MAX);
 
-	Logging::Log(particleCount, "particleCount");
-
 	//place <particleCount> number of sub particles
 	//for (uint8 i = 0; i < particleCount; i++)
 	//{

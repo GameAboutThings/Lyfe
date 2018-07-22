@@ -10,6 +10,7 @@
 #include "Character_SingleCelled.h"
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 #include "CompoundStorageComponent_Cell.h"
+#include "Runtime/Engine/Classes/Engine/World.h"
 
 
 // Sets default values for this component's properties
@@ -25,6 +26,11 @@ UCompound_ParticleComponent_Cell::UCompound_ParticleComponent_Cell()
 	particleSystem->SetupAttachment(this);
 	mesh->SetupAttachment(this);
 	
+	//Collision binding
+	mesh->bGenerateOverlapEvents = true;
+	mesh->OnComponentBeginOverlap.AddDynamic(this, &UCompound_ParticleComponent_Cell::BeginOverlap);
+	mesh->OnComponentEndOverlap.AddDynamic(this, &UCompound_ParticleComponent_Cell::EndOverlap);
+
 
 	//get the mesh and set it
 	auto meshAsset = ConstructorHelpers::FObjectFinder<UStaticMesh>(TEXT("StaticMesh'/Game/Meshes/ball.ball'"));
@@ -40,26 +46,26 @@ UCompound_ParticleComponent_Cell::UCompound_ParticleComponent_Cell()
 
 	//get the needed particle system and set it in the component
 	//For some fucking reason this line might give some trouble
-	try
-	{
-		//static ConstructorHelpers::FObjectFinder<UParticleSystem> psAsset(TEXT("ParticleSystem'/Game/ParticleSystems/PS_CompoundCloud_SingleCelled.PS_CompoundCloud_SingleCelled'"));
-		auto psAsset = ConstructorHelpers::FObjectFinderOptional<UParticleSystem>(TEXT("'/Game/ParticleSystems/PS_CompoundCloud.PS_CompoundCloud'"));
-		if (psAsset.Succeeded())
-		{
-			particleSystemType = psAsset.Get();
-		}
-		else
-		{
-			Logging::Log("Could not find Asset 'PS_CompoundCloud_SingleCelled' at path in Compound_ParticleComponent_Cell");
-		}
-		//particleSystem->Template = particleSystemType;
-		particleSystem->SetTemplate(particleSystemType);
-	}
-	catch (int e)
-	{
-		Logging::Log("Could not find Asset 'PS_CompoundCloud_SingleCelled' at path in Compound_ParticleComponent_Cell\nCause: FObjectFinder Access Violation");
-		Logging::Log(e);
-	}
+	//try
+	//{
+	//	//static ConstructorHelpers::FObjectFinder<UParticleSystem> psAsset(TEXT("ParticleSystem'/Game/ParticleSystems/PS_CompoundCloud_SingleCelled.PS_CompoundCloud_SingleCelled'"));
+	//	auto psAsset = ConstructorHelpers::FObjectFinderOptional<UParticleSystem>(TEXT("'/Game/ParticleSystems/PS_CompoundCloud.PS_CompoundCloud'"));
+	//	if (psAsset.Succeeded())
+	//	{
+	//		particleSystemType = psAsset.Get();
+	//	}
+	//	else
+	//	{
+	//		Logging::Log("Could not find Asset 'PS_CompoundCloud_SingleCelled' at path in Compound_ParticleComponent_Cell");
+	//	}
+	//	//particleSystem->Template = particleSystemType;
+	//	particleSystem->SetTemplate(particleSystemType);
+	//}
+	//catch (int e)
+	//{
+	//	Logging::Log("Could not find Asset 'PS_CompoundCloud_SingleCelled' at path in Compound_ParticleComponent_Cell\nCause: FObjectFinder Access Violation");
+	//	Logging::Log(e);
+	//}
 	
 }
 
@@ -86,47 +92,55 @@ void UCompound_ParticleComponent_Cell::TickComponent(float DeltaTime, ELevelTick
   //////////////////////////////////////////////////////////////////////////////
  //////////////////////////////// PROTECTED ///////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-void UCompound_ParticleComponent_Cell::Consumption()
+void UCompound_ParticleComponent_Cell::Consumption(AActor* consumer)
 {
+	if (consumer == nullptr)
+	{
+		Logging::Log("ERROR on CompoundCloud consumption: consumer is nullptr");
+		return;
+	}
+
 	ACompoundCloud_Cell* parent = Cast<ACompoundCloud_Cell>(GetOwner());
-	if(parent != nullptr)
+	if (parent == nullptr)
 	{
-		parent->AddValue(-1);
-
-		ACharacter_SingleCelled* controller = Cast<ACharacter_SingleCelled>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
-		if (controller != nullptr)
-		{
-			controller->GetCompoundStorage()->AddCompound(value, parent->GetType());
-		}
-		else
-		{
-			Logging::Log("ERROR in Consumption: controller could not be referenced ", true);
-		}
-
-		this->DestroyComponent();
+		Logging::Log("ERROR on CompoundCloud consumption: parent of particleComponent could not be referenced");
+		return;
 	}
-	else
+		
+
+	parent->AddValue(-1);
+
+	//If the player is on the compound cloud
+	ACharacter_SingleCelled* controller = Cast<ACharacter_SingleCelled>(consumer);
+
+	if (controller != nullptr)//consumer == player
 	{
-		Logging::Log("ERROR in Consumption: parent could not be referenced ", true);
-	}	
+		controller->GetCompoundStorage()->AddCompound(value, parent->GetType());
+	}
+	else //consumer == other random object
+	{
+		FString c = consumer->GetClass()->GetName();
+		Logging::Log(c, "Consumer of class ");
+	}
+	mesh->UnregisterComponent();
+	particleSystem->UnregisterComponent();
+	this->UnregisterComponent();
 }
 
-void UCompound_ParticleComponent_Cell::BeginOverlap(AActor* otherActor)
+void UCompound_ParticleComponent_Cell::BeginOverlap(class UPrimitiveComponent* newComp, class AActor* otherActor, class UPrimitiveComponent* otherComp, int32 otherBodyIndex, bool bFromSweep, const FHitResult& sweepResult)
 {
-	if ((otherActor != nullptr) /*&& (otherActor != this)*/)
-	{
-		//If the player is on the compound cloud
-		ACharacter_SingleCelled* controller = Cast<ACharacter_SingleCelled>(otherActor);
-		if (controller != nullptr)
-		{
-			Consumption();
-		}
+	ACompoundCloud_Cell* parent = Cast<ACompoundCloud_Cell>(this->GetOwner());
+	if (parent == nullptr)
+		return;
 
-		//If a cell is on the compound cloud
+
+	if ((otherActor != nullptr) && (otherActor != parent))
+	{
+		Consumption(otherActor);
 	}
 }
 
-void UCompound_ParticleComponent_Cell::EndOverlap(AActor* otherActor)
+void UCompound_ParticleComponent_Cell::EndOverlap(class UPrimitiveComponent* overlappedComp, class AActor* otherActor, class UPrimitiveComponent* otherComp, int32 otherBodyIndex)
 {
 	if ((otherActor != nullptr) /*&& (otherActor != this)*/)
 	{
