@@ -7,6 +7,7 @@
 #include "CellEditor_ArrowComponent.h"
 #include "StaticMaths.h"
 #include "ProceduralMeshComponent.h"
+#include "Meta_CellEditor.h"
 
 
 // Sets default values

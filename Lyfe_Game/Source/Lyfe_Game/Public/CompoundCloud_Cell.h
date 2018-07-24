@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "ProceduralMeshComponent.h"
-#include "Compound_ParticleComponent_Cell.h"
 #include "Meta_CellStage.h"
 #include "CompoundCloud_Cell.generated.h"
 
@@ -120,5 +119,5 @@ public:
 	* @return Array with all particle systems for the cloud representation
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CELL|CompoundCloud|Compound")
-	TArray<UCompound_ParticleComponent_Cell*> GetParticleComponents();
+	TArray<class UCompound_ParticleComponent_Cell*> GetParticleComponents();
 };

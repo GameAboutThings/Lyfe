@@ -4,6 +4,7 @@
 #include "Character_SingleCelled.h"
 #include "Logging.h"
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
+#include "Meta_CellStage.h"
 
 
 // Sets default values for this component's properties
@@ -196,28 +197,28 @@ void UCompoundStorageComponent_Cell::SetCompounds()
 {
 	//CO2
 	_playerCompounds._CO2.maximum = 10000.f;
-	_playerCompounds._CO2.current = 10000.f;
-	_playerCompounds._CO2.balance = 0;
+	_playerCompounds._CO2.current = 1000.f;
+	_playerCompounds._CO2.balance = -1;
 
 	//Oxygen
 	_playerCompounds._O2.maximum = 10000.f;
-	_playerCompounds._O2.current = 10000.f;
-	_playerCompounds._O2.balance = 0;
+	_playerCompounds._O2.current = 1000.f;
+	_playerCompounds._O2.balance = -1;
 
 	//Amino Acid
 	_playerCompounds._AminoAcid.maximum = 10000.f;
-	_playerCompounds._AminoAcid.current = 10000.f;
-	_playerCompounds._AminoAcid.balance = 0;
+	_playerCompounds._AminoAcid.current = 1000.f;
+	_playerCompounds._AminoAcid.balance = -1;
 
 	//Glucose
 	_playerCompounds._Glucose.maximum = 10000.f;
-	_playerCompounds._Glucose.current = 10000.f;
-	_playerCompounds._Glucose.balance = 0;
+	_playerCompounds._Glucose.current = 1000.f;
+	_playerCompounds._Glucose.balance = -1;
 
 	//Lipid
 	_playerCompounds._Lipid.maximum = 10000.f;
-	_playerCompounds._Lipid.current = 10000.f;
-	_playerCompounds._Lipid.balance = 0;
+	_playerCompounds._Lipid.current = 1000.f;
+	_playerCompounds._Lipid.balance = -1;
 }
 
 void UCompoundStorageComponent_Cell::AddCompound(int amount, ECompound compound)

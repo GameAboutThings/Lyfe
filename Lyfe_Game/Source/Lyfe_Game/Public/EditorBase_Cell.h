@@ -4,8 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
-#include "Meta_CellEditor.h"
-
 #include "EditorBase_Cell.generated.h"
 
 UCLASS()

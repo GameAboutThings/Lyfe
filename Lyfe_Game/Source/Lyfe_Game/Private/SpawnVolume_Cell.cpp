@@ -7,6 +7,9 @@
 #include "GameMode_Cell.h"
 #include "Logging.h"
 #include "Runtime/Engine/Classes/Engine/World.h"
+#include "Runtime/Engine/Classes/Components/BoxComponent.h"
+#include "PassiveObject_Cell.h"
+#include "CompoundCloud_Cell.h"
 
 
 // Sets default values

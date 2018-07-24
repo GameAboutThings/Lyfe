@@ -4,6 +4,7 @@
 #include "Character_SingleCelled.h"
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 #include "Logging.h"
+#include "Meta_CellStage.h"
 //#include "CompoundStorageComponent_Cell.h"
 
   //////////////////////////////////////////////////////////////////////////////

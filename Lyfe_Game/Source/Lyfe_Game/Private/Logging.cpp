@@ -4,7 +4,7 @@
 #include "Runtime/Core/Public/Misc/FileHelper.h"
 #include "Runtime/Core/Public/HAL/PlatformFilemanager.h"
 #include "Runtime/Core/Public/Misc/DateTime.h"
-//#include "Util.h"
+#include "Util.h"
 //#include "../Private/Util.cpp"
 
 Logging::Logging()

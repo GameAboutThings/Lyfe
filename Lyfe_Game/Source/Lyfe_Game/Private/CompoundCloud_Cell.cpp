@@ -4,17 +4,15 @@
 #include "StaticMaths.h"
 #include "Logging.h"
 #include "Character_SingleCelled.h"
-//#include "Runtime/Engine/Classes/Materials/MaterialInstanceDynamic.h"
 #include "Runtime/CoreUObject/Public/UObject/ConstructorHelpers.h"
 #include "GameMode_Cell.h"
-#include "Character_SingleCelled.h"
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 #include "StaticMaths.h"
 #include "CompoundStorageComponent_Cell.h"
 #include <string>
 #include <math.h>
 #include "Compound_ParticleComponent_Cell.h"
-#include "Runtime/Engine/Classes/Particles/ParticleSystemComponent.h"
+//#include "Runtime/Engine/Classes/Particles/ParticleSystemComponent.h"
 
 
 // Sets default values
@@ -30,28 +28,6 @@ ACompoundCloud_Cell::ACompoundCloud_Cell()
 
 	uint8 particleCount = StaticMaths::RR(CLOUD_PARTICLE_MIN, CLOUD_PARTICLE_MAX);
 
-	//place <particleCount> number of sub particles
-	//for (uint8 i = 0; i < particleCount; i++)
-	//{
-	//	/*std::string name = "particle" + i;*/
-	//	std::string name = "ParticleSystem_";
-	//	name.append({ static_cast<char>(i) });
-	//	UCompound_ParticleComponent_Cell* temp = CreateDefaultSubobject<UCompound_ParticleComponent_Cell>(name.c_str());
-	//	particles.Add(temp);
-	//	temp->SetupAttachment(RootComponent);
-
-
-	//	//set up random location within a circle
-	//	double a = (((double)rand() / (RAND_MAX)) + 1) * 2 * PI;
-	//	double r = CLOUD_RADIUS * sqrt(((double)rand() / (RAND_MAX)) + 1);
-
-	//	double x = r * cos(a);
-	//	double y = r * sin(a);
-
-	//	FVector location = FVector(x, y, 0);
-
-	//	temp->SetRelativeLocation(location);
-	//}
 
 	value = particleCount;
 
@@ -119,9 +95,9 @@ ACompoundCloud_Cell::ACompoundCloud_Cell()
 			}
 
 			//change the color of the particle system
-			UParticleSystemComponent* particleSystem = temp->GetParticleSystem();
+			//UParticleSystemComponent* particleSystem = temp->GetParticleSystem();
 
-			particleSystem->SetColorParameter(FName("Color"), color);
+			//particleSystem->SetColorParameter(FName("Color"), color);
 
 			//UMaterialInterface* material = particleSystem->GetMaterial(0);
 			//UMaterialInstanceDynamic* dynMaterial = UMaterialInstanceDynamic::Create(material, this);

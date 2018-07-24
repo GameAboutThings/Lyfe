@@ -2,9 +2,10 @@
 
 #pragma once
 
-#include "Meta_CellStage.h"
 #include "CoreMinimal.h"
+#include "Meta_CellStage.h"
 #include "Components/ActorComponent.h"
+
 #include "CompoundStorageComponent_Cell.generated.h"
 
 

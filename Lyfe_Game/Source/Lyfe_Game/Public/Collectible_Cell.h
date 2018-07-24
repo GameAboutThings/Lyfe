@@ -4,7 +4,7 @@
 
 #include "PassiveObject_Cell.h"
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
+//#include "GameFramework/Actor.h"
 #include "Collectible_Cell.generated.h"
 
 UCLASS()

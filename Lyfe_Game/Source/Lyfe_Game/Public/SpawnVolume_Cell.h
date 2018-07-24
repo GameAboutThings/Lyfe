@@ -4,9 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Runtime/Engine/Classes/Components/BoxComponent.h"
-#include "PassiveObject_Cell.h"
-#include "CompoundCloud_Cell.h"
 
 #include "SpawnVolume_Cell.generated.h"
 

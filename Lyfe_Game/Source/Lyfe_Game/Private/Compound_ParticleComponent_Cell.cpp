@@ -11,6 +11,7 @@
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 #include "CompoundStorageComponent_Cell.h"
 #include "Runtime/Engine/Classes/Engine/World.h"
+#include "StaticMaths.h"
 
 
 // Sets default values for this component's properties
@@ -19,6 +20,9 @@ UCompound_ParticleComponent_Cell::UCompound_ParticleComponent_Cell()
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
+
+	//Set value for this one blob
+	value = StaticMaths::RR(50, 100);
 
 	//instantiate mesh component and particle system component
 	particleSystem = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("ParticleSystem"));
@@ -49,7 +53,7 @@ UCompound_ParticleComponent_Cell::UCompound_ParticleComponent_Cell()
 	//try
 	//{
 	//	//static ConstructorHelpers::FObjectFinder<UParticleSystem> psAsset(TEXT("ParticleSystem'/Game/ParticleSystems/PS_CompoundCloud_SingleCelled.PS_CompoundCloud_SingleCelled'"));
-	//	auto psAsset = ConstructorHelpers::FObjectFinderOptional<UParticleSystem>(TEXT("'/Game/ParticleSystems/PS_CompoundCloud.PS_CompoundCloud'"));
+	//	auto psAsset = ConstructorHelpers::FObjectFinderOptional<UParticleSystem>(TEXT("ParticleSystem'/Game/ParticleSystems/PS_CompoundCloud.PS_CompoundCloud'"));
 	//	if (psAsset.Succeeded())
 	//	{
 	//		particleSystemType = psAsset.Get();
@@ -168,4 +172,11 @@ class UParticleSystemComponent* UCompound_ParticleComponent_Cell::GetParticleSys
 UStaticMeshComponent * UCompound_ParticleComponent_Cell::GetMesh()
 {
 	return mesh;
+}
+
+void UCompound_ParticleComponent_Cell::DestroyComponent()
+{
+	mesh->UnregisterComponent();
+	particleSystem->UnregisterComponent();
+	this->UnregisterComponent();
 }
