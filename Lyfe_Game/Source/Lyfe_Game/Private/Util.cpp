@@ -148,7 +148,7 @@ FString Util::Vector3DToString(FVector vector)
 	ret.Append(FString::SanitizeFloat(vector.Y));
 	ret.Append("|");
 	ret.Append(FString::SanitizeFloat(vector.Z));
-	return FString();
+	return ret;
 }
 
 FString Util::Vector2DToString(FVector2D vector)
@@ -157,5 +157,5 @@ FString Util::Vector2DToString(FVector2D vector)
 	ret.Append(FString::SanitizeFloat(vector.X));
 	ret.Append("|");
 	ret.Append(FString::SanitizeFloat(vector.Y));
-	return FString();
+	return ret;
 }
