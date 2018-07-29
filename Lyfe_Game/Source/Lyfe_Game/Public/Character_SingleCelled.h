@@ -61,31 +61,7 @@ private:
 		* 0 for no input
 		*/
 		float rightInput;
-
-		/** The location the cell will move towards */
-		FVector targetLocation;
-
-		/** targetLocation of previous frame */
-		FVector targetLocationPrev;
 	};
-
-	///** One single compound*/
-	//struct Compound
-	//{
-	//	int current;
-	//	int maximum;
-	//	int balance;
-	//};
-
-	/** Saves all compunds within the player */
-	//struct Compounds
-	//{
-	//	Compound _CO2;
-	//	Compound _O2;
-	//	Compound _AminoAcid;
-	//	Compound _Glucose;
-	//	Compound _Lipid;
-	//};
 
 protected:
 
@@ -119,32 +95,18 @@ private:
 	/** Current player state */
 	EPlayerState _ePlayerState;
 
-	//UPROPERTY()
-	//class USphereComponent* testMesh;
-
 	/** The camera that follows your cell around */
 	class UCameraComponent* playerCamera;
 
 	/** The springarm the camera is attached to */
 	class USpringArmComponent* cameraAttachmentArm;
 
-	/** True when the player character is moving */
-	bool bIsMoving;
-
-	/** True when the player character is rotating */
-	bool bIsRotating;
-
-	/** stores all compounds for the player */
-	//Compounds _playerCompounds;
-
-	///** stores current and max Protein */
-	//Compound _protein;
-
-	/** Whether the mouse influences Gameplay or the GUI */
-	bool bInteractGUI;
 
 	/** A class that stores all compounds including proteins */
 	class UCompoundStorageComponent_Cell* compoundStorage;
+
+	/** A class that handles the user input */
+	class UInputComponent_Cell* inputComponent;
 
 protected:
 	UPROPERTY(BlueprintReadWrite)
@@ -160,19 +122,9 @@ public:
 /////////////////////////////////////////////////////////////////////////////
 private:
 
-	/** Determines the location the cell will move towards 
-	* For EFollowMouse it's the mouse position
-	* For EWASD it's a vector determined through the user's key input
-	*/
-	void DetermineTargetLocation();
-
 	void MoveToTargetLocation(float DeltaTime);
 
 	void Die();
-
-	/** Access the player Camera */
-	UFUNCTION(BlueprintCallable, Category = "CELL|CELL_Camera")
-	class UCameraComponent* GetPlayerCamera();
 
 	/** Moves the camera closer to or further away from the player cell */
 	UFUNCTION(BlueprintCallable, Category = "CELL|CELL_Camera")
@@ -184,23 +136,7 @@ private:
 	/** Called when the player clicks the right mouse button */
 	void OnRightClick();
 
-	///** Sets compounds when world is loaded.
-	//* Should not be called anywhere else.
-	//*/
-	//void SetCompounds();
-
-	/** Sets whether the player interacts with the GUI or with the Game. This is mostly relevant for EFollowMouse*/
-	UFUNCTION(BlueprintCallable, Category = "CELL|CELL_HUD")
-	void SetInteractGUI(bool bGUI);
-
-	/** Only used for key binding*/
-	UFUNCTION(BlueprintCallable, Category = "CELL|CELL_HUD")
-	void SetInteractGUITrue();
-
-	///** Enforces the balance saved for every compound; Called every frame to reduce compound or rather metabolize it*/
-	//void EnforceCompoundBalance();
-
-	/*FString GetCompoundName(ECompound compound);*/
+	void SetInteractGUI();
 
 protected:
 	/** Bound to the MoveForward Axis */
@@ -248,9 +184,17 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "CELL|State")
 	EPlayerState GetPlayerState();
 
-	UFUNCTION(BlueprintCallable, Category = "CELL|Movement")
-	bool PlayerIsMoving();
+	//UFUNCTION(BlueprintCallable, Category = "CELL|Movement")
+	//bool PlayerIsMoving();
 
 	UFUNCTION(BlueprintCallable, Category = "CELL|Movement")
 	UCompoundStorageComponent_Cell* GetCompoundStorage();
+
+	/** Access the player Camera */
+	UFUNCTION(BlueprintCallable, Category = "CELL|CELL_Camera")
+	class UCameraComponent* GetPlayerCamera();
+
+	/** Access the player Camera springarm*/
+	UFUNCTION(BlueprintCallable, Category = "CELL|CELL_Camera")
+	class USpringArmComponent* GetPlayerCameraArm();
 };

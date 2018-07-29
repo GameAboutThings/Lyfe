@@ -12,6 +12,8 @@
 #include "GameMode_Cell.h"
 #include "Logging.h"
 #include "CompoundStorageComponent_Cell.h"
+#include "InputComponent_Cell.h"
+#include "Runtime/Engine/Classes/Engine/World.h"
 
 // Sets default values
 ACharacter_SingleCelled::ACharacter_SingleCelled()
@@ -41,12 +43,15 @@ ACharacter_SingleCelled::ACharacter_SingleCelled()
 
 	compoundStorage = CreateDefaultSubobject<UCompoundStorageComponent_Cell>(TEXT("Compound Storage"));
 
+	//set up the input component
+	inputComponent = CreateDefaultSubobject<UInputComponent_Cell>(TEXT("InputHandler"));
+
 	//Allow user to control this character
 	AutoPossessPlayer = EAutoReceiveInput::Player0;
 
 
-	bIsMoving = false;
-	bIsRotating = false;
+	//bIsMoving = false;
+	//bIsRotating = false;
 }
 
 // Called when the game starts or when spawned
@@ -75,12 +80,7 @@ void ACharacter_SingleCelled::BeginPlay()
 				50.f,   //movementSpeed || needs to be called from function later on
 				0.f,   //forwardInput
 				0.f,   //rightInput
-				GetActorLocation(), //targetLocation
-				GetActorLocation() //targetLocationPrev
 		};
-
-	//make it so the cell looks up at the beginning;
-	_movement.targetLocation += playerDirection->GetForwardVector();
 
 	playerMesh->bGenerateOverlapEvents = true;
 
@@ -94,7 +94,6 @@ void ACharacter_SingleCelled::Tick(float DeltaTime)
 
 	if (_ePlayerState == EPlayerState::EAlive)
 	{
-		DetermineTargetLocation();
 		MoveToTargetLocation(DeltaTime);
 	}
 }
@@ -109,7 +108,7 @@ void ACharacter_SingleCelled::SetupPlayerInputComponent(UInputComponent* PlayerI
 	PlayerInputComponent->BindAxis("MoveRight", this, &ACharacter_SingleCelled::SetRightMotion);
 	PlayerInputComponent->BindAction("MouseLeft", IE_Pressed, this, &ACharacter_SingleCelled::OnLeftClick);
 	PlayerInputComponent->BindAction("MouseRight", IE_Pressed, this, &ACharacter_SingleCelled::OnRightClick);
-	PlayerInputComponent->BindAction("InteractGUI", IE_Pressed, this, &ACharacter_SingleCelled::SetInteractGUITrue);
+	PlayerInputComponent->BindAction("InteractGUI", IE_Pressed, this, &ACharacter_SingleCelled::SetInteractGUI);
 }
 
 /*---------------------------------------------------------------------------------------------------------------------------------------------------------------*/
@@ -118,54 +117,19 @@ void ACharacter_SingleCelled::SetupPlayerInputComponent(UInputComponent* PlayerI
  ///////////////////////////////// PRIVATE ////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-void ACharacter_SingleCelled::DetermineTargetLocation()
-{
-	_movement.targetLocationPrev = _movement.targetLocation;
-	AGameMode_Cell* gameMode = Cast<AGameMode_Cell>(GetWorld()->GetAuthGameMode());
-	if (gameMode != nullptr)
-	{
-		FVector mouseDirection;
-		//Check which control setting is activated
-		if (gameMode->GetControlSetting() == EControlSettings::EFollowMouse) //Cell follows mouse
-		{
-			APlayerController* playerController = Cast<APlayerController>(GetController());
-			if (playerController != nullptr)
-			{
-				playerController->DeprojectMousePositionToWorld(_movement.targetLocation, mouseDirection);
-				_movement.targetLocation = _movement.targetLocation + (cameraAttachmentArm->TargetArmLength * mouseDirection);
-			}
-		}
-		else if (gameMode->GetControlSetting() == EControlSettings::EWASD) //WASD to move
-		{
-			//This is handled in the Binding methods |||||||| for test reason not anymore
-
-			_movement.targetLocation.X = (_movement.forwardInput * 1000.f) + GetActorLocation().X; //+ (_movement.targetLocationPrev.X / 100.f);
-			_movement.targetLocation.Y = (_movement.rightInput * 1000.f) + GetActorLocation().Y; // + (_movement.targetLocationPrev.Y / 100.f);
-		}
-		else if (gameMode->GetControlSetting() == EControlSettings::EClick) //Cell moves towards location of mouse click
-		{
-			//This is handled in the on LeftClick method
-		}
-		
-	}
-
-	if (_movement.targetLocation.Z != 0)
-	{
-		_movement.targetLocation.Z = 0;
-	}
-}
-
 void ACharacter_SingleCelled::MoveToTargetLocation(float DeltaTime)
 {
 	//If interaction is set to GUI the cell won't move anymore
-	if (bInteractGUI)
+	if (inputComponent->GetInteractGUI())
 		return;
 	//Cell will only move forward from it's point of view but ROTATE towards the cursor while doing so resulting in an arch movement.
 	//getting player position
 	FVector currentLocation = GetActorLocation();
 
 	//moveVector is the vector towards the position the cell should move
-	FVector directionVector = FVector(_movement.targetLocation.X - currentLocation.X, _movement.targetLocation.Y - currentLocation.Y, 0.f);
+	FVector targetLocation = inputComponent->GetTargetPosition();
+
+	FVector directionVector = FVector(targetLocation.X - currentLocation.X, targetLocation.Y - currentLocation.Y, 0.f);
 
 	float distance = sqrt(pow(directionVector.X, 2) + pow(directionVector.Y, 2));
 
@@ -242,11 +206,6 @@ void ACharacter_SingleCelled::Die()
 	SetPlayerState(EPlayerState::EDead);
 }
 
-class UCameraComponent * ACharacter_SingleCelled::GetPlayerCamera()
-{
-	return playerCamera;
-}
-
 void ACharacter_SingleCelled::Zoom(float input)
 {
 	float start = cameraAttachmentArm->TargetArmLength;
@@ -260,42 +219,18 @@ void ACharacter_SingleCelled::Zoom(float input)
 
 void ACharacter_SingleCelled::OnLeftClick()
 {
-	AGameMode_Cell* gameMode = Cast<AGameMode_Cell>(GetWorld()->GetAuthGameMode());
-	if (gameMode == nullptr)
-		return;
-
-	if (gameMode->GetControlSetting() == EControlSettings::EClick)
-	{
-		APlayerController* playerController = Cast<APlayerController>(GetController());
-		if (playerController != nullptr)
-		{
-			FVector mouseDirection;
-			playerController->DeprojectMousePositionToWorld(_movement.targetLocation, mouseDirection);
-			_movement.targetLocation = _movement.targetLocation + (cameraAttachmentArm->TargetArmLength * mouseDirection);
-		}
-	}
-
-	//return to the normal game
-	bInteractGUI = false;
+	inputComponent->LeftClick();
 }
 
 void ACharacter_SingleCelled::OnRightClick()
 {
+	inputComponent->RightClick();
 }
 
-
-
-void ACharacter_SingleCelled::SetInteractGUI(bool bGUI)
+void ACharacter_SingleCelled::SetInteractGUI()
 {
-	bInteractGUI = bGUI;
+	inputComponent->SetInteractGUI(true);
 }
-
-void ACharacter_SingleCelled::SetInteractGUITrue()
-{
-	SetInteractGUI(true);
-}
-
-
 
   //////////////////////////////////////////////////////////////////////////////
  //////////////////////////////// PROTECTED ///////////////////////////////////
@@ -303,26 +238,12 @@ void ACharacter_SingleCelled::SetInteractGUITrue()
 
 void ACharacter_SingleCelled::SetForwardMotion(float input)
 {
-	AGameMode_Cell* gameMode = Cast<AGameMode_Cell>(GetWorld()->GetAuthGameMode());
-	if (gameMode)
-	{
-		if (gameMode->GetControlSetting() == EControlSettings::EWASD)
-		{
-			_movement.forwardInput =  FMath::Clamp(input, -1.f, 1.f) * 1.f;
-		}
-	}
+	inputComponent->SetForwardMotion(input);
 }
 
 void ACharacter_SingleCelled::SetRightMotion(float input)
 {
-	AGameMode_Cell* gameMode = Cast<AGameMode_Cell>(GetWorld()->GetAuthGameMode());
-	if (gameMode)
-	{
-		if (gameMode->GetControlSetting() == EControlSettings::EWASD)
-		{
-			_movement.rightInput =  FMath::Clamp(input, -1.f, 1.f) * 1.f;
-		}
-	}
+	inputComponent->SetRightMotion(input);
 }
 
 float ACharacter_SingleCelled::GetRotationSpeed()
@@ -378,12 +299,22 @@ EPlayerState ACharacter_SingleCelled::GetPlayerState()
 	return _ePlayerState;
 }
 
-bool ACharacter_SingleCelled::PlayerIsMoving()
-{
-	return bIsMoving;
-}
+//bool ACharacter_SingleCelled::PlayerIsMoving()
+//{
+//	return bIsMoving;
+//}
 
 UCompoundStorageComponent_Cell * ACharacter_SingleCelled::GetCompoundStorage()
 {
 	return compoundStorage;
+}
+
+class UCameraComponent * ACharacter_SingleCelled::GetPlayerCamera()
+{
+	return playerCamera;
+}
+
+USpringArmComponent * ACharacter_SingleCelled::GetPlayerCameraArm()
+{
+	return cameraAttachmentArm;
 }

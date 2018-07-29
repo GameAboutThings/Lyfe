@@ -12,7 +12,7 @@
 #define MOVEMENT_SPEED_BASE 10.f //input gets multiplied with this value before being defided by the cells weight
 
 /* CONTROL SETTING FOR TESTING */
-#define CONTROLSETTING EControlSettings::EFollowMouse
+#define CONTROLSETTING EControlSettings::EWASD
 
 /* CAMERA MOVEMENT */
 #define CAMERA_ZOOM_FACTOR 150.f //how far you zoom in our out with each time you scroll || PASST
