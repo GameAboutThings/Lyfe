@@ -12,6 +12,7 @@
 #include "CompoundStorageComponent_Cell.h"
 #include "Runtime/Engine/Classes/Engine/World.h"
 #include "StaticMaths.h"
+#include "Runtime/Engine/Classes/Materials/MaterialInstanceDynamic.h"
 
 
 // Sets default values for this component's properties
@@ -42,6 +43,7 @@ UCompound_ParticleComponent_Cell::UCompound_ParticleComponent_Cell()
 	{
 		mesh->SetStaticMesh(meshAsset.Object);
 		mesh->SetVisibility(false);
+		mesh->RelativeScale3D = FVector(5.f);
 	}
 	else
 	{
@@ -53,7 +55,7 @@ UCompound_ParticleComponent_Cell::UCompound_ParticleComponent_Cell()
 	try
 	{
 		//static ConstructorHelpers::FObjectFinder<UParticleSystem> psAsset(TEXT("ParticleSystem'/Game/ParticleSystems/PS_CompoundCloud_SingleCelled.PS_CompoundCloud_SingleCelled'"));
-		auto psAsset = ConstructorHelpers::FObjectFinderOptional<UParticleSystem>(TEXT("ParticleSystem'/Game/ParticleSystems/PS_CompoundCloud.PS_CompoundCloud'"));
+		auto psAsset = ConstructorHelpers::FObjectFinderOptional<UParticleSystem>(TEXT("ParticleSystem'/Game/ParticleSystems/PS_CompoundCloud_SingleCelled.PS_CompoundCloud_SingleCelled'"));
 		if (psAsset.Succeeded())
 		{
 			particleSystemType = psAsset.Get();
@@ -78,6 +80,7 @@ UCompound_ParticleComponent_Cell::UCompound_ParticleComponent_Cell()
 void UCompound_ParticleComponent_Cell::BeginPlay()
 {
 	Super::BeginPlay();
+	SetColorToType();
 }
 
 
@@ -93,7 +96,73 @@ void UCompound_ParticleComponent_Cell::TickComponent(float DeltaTime, ELevelTick
 //////////////////////////////////////////////////////////////////////////////
 
 
-  //////////////////////////////////////////////////////////////////////////////
+void UCompound_ParticleComponent_Cell::SetColorToType()
+{
+	//generate cloud color:
+	FColor color = FColor(1.f, 1.f, 1.f, 1.f);
+
+	ACompoundCloud_Cell* cloud = Cast<ACompoundCloud_Cell>(this->GetOwner());
+	if (cloud == nullptr)
+	{
+		Logging::Log("Parent Cloud for particleComponent returned nullptr.");
+		return;
+	}
+	TEnumAsByte<ECompound> type = cloud->GetType();
+
+	switch (type)
+	{
+	case ECompound::ECO2:
+		color = FColor(0.6, 1, 0.8, 1);
+		break;
+	case ECompound::EO2:
+		color = FColor(1, 0.6, 0.4, 1);
+		break;
+	case ECompound::EAminoAcid:
+		color = FColor(0.4, 1, 0.6, 1);
+		break;
+	case ECompound::EGlucose:
+		color = FColor(1, 1, 1, 1);
+		break;
+	case ECompound::ELipid:
+		color = FColor(1, 1, 0.6, 1);
+		break;
+	default:
+		color = FColor(1, 1, 1, 1);
+		break;
+	}
+
+	//change the color of the particle system
+	if (particleSystem != nullptr)
+	{
+		UMaterialInterface* material = particleSystem->GetMaterial(0);
+		if (material != nullptr)
+		{
+			UMaterialInstanceDynamic* dynMaterial = UMaterialInstanceDynamic::Create(material, this);
+			if (dynMaterial != nullptr)
+			{
+				Logging::Log(color);
+				dynMaterial->SetVectorParameterValue(FName("Color"), color);
+				particleSystem->SetMaterial(0, dynMaterial);
+				//particleSystem->SetMaterialByName(FName("Material"), dynMaterial);
+				//particleSystem->SetVectorParameter(FName("Color"), FVector(color));
+			}
+			else
+			{
+				Logging::Log("Dynamic Material in CompoundCloud_Cell constructor is nullptr.");
+			}
+		}
+		else
+		{
+			Logging::Log("Material in CompoundCloud_Cell constructor is nullptr.");
+		}
+	}
+	else
+	{
+		Logging::Log("ParticleSystem in CompoundCloud_Cell constructor is nullptr.");
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////////
  //////////////////////////////// PROTECTED ///////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 void UCompound_ParticleComponent_Cell::Consumption(AActor* consumer)

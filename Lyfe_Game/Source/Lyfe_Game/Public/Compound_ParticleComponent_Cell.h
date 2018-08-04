@@ -57,13 +57,14 @@ public:
  ////////////////////////////// FUNCTIONS ////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 private:
+	UFUNCTION()
+	void SetColorToType();
 protected:
 	UFUNCTION(BlueprintCallable, Category = "CELL|CompoundCloud|Collision")
 	void Consumption(AActor* consumer);
 
 	UFUNCTION(BlueprintCallable, Category = "CELL|CompoundCloud|Collision")
 	void BeginOverlap(class UPrimitiveComponent* newComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-	//void BeginOverlap(AActor* otherActor);
 
 	UFUNCTION(BlueprintCallable, Category = "CELL|CompoundCloud|Collision")
 	void EndOverlap(class UPrimitiveComponent* overlappedComp, class AActor* otherActor, class UPrimitiveComponent* otherComp, int32 otherBodyIndex);

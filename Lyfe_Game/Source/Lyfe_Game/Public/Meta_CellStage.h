@@ -73,6 +73,7 @@ enum class ESpawnable : uint8
 	EPassive UMETA(DisplayName = "PassiveObject")
 };
 
+
 /**
  * 
  */

@@ -159,3 +159,16 @@ FString Util::Vector2DToString(FVector2D vector)
 	ret.Append(FString::SanitizeFloat(vector.Y));
 	return ret;
 }
+
+FString Util::ColorToString(FColor color)
+{
+	FString ret = "R: ";
+	ret.Append(FString::SanitizeFloat(color.R));
+	ret.Append("| G: ");
+	ret.Append(FString::SanitizeFloat(color.G));
+	ret.Append("| B: ");
+	ret.Append(FString::SanitizeFloat(color.B));
+	ret.Append("| A: ");
+	ret.Append(FString::SanitizeFloat(color.A));
+	return ret;
+}

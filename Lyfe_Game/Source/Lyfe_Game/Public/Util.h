@@ -28,4 +28,6 @@ public:
 	static FString Vector3DToString(FVector vector);
 
 	static FString Vector2DToString(FVector2D vector);
+
+	static FString ColorToString(FColor color);
 };

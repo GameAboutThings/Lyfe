@@ -12,7 +12,6 @@
 #include <string>
 #include <math.h>
 #include "Compound_ParticleComponent_Cell.h"
-//#include "Runtime/Engine/Classes/Particles/ParticleSystemComponent.h"
 
 
 // Sets default values
@@ -21,16 +20,9 @@ ACompoundCloud_Cell::ACompoundCloud_Cell()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	//mesh = CreateDefaultSubobject<UProceduralMeshComponent>(TEXT("GeneratedMesh"));
-
-	
-	//RootComponent = temp;
-
 	uint8 particleCount = StaticMaths::RR(CLOUD_PARTICLE_MIN, CLOUD_PARTICLE_MAX);
 
-
 	value = particleCount;
-
 	type = ECompound(rand() % 5);
 
 	// +++++ second idea for distribution of particle systems +++++
@@ -70,42 +62,6 @@ ACompoundCloud_Cell::ACompoundCloud_Cell()
 			FVector location = FVector(x, y, 0);
 
 			temp->SetRelativeLocation(location);
-
-			//generate cloud color:
-			FColor color;
-			switch (type)
-			{
-			case ECompound::ECO2:
-				color = FColor(0.6, 1, 0.8, 0);
-				break;
-			case ECompound::EO2:
-				color = FColor(1, 0.6, 0.4, 0);
-				break;
-			case ECompound::EAminoAcid:
-				color = FColor(0.4, 1, 0.6, 0);
-				break;
-			case ECompound::EGlucose:
-				color = FColor(1, 1, 1, 0);
-				break;
-			case ECompound::ELipid:
-				color = FColor(1, 1, 0.6, 0);
-				break;
-			default:
-				break;
-			}
-
-			//change the color of the particle system
-			//UParticleSystemComponent* particleSystem = temp->GetParticleSystem();
-
-			//particleSystem->SetColorParameter(FName("Color"), color);
-
-			//UMaterialInterface* material = particleSystem->GetMaterial(0);
-			//UMaterialInstanceDynamic* dynMaterial = UMaterialInstanceDynamic::Create(material, this);
-			//dynMaterial->SetVectorParameterValue(FName("Color"), color);
-			//particleSystem->SetMaterial(0, dynMaterial);
-			
-			
-
 
 			//finally: check if number of elements in array is particle count
 			//if so, stop this loop

@@ -336,3 +336,27 @@ void Logging::Log(EControlSettings inputControls, const char comment[])
 {
 	Logging::Log(inputControls, comment, false);
 }
+
+
+//FColor
+void Logging::Log(FColor color, const char comment[], bool bConsole)
+{
+	FString log = FString(" FCOLOR : ");
+	log.Append(Util::ColorToString(color));
+	Logging::Log(log, bConsole);
+}
+
+void Logging::Log(FColor color, bool bConsole)
+{
+	Logging::Log(color, "", bConsole);
+}
+
+void Logging::Log(FColor color)
+{
+	Logging::Log(color, false);
+}
+
+void Logging::Log(FColor color, const char comment[])
+{
+	Logging::Log(color, comment, false);
+}

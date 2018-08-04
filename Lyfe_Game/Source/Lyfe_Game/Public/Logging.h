@@ -107,4 +107,13 @@ public:
 	static void Log(EControlSettings inputControls);
 
 	static void Log(EControlSettings inputControls, const char comment[]);
+
+	//FColor
+	static void Log(FColor color, const char comment[], bool bConsole);
+
+	static void Log(FColor color, bool bConsole);
+
+	static void Log(FColor color);
+
+	static void Log(FColor color, const char comment[]);
 };
