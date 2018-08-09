@@ -13,6 +13,23 @@ AI_Node::~AI_Node()
 {
 }
 
+//+++++++++++++++++++++++++++++++++++++++++++ AI_SEXUALNODE +++++++++++++++++++++++++++++++
+
+AI_SexualNode::AI_SexualNode(ESexuality sexuality, TArray<FString> partner)
+{
+	_eSexuality = sexuality;
+	sexualPartner = partner;
+}
+
+AI_SexualNode::~AI_SexualNode()
+{
+}
+
+void AI_SexualNode::Destroy()
+{
+	
+}
+
 //+++++++++++++++++++++++++++++++++++++++++++ AI_DECISIONNODE +++++++++++++++++++++++++++++++
 
 AI_DecisionNode::AI_DecisionNode()
@@ -103,6 +120,8 @@ AI_Node * AI_DecisionNode::GetLeftChild()
 	{
 		AI_Node* node = new AI_ActionNode(EAction::ENothing);
 
+		leftChild = node;
+
 		return node;
 	}
 	else
@@ -117,12 +136,25 @@ AI_Node * AI_DecisionNode::GetRightChild()
 	{
 		AI_Node* node = new AI_ActionNode(EAction::ENothing);
 
+		rightChild = node;
+
 		return node;
 	}
 	else
 	{
 		return rightChild;
 	}
+}
+
+void AI_DecisionNode::Destroy()
+{
+	if(leftChild != nullptr)
+		leftChild->Destroy();
+	free(leftChild);
+
+	if(rightChild != nullptr)
+		rightChild->Destroy();
+	free(rightChild);
 }
 
 //+++++++++++++++++++++++++++++++++++++++++++ AI_ACTIONNODE +++++++++++++++++++++++++++++++
@@ -136,15 +168,7 @@ AI_ActionNode::~AI_ActionNode()
 {
 }
 
-//+++++++++++++++++++++++++++++++++++++++++++ AI_SEXUALNODE +++++++++++++++++++++++++++++++
-
-AI_SexualNode::AI_SexualNode(ESexuality sexuality, TArray<FString> partner)
-{
-	_eSexuality = sexuality;
-	sexualPartner = partner;
-}
-
-AI_SexualNode::~AI_SexualNode()
+void AI_ActionNode::Destroy()
 {
 }
 
@@ -165,6 +189,8 @@ AI_Node * AI_BaseNode::GetIdleNode()
 	{
 		AI_Node*  node = new AI_ActionNode(EAction::ENothing);
 
+		idle = node;
+
 		return node;
 	}
 	else
@@ -178,6 +204,8 @@ AI_Node * AI_BaseNode::GetAttackedNode()
 	if (attacked == nullptr)
 	{
 		AI_Node*  node = new AI_ActionNode(EAction::EFlee);
+
+		attacked = node;
 
 		return node;
 	}
@@ -193,6 +221,8 @@ AI_Node * AI_BaseNode::GetLowHealthNode()
 	{
 		AI_Node* node = new AI_ActionNode(EAction::EFlee);
 
+		lowHealth = node;
+
 		return node;
 	}
 	else
@@ -207,6 +237,8 @@ AI_Node * AI_BaseNode::GetLowNutritionNode()
 	{
 		AI_Node* node = new AI_ActionNode(EAction::ESearchFood);
 
+		lowNutrition = node;
+
 		return node;
 	}
 	else
@@ -220,6 +252,8 @@ AI_Node * AI_BaseNode::GetNightNode()
 	if (night == nullptr)
 	{
 		AI_Node* node = new AI_ActionNode(EAction::ESleep);
+
+		night = node;
 
 		return node;
 	}
@@ -237,10 +271,39 @@ AI_SexualNode * AI_BaseNode::GetSexualityNode()
 		partner.Add("");
 		AI_SexualNode* node = new AI_SexualNode(ESexuality::EAsexual, partner);
 
+		sexuality = node;
+
 		return node;
 	}
 	else
 	{
 		return sexuality;
 	}
+}
+
+void AI_BaseNode::Destroy()
+{
+	if (idle != nullptr)
+		idle->Destroy();
+	free(idle);
+
+	if (attacked != nullptr)
+		attacked->Destroy();
+	free(attacked);
+
+	if (lowHealth != nullptr)
+		lowHealth->Destroy();
+	free(lowHealth);
+
+	if (lowNutrition != nullptr)
+		lowNutrition->Destroy();
+	free(lowNutrition);
+
+	if (night != nullptr)
+		night->Destroy();
+	free(night);
+
+	if (sexuality != nullptr)
+		sexuality->Destroy();
+	free(sexuality);
 }
