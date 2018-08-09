@@ -30,6 +30,23 @@ enum class EConditionStem : uint8
 	ENight
 };
 
+enum class ESexuality : uint8
+{
+	ESexual,
+	EAsexual,
+	EFlexible
+};
+
+enum class EAction : uint8
+{
+	ENothing,
+	EFlee,
+	EAttack,
+	EEat,
+	ESearchFood,
+	ESleep
+};
+
 /**
  * 
  */
@@ -40,22 +57,17 @@ public:
 	~AI_Node();
 };
 
-class LYFE_GAME_API AI_BaseNode : AI_Node
+class LYFE_GAME_API AI_SexualNode : public AI_Node
 {
 public:
-	AI_BaseNode();
-	~AI_BaseNode();
-private:
-	AI_Node * idle;
-	AI_Node * attacked;
-	AI_Node * lowHealth;
-	AI_Node * lowNutrition;
-	AI_Node * night;
-public:
-	void AddIdleNode();
+	AI_SexualNode(ESexuality sexuality, TArray<FString> partner);
+	~AI_SexualNode();
+
+	TEnumAsByte<ESexuality> _eSexuality;
+	TArray<FString> sexualPartner; //under no circumstances keep this a string
 };
 
-class LYFE_GAME_API AI_DecisionNode : AI_Node
+class LYFE_GAME_API AI_DecisionNode : public AI_Node
 {
 public:
 	AI_DecisionNode();
@@ -71,11 +83,39 @@ private:
 
 public:
 	void MakeDecision(class AGameMode* gameMode);
+
+	AI_Node * GetLeftChild();
+	AI_Node * GetRightChild();
 };
 
-class LYFE_GAME_API AI_ActionNode : AI_Node
+class LYFE_GAME_API AI_ActionNode : public AI_Node
 {
 public:
-	AI_ActionNode();
+	AI_ActionNode(EAction action);
 	~AI_ActionNode();
+
+private:
+	TEnumAsByte<EAction> _eAction;
+};
+
+class LYFE_GAME_API AI_BaseNode : public AI_Node
+{
+public:
+	AI_BaseNode();
+	~AI_BaseNode();
+private:
+	AI_Node * idle;
+	AI_Node * attacked;
+	AI_Node * lowHealth;
+	AI_Node * lowNutrition;
+	AI_Node * night;
+	AI_SexualNode * sexuality;
+	
+public:
+	AI_Node * GetIdleNode();
+	AI_Node * GetAttackedNode();
+	AI_Node * GetLowHealthNode();
+	AI_Node * GetLowNutritionNode();
+	AI_Node * GetNightNode();
+	AI_SexualNode* GetSexualityNode();
 };

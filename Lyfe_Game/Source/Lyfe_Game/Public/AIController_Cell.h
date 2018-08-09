@@ -13,8 +13,9 @@ UCLASS()
 class LYFE_GAME_API AAIController_Cell : public AAIController
 {
 	GENERATED_BODY()
-	
-	
+
+private:
+	class AI_BaseNode* aiBase;
 	
 	
 };

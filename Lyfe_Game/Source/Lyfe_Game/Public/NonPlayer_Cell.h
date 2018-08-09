@@ -1,0 +1,58 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+#pragma once
+
+#include "Meta_CellStage.h"
+#include "CoreMinimal.h"
+#include "GameFramework/Actor.h"
+#include "NonPlayer_Cell.generated.h"
+
+UCLASS()
+class LYFE_GAME_API ANonPlayer_Cell : public AActor
+{
+	GENERATED_BODY()
+	
+public:	
+	// Sets default values for this actor's properties
+	ANonPlayer_Cell();
+
+protected:
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
+
+public:	
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+
+
+/*---------------------------------------------------------------------------------------------------------------------------------------------------------------*/
+
+  //////////////////////////////////////////////////////////////////////////////
+ //////////////////////////// CLASSES | STRUCTS ///////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+public:
+protected:
+private:
+
+  //////////////////////////////////////////////////////////////////////////////
+ //////////////////////////////// VARIABLES ///////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+public:
+	MetaCell _metaCell;
+
+	class AIController_Cell;
+
+	
+protected:
+private:
+
+  /////////////////////////////////////////////////////////////////////////////
+ ////////////////////////////// FUNCTIONS ////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+public:
+	void SetupMeta();
+
+protected:
+private:
+
+};

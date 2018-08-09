@@ -69,15 +69,18 @@ void ACharacter_SingleCelled::BeginPlay()
 	}
 
 	//Setting health
-	maxHealth = 100; //will be calculated through the player's mass later on
-	currentHealth = maxHealth;
+	_metaCell.maxHealth = 100; //will be calculated through the player's mass later on
+	_metaCell.currentHealth = _metaCell.maxHealth;
+
+	_metaCell.movementSpeed = 50.f;
+	_metaCell.rotationSpeed = 50.f;
+	_metaCell.weight = 50.f;
 
 	//set compounds
 	//compoundStorage->SetCompounds();
 
 	//Sets the movement variables to neutral.
-	_movement = { 50.f, //rotationSpeed || needs to be called from function later on
-				50.f,   //movementSpeed || needs to be called from function later on
+	_movement = {
 				0.f,   //forwardInput
 				0.f,   //rightInput
 		};
@@ -176,7 +179,7 @@ void ACharacter_SingleCelled::MoveToTargetLocation(float DeltaTime)
 
 
 
-		float maxYawThisFrame = _movement.rotationSpeed * DeltaTime;
+		float maxYawThisFrame = _metaCell.rotationSpeed * DeltaTime;
 		if (maxYawThisFrame >= FMath::Abs(deltaYaw))
 		{
 			//character can reach the rotation within one frame
@@ -194,8 +197,8 @@ void ACharacter_SingleCelled::MoveToTargetLocation(float DeltaTime)
 	{
 		FVector movementDirection = playerDirection->GetForwardVector();
 		//FVector currentLocation = GetActorLocation();
-		currentLocation.X += movementDirection.X * _movement.movementSpeed * DeltaTime;
-		currentLocation.Y += movementDirection.Y * _movement.movementSpeed * DeltaTime;
+		currentLocation.X += movementDirection.X * _metaCell.movementSpeed * DeltaTime;
+		currentLocation.Y += movementDirection.Y * _metaCell.movementSpeed * DeltaTime;
 
 		SetActorLocation(currentLocation);
 	}
@@ -248,17 +251,17 @@ void ACharacter_SingleCelled::SetRightMotion(float input)
 
 float ACharacter_SingleCelled::GetRotationSpeed()
 {
-	return _movement.rotationSpeed;
+	return _metaCell.rotationSpeed;
 }
 
 float ACharacter_SingleCelled::GetMovementSpeed()
 {
-	return _movement.movementSpeed;
+	return _metaCell.movementSpeed;
 }
 
 float ACharacter_SingleCelled::GetMaxHealth()
 {
-	return maxHealth;
+	return _metaCell.maxHealth;
 }
 
   //////////////////////////////////////////////////////////////////////////////
@@ -267,25 +270,25 @@ float ACharacter_SingleCelled::GetMaxHealth()
 
 float ACharacter_SingleCelled::GetWeight()
 {
-	return weight;
+	return _metaCell.weight;
 }
 
 float ACharacter_SingleCelled::GetCurrentHealth()
 {
-	return currentHealth;
+	return _metaCell.currentHealth;
 }
 
 void ACharacter_SingleCelled::AddHealth(float amount)
 {
-	currentHealth = currentHealth + amount;
+	_metaCell.currentHealth = _metaCell.currentHealth + amount;
 
-	if (currentHealth <= 0)
+	if (_metaCell.currentHealth <= 0)
 	{
 		Die();
 	}
-	else if (currentHealth > maxHealth)
+	else if (_metaCell.currentHealth > _metaCell.maxHealth)
 	{
-		currentHealth = maxHealth;
+		_metaCell.currentHealth = _metaCell.maxHealth;
 	}
 }
 

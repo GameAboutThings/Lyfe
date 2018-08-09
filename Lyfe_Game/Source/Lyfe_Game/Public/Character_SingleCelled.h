@@ -35,20 +35,9 @@ public:
  //////////////////////////// CLASSES | STRUCTS ///////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 private:
-	/** Saves all the values necessary for the player's movement */
+	/** Saves all the values necessary for the cell's movement */
 	struct Movement
 	{
-		/** this will set the speed with which the cell will rotate towards the player's courser. => How many degrees per frame
-		* Can be called through code but not set.
-		* It will be calculated through the parts on the player's cell.
-		*/
-		float rotationSpeed;
-
-		/** This will set the speed with which the cell will move towards the player's courser.
-		* Can be called through code but not set.
-		* It will be calculated through the parts on the player's cell.
-		*/
-		float movementSpeed;
 
 		/** 1 if the player presses up or w
 		* -1 if the player presses down or s
@@ -62,7 +51,6 @@ private:
 		*/
 		float rightInput;
 	};
-
 protected:
 
 public:
@@ -76,21 +64,7 @@ private:
 	/** This variable describes all variables needed for movement calculation */
 	Movement _movement;
 
-	/** Sets the weight for the cell;
-	* has influence on rotation and movement
-	*/
-	float weight;
-
-	/** The maximum health the player cell can have currently .
-	* Can be called through code but not set.
-	* It will be calculated through the parts on the player's cell.
-	*/
-	float maxHealth;
-
-	/** The maximum health the player cell can have currently .
-	* Can be called and manipulated through code.
-	*/
-	float currentHealth;
+	MetaCell _metaCell;
 
 	/** Current player state */
 	EPlayerState _ePlayerState;

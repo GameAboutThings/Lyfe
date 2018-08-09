@@ -13,16 +13,6 @@ AI_Node::~AI_Node()
 {
 }
 
-//+++++++++++++++++++++++++++++++++++++++++++ AI_BASENODE +++++++++++++++++++++++++++++++
-
-AI_BaseNode::AI_BaseNode()
-{
-}
-
-AI_BaseNode::~AI_BaseNode()
-{
-}
-
 //+++++++++++++++++++++++++++++++++++++++++++ AI_DECISIONNODE +++++++++++++++++++++++++++++++
 
 AI_DecisionNode::AI_DecisionNode()
@@ -107,12 +97,150 @@ void AI_DecisionNode::MakeDecision(AGameMode * gameMode)
 	}
 }
 
+AI_Node * AI_DecisionNode::GetLeftChild()
+{
+	if (leftChild == nullptr)
+	{
+		AI_Node* node = new AI_ActionNode(EAction::ENothing);
+
+		return node;
+	}
+	else
+	{
+		return leftChild;
+	}
+}
+
+AI_Node * AI_DecisionNode::GetRightChild()
+{
+	if (rightChild == nullptr)
+	{
+		AI_Node* node = new AI_ActionNode(EAction::ENothing);
+
+		return node;
+	}
+	else
+	{
+		return rightChild;
+	}
+}
+
 //+++++++++++++++++++++++++++++++++++++++++++ AI_ACTIONNODE +++++++++++++++++++++++++++++++
 
-AI_ActionNode::AI_ActionNode()
+AI_ActionNode::AI_ActionNode(EAction action)
 {
+	_eAction = action;
 }
 
 AI_ActionNode::~AI_ActionNode()
 {
+}
+
+//+++++++++++++++++++++++++++++++++++++++++++ AI_SEXUALNODE +++++++++++++++++++++++++++++++
+
+AI_SexualNode::AI_SexualNode(ESexuality sexuality, TArray<FString> partner)
+{
+	_eSexuality = sexuality;
+	sexualPartner = partner;
+}
+
+AI_SexualNode::~AI_SexualNode()
+{
+}
+
+//+++++++++++++++++++++++++++++++++++++++++++ AI_BASENODE +++++++++++++++++++++++++++++++
+
+AI_BaseNode::AI_BaseNode()
+{
+	
+}
+
+AI_BaseNode::~AI_BaseNode()
+{
+}
+
+AI_Node * AI_BaseNode::GetIdleNode()
+{
+	if (idle == nullptr)
+	{
+		AI_Node*  node = new AI_ActionNode(EAction::ENothing);
+
+		return node;
+	}
+	else
+	{
+		return idle;
+	}
+}
+
+AI_Node * AI_BaseNode::GetAttackedNode()
+{
+	if (attacked == nullptr)
+	{
+		AI_Node*  node = new AI_ActionNode(EAction::EFlee);
+
+		return node;
+	}
+	else
+	{
+		return attacked;
+	}
+}
+
+AI_Node * AI_BaseNode::GetLowHealthNode()
+{
+	if (lowHealth == nullptr)
+	{
+		AI_Node* node = new AI_ActionNode(EAction::EFlee);
+
+		return node;
+	}
+	else
+	{
+		return lowHealth;
+	}
+}
+
+AI_Node * AI_BaseNode::GetLowNutritionNode()
+{
+	if (lowNutrition == nullptr)
+	{
+		AI_Node* node = new AI_ActionNode(EAction::ESearchFood);
+
+		return node;
+	}
+	else
+	{
+		return lowNutrition;
+	}
+}
+
+AI_Node * AI_BaseNode::GetNightNode()
+{
+	if (night == nullptr)
+	{
+		AI_Node* node = new AI_ActionNode(EAction::ESleep);
+
+		return node;
+	}
+	else
+	{
+		return night;
+	}
+}
+
+AI_SexualNode * AI_BaseNode::GetSexualityNode()
+{
+	if (sexuality == nullptr)
+	{
+		TArray<FString> partner;
+		partner.Add("");
+		AI_SexualNode* node = new AI_SexualNode(ESexuality::EAsexual, partner);
+
+		return node;
+	}
+	else
+	{
+		return sexuality;
+	}
 }
