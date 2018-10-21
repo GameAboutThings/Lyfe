@@ -45,6 +45,9 @@ private:
 	bool isSelected;
 	int id;
 	class AEditorBase_Cell* editorBase;
+	float cubePortion;
+	FVector distortion;
+
 protected:
 	/** If this node is a base node or just a regular one */
 	UPROPERTY(VisibleAnywhere, Category = "CELL|Editor|Sculpting")
@@ -146,6 +149,7 @@ public:
 
 	/** Might come in Handy when moving a node too far around its parent so it turns from below to left or something 
 	* This position applies only to the pointer not the actual position in 3D space
+	* Basically puts this node from one socket to another on the parent
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CELL|Editor|Sculpting")
 	void SwitchNodePosition(EPosition _eTargetPosition);
@@ -153,7 +157,11 @@ public:
 	UFUNCTION()
 	void SetType(ENodeType _eNewType);
 
-	/** This doesn't create a new node; this is simply used to assign a node to the child pointer*/
+	/** This doesn't create a new node; this is simply used to assign a node to the child pointer
+	* Can only put a node onto the position if it is free.
+	* 
+	* @param node Can also be a nullptr. This means the child node is being removed
+	*/
 	UFUNCTION()
 	void SetChildNode(EPosition _ePosition, UCellEditor_NodeComponent* node);
 
@@ -184,4 +192,13 @@ public:
 
 	UFUNCTION()
 	FString ToString();
+
+	UFUNCTION()
+	float GetCubePortion() { return cubePortion; }
+
+	UFUNCTION()
+	float GetSpherePortion() { return 1 - cubePortion; }
+
+	UFUNCTION()
+	FVector GetDistortion() { return distortion; }
 };

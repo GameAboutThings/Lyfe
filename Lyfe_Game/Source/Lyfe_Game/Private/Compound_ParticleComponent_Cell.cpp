@@ -243,7 +243,7 @@ UStaticMeshComponent * UCompound_ParticleComponent_Cell::GetMesh()
 	return mesh;
 }
 
-void UCompound_ParticleComponent_Cell::DestroyComponent()
+void UCompound_ParticleComponent_Cell::Destroy()
 {
 	mesh->UnregisterComponent();
 	particleSystem->UnregisterComponent();

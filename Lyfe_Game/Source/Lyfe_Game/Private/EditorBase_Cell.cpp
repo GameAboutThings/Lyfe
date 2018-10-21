@@ -8,6 +8,8 @@
 #include "StaticMaths.h"
 #include "ProceduralMeshComponent.h"
 #include "Meta_CellEditor.h"
+#include "Logging.h"
+#include "DrawDebugHelpers.h"
 
 
 // Sets default values
@@ -40,7 +42,7 @@ AEditorBase_Cell::AEditorBase_Cell()
 	camera->bUsePawnControlRotation = false;
 
 	//Allow user to control this character
-	AutoPossessPlayer = EAutoReceiveInput::Player0;
+	//AutoPossessPlayer = EAutoReceiveInput::Player0;
 }
 
 // Called when the game starts or when spawned
@@ -48,6 +50,8 @@ void AEditorBase_Cell::BeginPlay()
 {
 	Super::BeginPlay();
 	idCounter = 0;
+
+	baseNode->CreateAndAttachChildNode(EPosition::ELeft);
 }
 
 // Called every frame
@@ -71,87 +75,118 @@ void AEditorBase_Cell::Tick(float DeltaTime)
  ///////////////////////////////// PUBLIC /////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+void AEditorBase_Cell::AddChildNodes(TArray<UCellEditor_NodeComponent*>* nodes, UCellEditor_NodeComponent* parentNode)
+{
+	TArray<EPosition> childrenPositions = parentNode->GetChildrenPositions();
+
+	for(int i = 0; i < childrenPositions.Num(); i++)
+	{
+		nodes->Add(parentNode->GetChild(childrenPositions[i]));
+		AddChildNodes(nodes, parentNode->GetChild(childrenPositions[i]));
+	}
+}
+
+FVector AEditorBase_Cell::GridPosToLocalPos(FVector gridPos)
+{
+	FVector localPos = gridPos;
+	localPos.X -= EDITOR_GRID_DIMENSION_X / 2;
+	localPos.Y -= EDITOR_GRID_DIMENSION_Y / 2;
+	localPos.Z -= EDITOR_GRID_DIMENSION_Z / 2;
+
+	localPos *= EDITOR_GRID_SCALE;
+
+	return localPos + GetActorLocation();
+}
+
+FVector AEditorBase_Cell::NodePosToLocalPos(UCellEditor_NodeComponent * node)
+{
+	return node->GetComponentToWorld().GetLocation() - baseNode->GetComponentToWorld().GetLocation();
+}
+
+float AEditorBase_Cell::CalculateCharge(FVector nodePos, FVector voxelPos, float cubePortion, FVector distortion, float mag)
+{
+	return 1 / (cubePortion * CalculateCubeCharge(nodePos, voxelPos, distortion, mag) + (1 - cubePortion) * CalculateSphereCharge(nodePos, voxelPos, distortion, mag));
+}
+
+float AEditorBase_Cell::CalculateCubeCharge(FVector nodePos, FVector voxelPos, FVector distortion, float mag)
+{
+	return 1.0f;
+}
+
+float AEditorBase_Cell::CalculateSphereCharge(FVector nodePos, FVector voxelPos, FVector distortion, float mag)
+{
+	float dx = FMath::Pow(voxelPos.X - nodePos.X, 2);
+	float dy = FMath::Pow(voxelPos.Y - nodePos.Y, 2);
+	float dz = FMath::Pow(voxelPos.Z - nodePos.Z, 2);
+
+	float r_squared = (dx * distortion.X + dy * distortion.Y + dz * distortion.Z) / FMath::Pow(mag, 2);
+
+	//if(r_squared < 0.5f) //or Mathf.Sqrt(r_squared) < 0.707f
+	//{
+	return 0.25f - r_squared + FMath::Pow(r_squared, 2);
+	//}
+	//return 0;
+}
+
+
 void AEditorBase_Cell::GenerateBodyMesh()
 {
-	TArray<FVector> vertices;
-	TArray<int> indices;
-	TArray<FVector> normals;
+	//TODO rebuild this function so it actually generates a mesh and not just a lot of cubes
 
-	//start with the base node and calculate the
-	int radiusTemp = baseNode->GetRadius();
-	FVector centerOffsetTemp = baseNode->GetRelativeTransform().GetLocation();
-
-	uint8 latBands = 20;
-	uint8 longBands = 20;
-
-	StaticMaths::AddSphereToCellMesh(latBands, longBands, radiusTemp, centerOffsetTemp, &vertices, &normals, &indices);
-
-	//After the base node continue with its children
-	//Offset when adding to the index buffer is always the length of the vertex buffer when starting a new sphere
-	//This iteration over children has to be done 4x
-	TArray<EPosition> pos = baseNode->GetChildrenPositions();
-	for(uint8 i = 0; i < pos.Num(); i++)
+	//3 dimensional grid for chargeValues that determine if there is a voxel or not
+	float*** chargeValues = new float**[EDITOR_GRID_DIMENSION_Z];
+	for (int i = 0; i < EDITOR_GRID_DIMENSION_Z; i++)
 	{
-		UCellEditor_NodeComponent* curNode = baseNode->GetChild(pos[i]);
-		centerOffsetTemp = curNode->GetRelativeTransform().GetLocation();
-		radiusTemp = curNode->GetRadius();
-		//Get current child node of the base and add its sphere
-		StaticMaths::AddSphereToCellMesh(latBands, longBands, radiusTemp, centerOffsetTemp, &vertices, &normals, &indices);
+		chargeValues[i] = new float *[EDITOR_GRID_DIMENSION_Y]();
+		for (int j = 0; j < EDITOR_GRID_DIMENSION_Y; j++)
+			chargeValues[i][j] = new float[EDITOR_GRID_DIMENSION_X]();
+	}
 
-		//Move on along the arm of this node one step
-		TArray<EPosition> pos_2 = curNode->GetChildrenPositions();
-		for(uint8 i_2 = 0; i_2 < pos_2.Num(); i_2 ++)
+	TArray<UCellEditor_NodeComponent*> nodes;// = new TArray<UCellEditor_NodeComponent*>();
+
+	////Go through all level of nodes
+	nodes.Add(baseNode);
+	AddChildNodes(&nodes, baseNode);
+	FVector voxelPos;
+	FVector nodePos;
+	FVector voxel;
+
+
+	for (uint8 n = 0; n < nodes.Num(); n++)
+	{
+		for (voxel.Z = 0; voxel.Z < EDITOR_GRID_DIMENSION_Z; voxel.Z ++)
 		{
-			UCellEditor_NodeComponent* curNode_2 = curNode->GetChild(pos[i]);
-			centerOffsetTemp = curNode_2->GetRelativeTransform().GetLocation();
-			radiusTemp = curNode_2->GetRadius();
-			StaticMaths::AddSphereToCellMesh(latBands, longBands, radiusTemp, centerOffsetTemp, &vertices, &normals, &indices);
-
-			TArray<EPosition> pos_3 = curNode_2->GetChildrenPositions();
-			for(uint8 i_3 = 0; i_3 < pos_3.Num(); i_3 ++)
+			for (voxel.Y = 0; voxel.Y < EDITOR_GRID_DIMENSION_Y; voxel.Y ++)
 			{
-				UCellEditor_NodeComponent* curNode_3 = curNode_2->GetChild(pos[i]);
-				centerOffsetTemp = curNode_3->GetRelativeTransform().GetLocation();
-				radiusTemp = curNode_3->GetRadius();
-				StaticMaths::AddSphereToCellMesh(latBands, longBands, radiusTemp, centerOffsetTemp, &vertices, &normals, &indices);
-
-				TArray<EPosition> pos_4 = curNode_3->GetChildrenPositions();
-				for(uint8 i_4 = 0; i_4 < pos_4.Num(); i_4 ++)
+				for (voxel.X = 0; voxel.X < EDITOR_GRID_DIMENSION_X; voxel.X ++)
 				{
-					UCellEditor_NodeComponent* curNode_4 = curNode_3->GetChild(pos[i]);
-					centerOffsetTemp = curNode_4->GetRelativeTransform().GetLocation();
-					radiusTemp = curNode_4->GetRadius();
-					StaticMaths::AddSphereToCellMesh(latBands, longBands, radiusTemp, centerOffsetTemp, &vertices, &normals, &indices);
+					if (chargeValues[FMath::FloorToInt(voxel.Z)][FMath::FloorToInt(voxel.Y)][FMath::FloorToInt(voxel.X)] < EDITOR_METABALLS_THRESHOLD)
+					{
+						voxelPos = GridPosToLocalPos(voxel);
+						nodePos = NodePosToLocalPos(nodes[n]);
+						float chargeTmp = CalculateCharge(nodePos, voxelPos, nodes[n]->GetCubePortion(), nodes[n]->GetDistortion(), nodes[n]->GetRadius() * EDITOR_GRID_SCALE);
+
+						chargeValues[FMath::FloorToInt(voxel.Z)][FMath::FloorToInt(voxel.Y)][FMath::FloorToInt(voxel.X)] += chargeTmp;
+						//chargeValues[FMath::FloorToInt(voxel.Z)][FMath::FloorToInt(voxel.Y)][FMath::FloorToInt(voxel.X)] /= 1.5f;
+						
+						if (chargeValues[FMath::FloorToInt(voxel.Z)][FMath::FloorToInt(voxel.Y)][FMath::FloorToInt(voxel.X)] >= EDITOR_METABALLS_THRESHOLD)
+						{
+							Logging::Log(chargeValues[FMath::FloorToInt(voxel.Z)][FMath::FloorToInt(voxel.Y)][FMath::FloorToInt(voxel.X)]);
+							DrawDebugBox(GetWorld(), voxelPos, FVector(EDITOR_GRID_SCALE), FColor(225,225,225), true, -1);
+						}
+					}
 				}
 			}
 		}
 	}
 
-
-
-	/** This function is called to generate the mesh every time it changes therefore I have to first check if I already generated a body mesh before
-	 * that I can now modify or have to generate a completly new one.
-	 * Currently planned method would be to delete the old mesh and create a new one since I can't update indices but only vertices.
-	 * Also it is qicker to just delete the mesh and replace it than checking all vertices and only moving the ones needed evertime you sculpt something.
-	 * Deleting the mesh will be called shortly before replacing it as to make the transition look a lot smoother.
-	*/
-	if(bodyMesh != nullptr)
+	for (int i = 0; i < EDITOR_GRID_DIMENSION_Z; i++)
 	{
-		bodyMesh->UnregisterComponent();
+		for (int j = 0; j < EDITOR_GRID_DIMENSION_Y; j++)
+			delete[] chargeValues[i][j];
+		delete[] chargeValues[i];
 	}
-
-	bodyMesh->CreateMeshSection_LinearColor(0, vertices, indices, normals, {}, {}, {}, true);
-	/*mesh->SetMobility(EComponentMobility::Movable);
-	mesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-	mesh->SetCollisionProfileName("OverlapAll");
-	SetActorEnableCollision(true);
-	//mesh->bUseComplexAsSimpleCollision = true;
-	//mesh->SetSimulatePhysics(false);
-	//mesh->SetCollisionObjectType(ECollisionChannel::ECC_WorldDynamic);
-	mesh->bGenerateOverlapEvents = true;
-	mesh->SetCollisionConvexMeshes({ vertices });
-	mesh->ContainsPhysicsTriMeshData(false);
-	//mesh->UpdateMeshSection_LinearColor(0, vertices, normals, uv0, vertexColors, tangents);*/
+	delete[] chargeValues;
 }
 
 int AEditorBase_Cell::GetIdCounter()

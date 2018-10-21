@@ -80,6 +80,10 @@ UCellEditor_NodeComponent::UCellEditor_NodeComponent()
 	{
 		editorBase = Cast<AEditorBase_Cell>(parent->GetEditorBase());
 	}
+
+	cubePortion = 0;
+	distortion = FVector(1,1,1);
+	radius = 3.f;
 }
 
 
@@ -161,11 +165,30 @@ void UCellEditor_NodeComponent::CreateAndAttachChildNode(EPosition position)
 			Logging::Log("No parent node could be found", true);
 		}
 	}
+	else
+	{
+		childPos = this->GetRelativeTransform().GetLocation();
+		switch (position)
+		{
+		case EPosition::EAbove:
+			childPos.X += EDITOR_NODE_DISTANCE;
+			break;
+		case EPosition::EBelow:
+			childPos.X -= EDITOR_NODE_DISTANCE;
+			break;
+		case EPosition::ELeft:
+			childPos.Y -= EDITOR_NODE_DISTANCE;
+			break;
+		case EPosition::ERight:
+			childPos.Y += EDITOR_NODE_DISTANCE;
+			break;
+		}
+	}
 
 	//These ifs make sure that you can't create a child node on the socket where a parent node is attached
 	if(position == EPosition::EAbove && _ePositionToParent != EPosition::EBelow)
 	{
-		child1 = CreateDefaultSubobject<UCellEditor_NodeComponent>(TEXT("ChildNode_Above"));
+		child1 = NewObject<UCellEditor_NodeComponent>(this, TEXT("ChildNode_Above"));
 		child1->SetupAttachment(this);
 		//child1->SetRelativeLocation(FVector(EDITOR_NODE_DISTANCE, 0.f, 0.f));
 		child1->SetRelativeLocation(childPos);
@@ -174,7 +197,7 @@ void UCellEditor_NodeComponent::CreateAndAttachChildNode(EPosition position)
 	}
 	else if(position == EPosition::ERight && _ePositionToParent != EPosition::ELeft)
 	{
-		child2 = CreateDefaultSubobject<UCellEditor_NodeComponent>(TEXT("ChildNode_Right"));
+		child2 = NewObject<UCellEditor_NodeComponent>(this, TEXT("ChildNode_Right"));
 		child2->SetupAttachment(this);
 		//child2->SetRelativeLocation(FVector(0.f, EDITOR_NODE_DISTANCE, 0.f));
 		child2->SetRelativeLocation(childPos);
@@ -183,7 +206,7 @@ void UCellEditor_NodeComponent::CreateAndAttachChildNode(EPosition position)
 	}
 	else if(position == EPosition::EBelow && _ePositionToParent != EPosition::EAbove)
 	{
-		child3 = CreateDefaultSubobject<UCellEditor_NodeComponent>(TEXT("ChildNode_Below"));
+		child3 = NewObject<UCellEditor_NodeComponent>(this, TEXT("ChildNode_Below"));
 		child3->SetupAttachment(this);
 		//child3->SetRelativeLocation(FVector(-EDITOR_NODE_DISTANCE, 0.f, 0.f));
 		child3->SetRelativeLocation(childPos);
@@ -192,7 +215,7 @@ void UCellEditor_NodeComponent::CreateAndAttachChildNode(EPosition position)
 	}
 	else if(position == EPosition::ELeft && _ePositionToParent != EPosition::ERight)
 	{
-		child4 = CreateDefaultSubobject<UCellEditor_NodeComponent>(TEXT("ChildNode_Left"));
+		child4 = NewObject<UCellEditor_NodeComponent>(this, TEXT("ChildNode_Left"));
 		child4->SetupAttachment(this);
 		//child4->SetRelativeLocation(FVector(0.f, -EDITOR_NODE_DISTANCE, 0.f));
 		child4->SetRelativeLocation(childPos);

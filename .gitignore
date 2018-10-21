@@ -94,3 +94,6 @@ obj/
 
 #Plugins
 Lyfe_Game/Plugins/*
+
+#ThirdParty
+Lyfe_Game/ThirdParty/*

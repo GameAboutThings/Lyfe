@@ -76,5 +76,5 @@ public:
 	class UStaticMeshComponent* GetMesh();
 
 	UFUNCTION(BlueprintCallable, Category = "CELL|CompdounCloud|Base")
-	void DestroyComponent();
+	void Destroy();
 };

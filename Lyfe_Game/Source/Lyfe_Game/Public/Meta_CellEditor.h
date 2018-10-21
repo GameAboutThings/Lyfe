@@ -20,7 +20,12 @@
 #define EDITOR_NODE_SIZE_MIN 50.f
 #define EDITOR_NODE_SIZE_MAX 150.f
 #define EDITOR_NODE_DISTANCE 15.f
-#define EDITOR_BODY_SPHERE_VERT_NUM 4.f * 25.f //for fucks sake keep the 4 in there. The 4 is needed to calculate the vertices
+//#define EDITOR_BODY_SPHERE_VERT_NUM 4.f * 25.f //for fucks sake keep the 4 in there. The 4 is needed to calculate the vertices
+#define EDITOR_GRID_DIMENSION_X 30
+#define EDITOR_GRID_DIMENSION_Y 30
+#define EDITOR_GRID_DIMENSION_Z 10
+#define EDITOR_GRID_SCALE 10
+#define EDITOR_METABALLS_THRESHOLD 0.5f
 
 
 UENUM()
