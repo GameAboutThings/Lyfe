@@ -84,6 +84,8 @@ UCellEditor_NodeComponent::UCellEditor_NodeComponent()
 	cubePortion = 0;
 	distortion = FVector(1,1,1);
 	radius = 3.f;
+
+	//this->OnBeginCursorOver.AddDynamic(this, &UCellEditor_NodeComponent::OnMouseOver);
 }
 
 
@@ -130,10 +132,31 @@ void UCellEditor_NodeComponent::SetID()
   //////////////////////////////////////////////////////////////////////////////
  ///////////////////////////////// PUBLIC /////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-void UCellEditor_NodeComponent::PostConstructor(ENodeType _eNewType, EPosition _eNewPositionToParent)
+void UCellEditor_NodeComponent::PostConstructor(ENodeType _eNewType, EPosition _eNewPositionToParent, UInputComponent* input)
 {
 	this->_eType = _eNewType;
 	this->_ePositionToParent = _eNewPositionToParent;
+
+
+	switch (_eNewPositionToParent)
+	{
+	case EPosition::EAbove:
+		arrowDown->DestroyComponent();
+		arrowDown = nullptr;
+		break;
+	case EPosition::EBelow:
+		arrowUp->DestroyComponent();
+		arrowUp = nullptr;
+		break;
+	case EPosition::ELeft:
+		arrowRight->DestroyComponent();
+		arrowRight = nullptr;
+		break;
+	case EPosition::ERight:
+		arrowLeft->DestroyComponent();
+		arrowLeft = nullptr;
+		break;
+	}
 }
 
 ENodeType UCellEditor_NodeComponent::GetType()
@@ -152,13 +175,18 @@ void UCellEditor_NodeComponent::CreateAndAttachChildNode(EPosition position)
 	FVector childPos;
 	if (_eType != ENodeType::EBase)
 	{
-		UCellEditor_NodeComponent* parentNode = Cast<UCellEditor_NodeComponent>(this->GetOwner());
+		TArray<USceneComponent*> parentNodes;
+		this->GetParentComponents(parentNodes);
+		UCellEditor_NodeComponent* parentNode = Cast<UCellEditor_NodeComponent>(parentNodes[0]);
+
+		//Logging::Log(this->GetOwner()->GetClass()->GetName(), "parent class:");
+
 		if (parentNode != nullptr)
 		{
 			FVector pos = this->GetRelativeTransform().GetLocation();
 			FVector parPos = parentNode->GetRelativeTransform().GetLocation();
 			FVector dir = StaticMaths::Normalized(pos - parPos);
-			childPos = (pos + dir) * EDITOR_NODE_DISTANCE;
+			childPos = dir * EDITOR_NODE_DISTANCE;
 		}
 		else
 		{
@@ -194,6 +222,7 @@ void UCellEditor_NodeComponent::CreateAndAttachChildNode(EPosition position)
 		child1->SetRelativeLocation(childPos);
 		arrowUp->DestroyComponent();
 		arrowUp = nullptr;
+		child1->PostConstructor(ENodeType::ENormal, position, inputComponent);
 	}
 	else if(position == EPosition::ERight && _ePositionToParent != EPosition::ELeft)
 	{
@@ -203,6 +232,7 @@ void UCellEditor_NodeComponent::CreateAndAttachChildNode(EPosition position)
 		child2->SetRelativeLocation(childPos);
 		arrowRight->DestroyComponent();
 		arrowRight = nullptr;
+		child2->PostConstructor(ENodeType::ENormal, position, inputComponent);
 	}
 	else if(position == EPosition::EBelow && _ePositionToParent != EPosition::EAbove)
 	{
@@ -212,6 +242,7 @@ void UCellEditor_NodeComponent::CreateAndAttachChildNode(EPosition position)
 		child3->SetRelativeLocation(childPos);
 		arrowDown->DestroyComponent();
 		arrowDown = nullptr;
+		child3->PostConstructor(ENodeType::ENormal, position, inputComponent);
 	}
 	else if(position == EPosition::ELeft && _ePositionToParent != EPosition::ERight)
 	{
@@ -221,6 +252,7 @@ void UCellEditor_NodeComponent::CreateAndAttachChildNode(EPosition position)
 		child4->SetRelativeLocation(childPos);
 		arrowLeft->DestroyComponent();
 		arrowLeft = nullptr;
+		child4->PostConstructor(ENodeType::ENormal, position, inputComponent);
 	}
 	else
 	{

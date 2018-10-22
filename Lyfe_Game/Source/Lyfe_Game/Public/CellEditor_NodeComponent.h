@@ -47,6 +47,7 @@ private:
 	class AEditorBase_Cell* editorBase;
 	float cubePortion;
 	FVector distortion;
+	class UInputComponent* inputComponent;
 
 protected:
 	/** If this node is a base node or just a regular one */
@@ -111,7 +112,7 @@ public:
 	* @param _eNewPositionToParent Where this node is relative to its parent
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CELL|Editor|Sculpting")
-	void PostConstructor(ENodeType _eNewType, EPosition _eNewPositionToParent);
+	void PostConstructor(ENodeType _eNewType, EPosition _eNewPositionToParent, UInputComponent* input);
 
 	/** Set whether this node is of type normal or base */
 	UFUNCTION(BlueprintCallable, Category = "CELL|Editor|Sculpting")

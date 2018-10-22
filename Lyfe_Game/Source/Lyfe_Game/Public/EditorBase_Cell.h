@@ -39,6 +39,7 @@ public:
 //////////////////////////////////////////////////////////////////////////////
 private:
 	int idCounter;
+	class UInputComponent* inputComponent;
 protected:
 	/** The root of the node system that will form the sculpting */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "CELL|Editor|Sculpting")
@@ -87,4 +88,7 @@ public:
 
 	UFUNCTION()
 	int GetIdCounter();
+
+	UFUNCTION()
+	class UInputComponent* GetInputComponent() { return inputComponent; }
 };

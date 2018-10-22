@@ -10,7 +10,7 @@
 #include "Meta_CellEditor.h"
 #include "Logging.h"
 #include "DrawDebugHelpers.h"
-
+#include "Runtime/Engine/Classes/Components/InputComponent.h"
 
 // Sets default values
 AEditorBase_Cell::AEditorBase_Cell()
@@ -20,11 +20,14 @@ AEditorBase_Cell::AEditorBase_Cell()
 
 	idCounter = 0;
 
+	inputComponent = CreateDefaultSubobject<UInputComponent>(TEXT("InputHandler"));
+	inputComponent->BindAxis(FName("Scroll"));
+
 	//Create the base node for this cell
 	baseNode = CreateDefaultSubobject<UCellEditor_NodeComponent>(TEXT("BaseNode"));
 	RootComponent = baseNode;
 	baseNode->SetRelativeLocation(FVector(0, 0, 0));
-	baseNode->PostConstructor(ENodeType::EBase, EPosition::EBase);
+	baseNode->PostConstructor(ENodeType::EBase, EPosition::EBase, inputComponent);
 	baseNode->SetEditorBase(this);
 
 	//Use a spring arm to give the camera smooth, natural-feeling motion
@@ -52,6 +55,12 @@ void AEditorBase_Cell::BeginPlay()
 	idCounter = 0;
 
 	baseNode->CreateAndAttachChildNode(EPosition::ELeft);
+	baseNode->GetChild(baseNode->GetChildrenPositions()[0])->CreateAndAttachChildNode(EPosition::ELeft);
+	baseNode->GetChild(baseNode->GetChildrenPositions()[0])->GetChild(baseNode->GetChildrenPositions()[0])->CreateAndAttachChildNode(EPosition::ELeft);
+
+	baseNode->CreateAndAttachChildNode(EPosition::EBelow);
+	baseNode->GetChild(baseNode->GetChildrenPositions()[0])->CreateAndAttachChildNode(EPosition::EBelow);
+	baseNode->GetChild(baseNode->GetChildrenPositions()[0])->GetChild(baseNode->GetChildrenPositions()[0])->CreateAndAttachChildNode(EPosition::ELeft);
 }
 
 // Called every frame
@@ -59,6 +68,10 @@ void AEditorBase_Cell::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (inputComponent->GetAxisValue(FName("Scroll")) != 0.f)
+	{
+		Logging::Log("scrolling");
+	}
 }
 
 /*---------------------------------------------------------------------------------------------------------------------------------------------------------------*/
@@ -171,7 +184,6 @@ void AEditorBase_Cell::GenerateBodyMesh()
 						
 						if (chargeValues[FMath::FloorToInt(voxel.Z)][FMath::FloorToInt(voxel.Y)][FMath::FloorToInt(voxel.X)] >= EDITOR_METABALLS_THRESHOLD)
 						{
-							Logging::Log(chargeValues[FMath::FloorToInt(voxel.Z)][FMath::FloorToInt(voxel.Y)][FMath::FloorToInt(voxel.X)]);
 							DrawDebugBox(GetWorld(), voxelPos, FVector(EDITOR_GRID_SCALE), FColor(225,225,225), true, -1);
 						}
 					}
