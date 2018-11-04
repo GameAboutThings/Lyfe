@@ -47,7 +47,8 @@ private:
 	class AEditorBase_Cell* editorBase;
 	float cubePortion;
 	FVector distortion;
-	class UInputComponent* inputComponent;
+	//class UInputComponent* inputComponent;
+	class APlayerController* controller;
 
 protected:
 	/** If this node is a base node or just a regular one */
@@ -103,6 +104,15 @@ public:
 private:
 	UFUNCTION()
 	void SetID();
+
+	UFUNCTION()
+	void SetupInput();
+
+	UFUNCTION()
+	void HandleInput();
+
+	UFUNCTION()
+	void OnBeginMouseOver(UPrimitiveComponent* comp);
 protected:
 public:
 	/** Call this after creating a new node 
@@ -112,7 +122,7 @@ public:
 	* @param _eNewPositionToParent Where this node is relative to its parent
 	*/
 	UFUNCTION(BlueprintCallable, Category = "CELL|Editor|Sculpting")
-	void PostConstructor(ENodeType _eNewType, EPosition _eNewPositionToParent, UInputComponent* input);
+	void PostConstructor(ENodeType _eNewType, EPosition _eNewPositionToParent);
 
 	/** Set whether this node is of type normal or base */
 	UFUNCTION(BlueprintCallable, Category = "CELL|Editor|Sculpting")

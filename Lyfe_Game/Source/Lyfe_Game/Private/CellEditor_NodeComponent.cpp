@@ -81,11 +81,15 @@ UCellEditor_NodeComponent::UCellEditor_NodeComponent()
 		editorBase = Cast<AEditorBase_Cell>(parent->GetEditorBase());
 	}
 
+	//Setting sculpting parameters
 	cubePortion = 0;
 	distortion = FVector(1,1,1);
 	radius = 3.f;
 
-	//this->OnBeginCursorOver.AddDynamic(this, &UCellEditor_NodeComponent::OnMouseOver);
+
+
+	//Binding methods to events!
+	this->OnBeginCursorOver.AddDynamic(this, &UCellEditor_NodeComponent::OnBeginMouseOver);
 }
 
 
@@ -94,7 +98,7 @@ void UCellEditor_NodeComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// ...
+	SetupInput();
 	
 }
 
@@ -104,15 +108,7 @@ void UCellEditor_NodeComponent::TickComponent(float DeltaTime, ELevelTick TickTy
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	if((isSelected || isMouseOver) /* && scroll wheel*/)
-	{
-		//add or subtract from radius;
-	}
-
-	if(isSelected /* && delete */)
-	{
-		this->DestroyComponent();
-	}
+	HandleInput();
 }
 
 /*---------------------------------------------------------------------------------------------------------------------------------------------------------------*/
@@ -125,6 +121,70 @@ void UCellEditor_NodeComponent::SetID()
 	id = editorBase->GetIdCounter();
 }
 
+void UCellEditor_NodeComponent::SetupInput()
+{
+	controller = GetWorld()->GetFirstPlayerController();
+
+	if (controller != nullptr)
+	{
+		controller->InputComponent->BindAxis("Scroll");
+	}
+}
+
+void UCellEditor_NodeComponent::HandleInput()
+{
+	if ((isSelected || isMouseOver))
+	{
+		if (controller->GetInputAxisValue(FName("Scroll")) != 0.f)
+		{
+			if (controller->IsInputKeyDown(EKeys::LeftControl) != 0)
+			{
+				distortion.X += controller->GetInputAxisValue(FName("Scroll"));
+				distortion.Y += controller->GetInputAxisValue(FName("Scroll"));
+				distortion.Z += controller->GetInputAxisValue(FName("Scroll"));
+			}
+			else
+			{
+				distortion.X += controller->GetInputAxisValue(FName("Scroll"));
+				distortion.Y += controller->GetInputAxisValue(FName("Scroll"));
+			}
+		}
+	}
+
+	
+
+	if (controller->IsInputKeyDown(EKeys::LeftMouseButton) != 0)
+	{
+		if (isMouseOver)
+		{
+			isSelected = true;
+		}
+		else
+		{
+			isSelected = false;
+		}
+	}
+
+	if (controller != nullptr)
+	{
+		
+	}
+
+	if (isSelected /* && delete */)
+	{
+		this->DestroyComponent();
+	}
+}
+
+void UCellEditor_NodeComponent::OnBeginMouseOver(UPrimitiveComponent* comp)
+{
+	if (comp == this)
+	{
+		Logging::Log("hover??", true);
+		isMouseOver = true;
+	}
+}
+
   //////////////////////////////////////////////////////////////////////////////
  //////////////////////////////// PROTECTED ///////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
@@ -132,7 +192,7 @@ void UCellEditor_NodeComponent::SetID()
   //////////////////////////////////////////////////////////////////////////////
  ///////////////////////////////// PUBLIC /////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-void UCellEditor_NodeComponent::PostConstructor(ENodeType _eNewType, EPosition _eNewPositionToParent, UInputComponent* input)
+void UCellEditor_NodeComponent::PostConstructor(ENodeType _eNewType, EPosition _eNewPositionToParent)
 {
 	this->_eType = _eNewType;
 	this->_ePositionToParent = _eNewPositionToParent;
@@ -179,8 +239,6 @@ void UCellEditor_NodeComponent::CreateAndAttachChildNode(EPosition position)
 		this->GetParentComponents(parentNodes);
 		UCellEditor_NodeComponent* parentNode = Cast<UCellEditor_NodeComponent>(parentNodes[0]);
 
-		//Logging::Log(this->GetOwner()->GetClass()->GetName(), "parent class:");
-
 		if (parentNode != nullptr)
 		{
 			FVector pos = this->GetRelativeTransform().GetLocation();
@@ -220,9 +278,12 @@ void UCellEditor_NodeComponent::CreateAndAttachChildNode(EPosition position)
 		child1->SetupAttachment(this);
 		//child1->SetRelativeLocation(FVector(EDITOR_NODE_DISTANCE, 0.f, 0.f));
 		child1->SetRelativeLocation(childPos);
-		arrowUp->DestroyComponent();
-		arrowUp = nullptr;
-		child1->PostConstructor(ENodeType::ENormal, position, inputComponent);
+		if (arrowUp != nullptr)
+		{
+			arrowUp->DestroyComponent();
+			arrowUp = nullptr;
+		}
+		child1->PostConstructor(ENodeType::ENormal, position);
 	}
 	else if(position == EPosition::ERight && _ePositionToParent != EPosition::ELeft)
 	{
@@ -230,9 +291,12 @@ void UCellEditor_NodeComponent::CreateAndAttachChildNode(EPosition position)
 		child2->SetupAttachment(this);
 		//child2->SetRelativeLocation(FVector(0.f, EDITOR_NODE_DISTANCE, 0.f));
 		child2->SetRelativeLocation(childPos);
-		arrowRight->DestroyComponent();
-		arrowRight = nullptr;
-		child2->PostConstructor(ENodeType::ENormal, position, inputComponent);
+		if (arrowRight != nullptr)
+		{
+			arrowRight->DestroyComponent();
+			arrowRight = nullptr;
+		}
+		child2->PostConstructor(ENodeType::ENormal, position);
 	}
 	else if(position == EPosition::EBelow && _ePositionToParent != EPosition::EAbove)
 	{
@@ -240,9 +304,12 @@ void UCellEditor_NodeComponent::CreateAndAttachChildNode(EPosition position)
 		child3->SetupAttachment(this);
 		//child3->SetRelativeLocation(FVector(-EDITOR_NODE_DISTANCE, 0.f, 0.f));
 		child3->SetRelativeLocation(childPos);
-		arrowDown->DestroyComponent();
-		arrowDown = nullptr;
-		child3->PostConstructor(ENodeType::ENormal, position, inputComponent);
+		if (arrowDown != nullptr)
+		{
+			arrowDown->DestroyComponent();
+			arrowDown = nullptr;
+		}
+		child3->PostConstructor(ENodeType::ENormal, position);
 	}
 	else if(position == EPosition::ELeft && _ePositionToParent != EPosition::ERight)
 	{
@@ -250,9 +317,12 @@ void UCellEditor_NodeComponent::CreateAndAttachChildNode(EPosition position)
 		child4->SetupAttachment(this);
 		//child4->SetRelativeLocation(FVector(0.f, -EDITOR_NODE_DISTANCE, 0.f));
 		child4->SetRelativeLocation(childPos);
-		arrowLeft->DestroyComponent();
-		arrowLeft = nullptr;
-		child4->PostConstructor(ENodeType::ENormal, position, inputComponent);
+		if (arrowLeft != nullptr)
+		{
+			arrowLeft->DestroyComponent();
+			arrowLeft = nullptr;
+		}
+		child4->PostConstructor(ENodeType::ENormal, position);
 	}
 	else
 	{

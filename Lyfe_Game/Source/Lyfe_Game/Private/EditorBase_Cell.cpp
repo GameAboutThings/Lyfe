@@ -11,6 +11,7 @@
 #include "Logging.h"
 #include "DrawDebugHelpers.h"
 #include "Runtime/Engine/Classes/Components/InputComponent.h"
+#include "Runtime/Engine/Classes/GameFramework/PlayerController.h"
 
 // Sets default values
 AEditorBase_Cell::AEditorBase_Cell()
@@ -20,14 +21,14 @@ AEditorBase_Cell::AEditorBase_Cell()
 
 	idCounter = 0;
 
-	inputComponent = CreateDefaultSubobject<UInputComponent>(TEXT("InputHandler"));
-	inputComponent->BindAxis(FName("Scroll"));
+	//inputComponent = CreateDefaultSubobject<UInputComponent>(TEXT("InputHandler"));
+	//inputComponent->BindAxis(FName("Scroll"));
 
 	//Create the base node for this cell
 	baseNode = CreateDefaultSubobject<UCellEditor_NodeComponent>(TEXT("BaseNode"));
 	RootComponent = baseNode;
 	baseNode->SetRelativeLocation(FVector(0, 0, 0));
-	baseNode->PostConstructor(ENodeType::EBase, EPosition::EBase, inputComponent);
+	baseNode->PostConstructor(ENodeType::EBase, EPosition::EBase);
 	baseNode->SetEditorBase(this);
 
 	//Use a spring arm to give the camera smooth, natural-feeling motion
@@ -43,9 +44,6 @@ AEditorBase_Cell::AEditorBase_Cell()
 	camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	camera->SetupAttachment(cameraArm, USpringArmComponent::SocketName);
 	camera->bUsePawnControlRotation = false;
-
-	//Allow user to control this character
-	//AutoPossessPlayer = EAutoReceiveInput::Player0;
 }
 
 // Called when the game starts or when spawned
@@ -54,24 +52,26 @@ void AEditorBase_Cell::BeginPlay()
 	Super::BeginPlay();
 	idCounter = 0;
 
-	baseNode->CreateAndAttachChildNode(EPosition::ELeft);
-	baseNode->GetChild(baseNode->GetChildrenPositions()[0])->CreateAndAttachChildNode(EPosition::ELeft);
-	baseNode->GetChild(baseNode->GetChildrenPositions()[0])->GetChild(baseNode->GetChildrenPositions()[0])->CreateAndAttachChildNode(EPosition::ELeft);
+	APlayerController* playerController = GetWorld()->GetFirstPlayerController();
 
-	baseNode->CreateAndAttachChildNode(EPosition::EBelow);
-	baseNode->GetChild(baseNode->GetChildrenPositions()[0])->CreateAndAttachChildNode(EPosition::EBelow);
-	baseNode->GetChild(baseNode->GetChildrenPositions()[0])->GetChild(baseNode->GetChildrenPositions()[0])->CreateAndAttachChildNode(EPosition::ELeft);
+	if (playerController != nullptr)
+	{
+		EnableInput(playerController);
+		playerController->bEnableMouseOverEvents = true;
+	}
+
+	baseNode->CreateAndAttachChildNode(EPosition::ELeft);
+	//baseNode->CreateAndAttachChildNode(EPosition::EBelow);
+	//baseNode->GetChild(baseNode->GetChildrenPositions()[0])->CreateAndAttachChildNode(EPosition::ELeft);
+	//baseNode->GetChild(baseNode->GetChildrenPositions()[1])->CreateAndAttachChildNode(EPosition::EBelow);
+	//baseNode->GetChild(baseNode->GetChildrenPositions()[0])->GetChild(baseNode->GetChildrenPositions()[0])->CreateAndAttachChildNode(EPosition::ELeft);
+	//baseNode->GetChild(baseNode->GetChildrenPositions()[1])->GetChild(baseNode->GetChildrenPositions()[0])->CreateAndAttachChildNode(EPosition::ELeft);
 }
 
 // Called every frame
 void AEditorBase_Cell::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	if (inputComponent->GetAxisValue(FName("Scroll")) != 0.f)
-	{
-		Logging::Log("scrolling");
-	}
 }
 
 /*---------------------------------------------------------------------------------------------------------------------------------------------------------------*/
@@ -80,19 +80,11 @@ void AEditorBase_Cell::Tick(float DeltaTime)
  ///////////////////////////////// PRIVATE ////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-  //////////////////////////////////////////////////////////////////////////////
- //////////////////////////////// PROTECTED ///////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-
-  //////////////////////////////////////////////////////////////////////////////
- ///////////////////////////////// PUBLIC /////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////
-
 void AEditorBase_Cell::AddChildNodes(TArray<UCellEditor_NodeComponent*>* nodes, UCellEditor_NodeComponent* parentNode)
 {
 	TArray<EPosition> childrenPositions = parentNode->GetChildrenPositions();
 
-	for(int i = 0; i < childrenPositions.Num(); i++)
+	for (int i = 0; i < childrenPositions.Num(); i++)
 	{
 		nodes->Add(parentNode->GetChild(childrenPositions[i]));
 		AddChildNodes(nodes, parentNode->GetChild(childrenPositions[i]));
@@ -140,6 +132,16 @@ float AEditorBase_Cell::CalculateSphereCharge(FVector nodePos, FVector voxelPos,
 	//}
 	//return 0;
 }
+
+
+
+  //////////////////////////////////////////////////////////////////////////////
+ //////////////////////////////// PROTECTED ///////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
+
+  //////////////////////////////////////////////////////////////////////////////
+ ///////////////////////////////// PUBLIC /////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
 
 
 void AEditorBase_Cell::GenerateBodyMesh()
