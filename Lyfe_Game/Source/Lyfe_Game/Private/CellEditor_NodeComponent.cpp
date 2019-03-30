@@ -7,10 +7,10 @@
 #include "StaticMaths.h"
 #include "CellEditor_ArrowComponent.h"
 #include "Runtime/Engine/Classes/Materials/Material.h"
+#include "Runtime/Engine/Classes/Materials/MaterialInstanceDynamic.h"
 #include "Runtime/Engine/Classes/Engine/StaticMesh.h"
 #include "EditorBase_Cell.h"
 #include "Util.h"
-//#include "../Private/Util.cpp"
 
 
 // Sets default values for this component's properties
@@ -31,23 +31,25 @@ UCellEditor_NodeComponent::UCellEditor_NodeComponent()
 		Logging::Log("Could not find Asset at path in CellEditor_NodeComponent()");
 	}
 
-	auto materialAsset = ConstructorHelpers::FObjectFinder<UMaterial>(TEXT("Material'/Game/Materials/M_Editor_Node.M_Editor_Node'"));
+	auto materialAsset = ConstructorHelpers::FObjectFinder<UMaterialInstance>(TEXT("MaterialInstace'/Game/Materials/MI_Editor_Node.MI_Editor_Node'"));
 	if (materialAsset.Object != nullptr)
 	{
-		//UStaticMesh* mesh = this->GetStaticMesh();
-		UMaterialInterface * mInterface = Cast<UMaterialInterface>(materialAsset.Object);
-		if (mInterface != nullptr)
+		UMaterialInstance * mInstance = Cast<UMaterialInstance>(materialAsset.Object);
+		if (mInstance != nullptr)
 		{
-			SetMaterial(0, materialAsset.Object);
+			materialDynamic = UMaterialInstanceDynamic::Create(mInstance, this, FName("Material"));
+			//materialDynamic = CreateAndSetMaterialInstanceDynamicFromMaterial(0, GetMaterial(0));
+
+			SetMaterial(0, materialDynamic);
 		}
 		else
 		{
-			Logging::Log("Couldn't cast material to interface");
+			Logging::Log("Couldn't cast material to instance");
 		}
 	}
 	else
 	{
-		Logging::Log("Could not find Asset at path '/Game/Materials/M_Editor_Node.M_Editor_Node' in CellEditor_NodeComponent.PostConstructor");
+		Logging::Log("Could not find Asset at path '/Game/Materials/MI_Editor_Node.MI_Editor_Node' in CellEditor_NodeComponent.Constructor");
 	}
 
 	//Create the 4 arrows that are used for creating and deleting nodes
@@ -90,6 +92,7 @@ UCellEditor_NodeComponent::UCellEditor_NodeComponent()
 
 	//Binding methods to events!
 	this->OnBeginCursorOver.AddDynamic(this, &UCellEditor_NodeComponent::OnBeginMouseOver);
+	this->OnEndCursorOver.AddDynamic(this, &UCellEditor_NodeComponent::OnEndMouseOver);
 }
 
 
@@ -152,12 +155,18 @@ void UCellEditor_NodeComponent::HandleInput()
 	}
 
 	
-
 	if (controller->IsInputKeyDown(EKeys::LeftMouseButton) != 0)
 	{
 		if (isMouseOver)
 		{
-			isSelected = true;
+			if (!isSelected)
+			{
+				isSelected = true;
+
+				if (materialDynamic)
+					//materialDynamic->SetScalarParameterValue
+					materialDynamic->GetScalarParameterValue(FName("Hover")/*, 1.0f*/);
+			}
 		}
 		else
 		{
@@ -170,18 +179,29 @@ void UCellEditor_NodeComponent::HandleInput()
 		
 	}
 
-	if (isSelected /* && delete */)
-	{
-		this->DestroyComponent();
-	}
+	//if (isSelected /* && delete */)
+	//{
+	//	this->DestroyComponent();
+	//}
 }
 
 void UCellEditor_NodeComponent::OnBeginMouseOver(UPrimitiveComponent* comp)
 {
-	if (comp == this)
+	if (!isMouseOver)
 	{
-		Logging::Log("hover??", true);
 		isMouseOver = true;
+
+		//materialDynamic->SetScalarParameterValue("Hover", 1);
+	}
+}
+
+void UCellEditor_NodeComponent::OnEndMouseOver(UPrimitiveComponent * comp)
+{
+	if (isMouseOver)
+	{
+		isMouseOver = false;
+
+		//materialDynamic->SetScalarParameterValue("Hover", 0);
 	}
 }
 
@@ -194,6 +214,9 @@ void UCellEditor_NodeComponent::OnBeginMouseOver(UPrimitiveComponent* comp)
 //////////////////////////////////////////////////////////////////////////////
 void UCellEditor_NodeComponent::PostConstructor(ENodeType _eNewType, EPosition _eNewPositionToParent)
 {
+	//materialDynamic = UMaterialInstanceDynamic::Create(this->GetMaterial(0), this, FName("Material"));
+	//materialDynamic = CreateAndSetMaterialInstanceDynamicFromMaterial(0, GetMaterial(0));
+
 	this->_eType = _eNewType;
 	this->_ePositionToParent = _eNewPositionToParent;
 

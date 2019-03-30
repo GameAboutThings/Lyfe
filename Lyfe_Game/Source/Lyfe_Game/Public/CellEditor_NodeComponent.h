@@ -49,6 +49,7 @@ private:
 	FVector distortion;
 	//class UInputComponent* inputComponent;
 	class APlayerController* controller;
+	class UMaterialInstanceDynamic* materialDynamic;
 
 protected:
 	/** If this node is a base node or just a regular one */
@@ -113,6 +114,9 @@ private:
 
 	UFUNCTION()
 	void OnBeginMouseOver(UPrimitiveComponent* comp);
+
+	UFUNCTION()
+	void OnEndMouseOver(UPrimitiveComponent* comp);
 protected:
 public:
 	/** Call this after creating a new node 
